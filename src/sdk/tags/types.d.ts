@@ -19,7 +19,3 @@ export type TagAttributes = {
 };
 
 export type Tag = BaseEntity<TagAttributes>;
-
-export type GetTagsResults = {
-  data: Tag[];
-};

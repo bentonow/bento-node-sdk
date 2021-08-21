@@ -19,7 +19,3 @@ export type FieldAttributes = {
 };
 
 export type Field = BaseEntity<FieldAttributes>;
-
-export type GetFieldsResults = {
-  data: Field[];
-};

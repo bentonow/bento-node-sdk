@@ -31,7 +31,3 @@ export type SubscriberAttributes<S> = {
 };
 
 export type Subscriber<S> = BaseEntity<SubscriberAttributes<S>>;
-
-export type GetSubscribersResult<S> = {
-  data: Subscriber<S>;
-};
