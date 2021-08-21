@@ -1,6 +1,6 @@
 import { AnalyticsOptions } from './sdk/interfaces';
 import { BentoClient } from './sdk/client';
-import { BentoSubscribers } from './sdk/subscribers';
+import { BentoSubscribers } from './sdk/subscribers/';
 
 export class Analytics {
   private readonly client: BentoClient;

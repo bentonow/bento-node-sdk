@@ -8,6 +8,10 @@ export const handlers = [
         return basicAuthError(res, ctx);
       }
 
+      const uuid =
+        req.url.searchParams.get('uuid') || '0f566d05f47a59bff25f147df3a6233d';
+      const email = req.url.searchParams.get('email') || 'jesse@bentonow.com';
+
       return res(
         ctx.status(200),
         ctx.json({
@@ -15,8 +19,8 @@ export const handlers = [
             id: '236',
             type: 'visitors',
             attributes: {
-              uuid: '0f566d05f47a59bff25f147df3a6233d',
-              email: 'jesse@bentonow.com',
+              uuid,
+              email,
               fields: {},
               cached_tag_ids: [],
             },
