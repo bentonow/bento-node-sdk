@@ -20,3 +20,8 @@ export type AddFieldParameters = {
     value: string;
   };
 };
+
+export type RemoveFieldParameters = {
+  email: string;
+  fieldName: string;
+};

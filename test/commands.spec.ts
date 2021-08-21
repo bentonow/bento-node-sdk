@@ -78,12 +78,38 @@ describe('Post Commands [/fetch/commands]', () => {
       attributes: {
         uuid: '090289b2a1cf40e8a85507eb9ae73684',
         email: 'test@bentonow.com',
-        fields: [
-          {
-            key: 'testKey',
-            value: 'testValue',
-          },
-        ],
+        fields: {
+          testKey: 'testValue',
+        },
+        cached_tag_ids: [],
+        unsubscribed_at: null,
+      },
+    });
+  });
+
+  it('Can remove a field', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Commands.removeField({
+        email: 'test@bentonow.com',
+        fieldName: 'testField',
+      })
+    ).resolves.toMatchObject({
+      id: '444792518',
+      type: 'visitors',
+      attributes: {
+        uuid: '090289b2a1cf40e8a85507eb9ae73684',
+        email: 'test@bentonow.com',
+        fields: {
+          definitelyNottestField: '',
+        },
         cached_tag_ids: [],
         unsubscribed_at: null,
       },

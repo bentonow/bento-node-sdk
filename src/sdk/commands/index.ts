@@ -1,6 +1,7 @@
 import {
   AddFieldParameters,
   AddTagParameters,
+  RemoveFieldParameters,
   RemoveTagParameters,
 } from './types';
 import { BentoClient } from '../client';
@@ -92,6 +93,34 @@ export class BentoCommands<S> {
             command: CommandTypes.ADD_FIELD,
             email: parameters.email,
             query: parameters.field,
+          },
+        }
+      );
+
+      if (Object.keys(result).length === 0 || !result.data) return null;
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Removes a field to the subscriber with the matching email.
+   *
+   * @param parameters \{ email: string, fieldName: string \}
+   * @returns Promise<Subscriber> | null
+   */
+  public async removeField(
+    parameters: RemoveFieldParameters
+  ): Promise<Subscriber<S> | null> {
+    try {
+      const result = await this._client.post<DataResponse<Subscriber<S>>>(
+        this._url,
+        {
+          command: {
+            command: CommandTypes.REMOVE_FIELD,
+            email: parameters.email,
+            query: parameters.fieldName,
           },
         }
       );

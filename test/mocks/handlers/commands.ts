@@ -22,6 +22,8 @@ export const handlers = [
           return removeTagResponse(query, email, res, ctx);
         case 'add_field':
           return addFieldResponse(query, email, res, ctx);
+        case 'remove_field':
+          return removeFieldResponse(query, email, res, ctx);
       }
 
       return res(ctx.status(500));
@@ -96,7 +98,33 @@ function addFieldResponse(
         attributes: {
           uuid: '090289b2a1cf40e8a85507eb9ae73684',
           email: email,
-          fields: [field],
+          fields: { [field.key]: field.value },
+          cached_tag_ids: [],
+          unsubscribed_at: null,
+        },
+      },
+    })
+  );
+}
+
+function removeFieldResponse(
+  fieldName: string,
+  email: string,
+  res: ResponseComposition,
+  ctx: RestContext
+) {
+  return res(
+    ctx.status(201),
+    ctx.json({
+      data: {
+        id: '444792518',
+        type: 'visitors',
+        attributes: {
+          uuid: '090289b2a1cf40e8a85507eb9ae73684',
+          email: email,
+          fields: {
+            [`definitelyNot${fieldName}`]: '',
+          },
           cached_tag_ids: [],
           unsubscribed_at: null,
         },
