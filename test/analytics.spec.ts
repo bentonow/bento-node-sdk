@@ -1,7 +1,7 @@
 import { Analytics } from '../src';
 
 describe('Analytics', () => {
-  it('Successfully initializes with the site UUID.', async () => {
+  it('Properly exposes the Subscribers module.', async () => {
     const bento = new Analytics({
       authentication: {
         privateKey: '',
@@ -10,10 +10,6 @@ describe('Analytics', () => {
       siteUuid: 'test',
     });
 
-    try {
-      console.log(await bento.Subscribers.getSubscribers());
-    } catch (e) {
-      console.log(e);
-    }
+    expect(bento.Subscribers).toBeTruthy();
   });
 });

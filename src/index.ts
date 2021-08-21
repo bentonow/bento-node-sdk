@@ -11,3 +11,5 @@ export class Analytics {
     this.Subscribers = new BentoSubscribers(this.client);
   }
 }
+
+export * from './sdk/errors';

@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import { InternalServerError, NotAuthorizedError } from './errors';
 import { AnalyticsOptions, AuthenticationOptions } from './interfaces';
 
 export class BentoClient {
@@ -20,7 +21,13 @@ export class BentoClient {
         method: 'GET',
         headers: this.headers,
       })
-        .then(result => result.json())
+        .then(result => {
+          if (this.isSuccessfulStatus(result.status)) {
+            return result.json();
+          }
+
+          throw this.getErrorForResponse(result);
+        })
         .then(data => resolve(data))
         .catch(error => reject(error));
     });
@@ -70,5 +77,16 @@ export class BentoClient {
     }
 
     return queryParameters.toString();
+  }
+
+  private isSuccessfulStatus(statusCode: number): boolean {
+    const validStatusCodes: number[] = [200, 201];
+
+    return validStatusCodes.includes(statusCode);
+  }
+
+  private getErrorForResponse(response: Response) {
+    if (response.status === 401) return new NotAuthorizedError();
+    return new InternalServerError();
   }
 }
