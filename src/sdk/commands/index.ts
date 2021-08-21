@@ -3,6 +3,8 @@ import {
   AddTagParameters,
   RemoveFieldParameters,
   RemoveTagParameters,
+  SubscribeParameters,
+  UnsubscribeParameters,
 } from './types';
 import { BentoClient } from '../client';
 import { DataResponse } from '../client/types';
@@ -121,6 +123,63 @@ export class BentoCommands<S> {
             command: CommandTypes.REMOVE_FIELD,
             email: parameters.email,
             query: parameters.fieldName,
+          },
+        }
+      );
+
+      if (Object.keys(result).length === 0 || !result.data) return null;
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Subscribes the supplied email to Bento. If the email does not exist, it is created.
+   * If the subscriber had previously unsubscribed, they will be re-subscribed.
+   *
+   * @param parameters \{ email: string \}
+   * @returns Promise<Subscriber> | null
+   */
+  public async subscribe(
+    parameters: SubscribeParameters
+  ): Promise<Subscriber<S> | null> {
+    try {
+      const result = await this._client.post<DataResponse<Subscriber<S>>>(
+        this._url,
+        {
+          command: {
+            command: CommandTypes.SUBSCRIBE,
+            email: parameters.email,
+          },
+        }
+      );
+
+      if (Object.keys(result).length === 0 || !result.data) return null;
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Unsubscribes the supplied email to Bento. If the email does not exist, it is created and
+   * immediately unsubscribed. If they had already unsubscribed, the `unsubscribed_at` property
+   * is updated.
+   *
+   * @param parameters \{ email: string \}
+   * @returns Promise<Subscriber> | null
+   */
+  public async unsubscribe(
+    parameters: UnsubscribeParameters
+  ): Promise<Subscriber<S> | null> {
+    try {
+      const result = await this._client.post<DataResponse<Subscriber<S>>>(
+        this._url,
+        {
+          command: {
+            command: CommandTypes.UNSUBSCRIBE,
+            email: parameters.email,
           },
         }
       );

@@ -25,3 +25,11 @@ export type RemoveFieldParameters = {
   email: string;
   fieldName: string;
 };
+
+export type SubscribeParameters = {
+  email: string;
+};
+
+export type UnsubscribeParameters = {
+  email: string;
+};

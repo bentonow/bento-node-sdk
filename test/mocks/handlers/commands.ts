@@ -24,6 +24,10 @@ export const handlers = [
           return addFieldResponse(query, email, res, ctx);
         case 'remove_field':
           return removeFieldResponse(query, email, res, ctx);
+        case 'subscribe':
+          return subscribeResponse(email, res, ctx);
+        case 'unsubscribe':
+          return unsubscribeResponse(email, res, ctx);
       }
 
       return res(ctx.status(500));
@@ -127,6 +131,52 @@ function removeFieldResponse(
           },
           cached_tag_ids: [],
           unsubscribed_at: null,
+        },
+      },
+    })
+  );
+}
+
+function subscribeResponse(
+  email: string,
+  res: ResponseComposition,
+  ctx: RestContext
+) {
+  return res(
+    ctx.status(201),
+    ctx.json({
+      data: {
+        id: '444792518',
+        type: 'visitors',
+        attributes: {
+          uuid: '090289b2a1cf40e8a85507eb9ae73684',
+          email: email,
+          fields: null,
+          cached_tag_ids: [],
+          unsubscribed_at: null,
+        },
+      },
+    })
+  );
+}
+
+function unsubscribeResponse(
+  email: string,
+  res: ResponseComposition,
+  ctx: RestContext
+) {
+  return res(
+    ctx.status(201),
+    ctx.json({
+      data: {
+        id: '444792518',
+        type: 'visitors',
+        attributes: {
+          uuid: '090289b2a1cf40e8a85507eb9ae73684',
+          email: email,
+          fields: null,
+          cached_tag_ids: [],
+          unsubscribed_at: '2021-08-21T09:11:55.587Z',
         },
       },
     })

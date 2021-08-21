@@ -115,4 +115,56 @@ describe('Post Commands [/fetch/commands]', () => {
       },
     });
   });
+
+  it('Can subscribe', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Commands.subscribe({
+        email: 'test@bentonow.com',
+      })
+    ).resolves.toMatchObject({
+      id: '444792518',
+      type: 'visitors',
+      attributes: {
+        uuid: '090289b2a1cf40e8a85507eb9ae73684',
+        email: 'test@bentonow.com',
+        fields: null,
+        cached_tag_ids: [],
+        unsubscribed_at: null,
+      },
+    });
+  });
+
+  it('Can unsubscribe', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Commands.unsubscribe({
+        email: 'test@bentonow.com',
+      })
+    ).resolves.toMatchObject({
+      id: '444792518',
+      type: 'visitors',
+      attributes: {
+        uuid: '090289b2a1cf40e8a85507eb9ae73684',
+        email: 'test@bentonow.com',
+        fields: null,
+        cached_tag_ids: [],
+        unsubscribed_at: '2021-08-21T09:11:55.587Z',
+      },
+    });
+  });
 });
