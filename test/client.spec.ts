@@ -5,7 +5,7 @@ describe('Subscribers', () => {
   it('Throws an unauthorized error when authorization fails.', async () => {
     const client = new BentoClient({
       authentication: {
-        privateKey: '',
+        secretKey: '',
         publishableKey: '',
       },
       siteUuid: 'test',

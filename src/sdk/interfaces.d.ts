@@ -6,7 +6,7 @@ export interface AnalyticsOptions {
 
 export interface AuthenticationOptions {
   publishableKey: string;
-  privateKey: string;
+  secretKey: string;
 }
 
 export interface ClientOptions {

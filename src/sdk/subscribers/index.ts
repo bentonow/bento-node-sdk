@@ -1,10 +1,21 @@
 import { BentoClient } from '../client';
-import { GetSubscribersParameters } from './types';
+import { DataResponse } from '../client/types';
+import { GetSubscribersParameters, Subscriber } from './types';
 
-export class BentoSubscribers {
+export class BentoSubscribers<S> {
   constructor(private readonly _client: BentoClient) {}
 
-  public getSubscribers(parameters?: GetSubscribersParameters) {
-    return this._client.get('/fetch/subscribers', parameters);
+  public async getSubscribers(parameters?: GetSubscribersParameters) {
+    try {
+      const result = await this._client.get<DataResponse<Subscriber<S>>>(
+        '/fetch/subscribers',
+        parameters
+      );
+
+      if (Object.keys(result).length === 0 || !result.data) return null;
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
   }
 }

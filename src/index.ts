@@ -1,15 +1,14 @@
 import { AnalyticsOptions } from './sdk/interfaces';
-import { BentoClient } from './sdk/client';
-import { BentoSubscribers } from './sdk/subscribers/';
+import { BentoClient, BentoSubscribers } from './sdk';
 
-export class Analytics {
-  private readonly client: BentoClient;
-  public readonly Subscribers: BentoSubscribers;
+export class Analytics<S = { [key: string]: string }> {
+  private readonly _client: BentoClient;
+  public readonly Subscribers: BentoSubscribers<S>;
 
   constructor(options: AnalyticsOptions) {
-    this.client = new BentoClient(options);
-    this.Subscribers = new BentoSubscribers(this.client);
+    this._client = new BentoClient(options);
+    this.Subscribers = new BentoSubscribers(this._client);
   }
 }
 
-export * from './sdk/errors';
+export * from './sdk/client/errors';
