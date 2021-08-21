@@ -1,3 +1,5 @@
+import { BaseEntity } from '../types';
+
 /**
  * Subscriber Method Parameter Types
  */
@@ -17,29 +19,18 @@ export type CreateSubscriberParameters = {
 };
 
 /**
- * Subscriber Enums
- */
-export enum SubscriberType {
-  VISITORS = 'visitors',
-}
-
-/**
  * Core Subscriber Types
  */
 
 export type SubscriberAttributes<S> = {
-  uuid: string;
+  cached_tag_ids: string[];
   email: string;
   fields: S | null;
-  cached_tag_ids: string[];
   unsubscribed_at: string | null;
+  uuid: string;
 };
 
-export type Subscriber<S> = {
-  id: string;
-  type: SubscriberType;
-  attributes: SubscriberAttributes<S>;
-};
+export type Subscriber<S> = BaseEntity<SubscriberAttributes<S>>;
 
 export type GetSubscribersResult<S> = {
   data: Subscriber<S>;

@@ -48,7 +48,7 @@ export const handlers = [
             type: 'visitors',
             attributes: {
               uuid: '4b6bede6f4271f8d033ca9a2d4f365eb',
-              email: body.email,
+              email: body.subscriber.email,
               fields: null,
               cached_tag_ids: [],
               unsubscribed_at: null,

@@ -11,5 +11,6 @@ describe('Analytics', () => {
     });
 
     expect(bento.Subscribers).toBeTruthy();
+    expect(bento.Tags).toBeTruthy();
   });
 });

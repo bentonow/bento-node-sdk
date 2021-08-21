@@ -7,12 +7,14 @@ import {
 } from './types';
 
 export class BentoSubscribers<S> {
+  private readonly _url = '/fetch/subscribers';
+
   constructor(private readonly _client: BentoClient) {}
 
   public async getSubscribers(parameters?: GetSubscribersParameters) {
     try {
       const result = await this._client.get<DataResponse<Subscriber<S>>>(
-        '/fetch/subscribers',
+        this._url,
         parameters
       );
 
@@ -26,8 +28,10 @@ export class BentoSubscribers<S> {
   public async createSubscriber(parameters: CreateSubscriberParameters) {
     try {
       const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        '/fetch/subscribers',
-        parameters
+        this._url,
+        {
+          subscriber: parameters,
+        }
       );
 
       if (Object.keys(result).length === 0 || !result.data) return null;
