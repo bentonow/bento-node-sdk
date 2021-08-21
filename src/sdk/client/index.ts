@@ -33,8 +33,8 @@ export class BentoClient {
     });
   }
 
-  public post(endpoint: string, payload: object = {}) {
-    return new Promise((resolve, reject) => {
+  public post<T>(endpoint: string, payload: object = {}): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
       const body = this._getBody(payload);
 
       fetch(`${this._baseUrl}${endpoint}`, {

@@ -1,29 +1,43 @@
-type GetSubscribersByUUID = {
-  email?: never;
-  uuid: string;
-};
-
-type GetSubscribersByEmail = {
-  email: string;
-  uuid?: never;
-};
-
+/**
+ * Subscriber Method Parameter Types
+ */
 export type GetSubscribersParameters =
-  | GetSubscribersByUUID
-  | GetSubscribersByEmail
+  | {
+      email?: never;
+      uuid: string;
+    }
+  | {
+      email: string;
+      uuid?: never;
+    }
   | never;
+
+export type CreateSubscriberParameters = {
+  email: string;
+};
+
+/**
+ * Subscriber Enums
+ */
+export enum SubscriberType {
+  VISITORS = 'visitors',
+}
+
+/**
+ * Core Subscriber Types
+ */
 
 export type SubscriberAttributes<S> = {
   uuid: string;
   email: string;
-  fields: S;
+  fields: S | null;
   cached_tag_ids: string[];
   unsubscribed_at: string | null;
 };
 
 export type Subscriber<S> = {
   id: string;
-  type: string;
+  type: SubscriberType;
   attributes: SubscriberAttributes<S>;
 };
 

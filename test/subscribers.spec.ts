@@ -1,6 +1,6 @@
 import { Analytics } from '../src';
 
-describe('Subscribers /fetch/subscribers', () => {
+describe('Get Subscribers [/fetch/subscribers]', () => {
   it('Works without any parameters', async () => {
     const bento = new Analytics({
       authentication: {
@@ -59,6 +59,34 @@ describe('Subscribers /fetch/subscribers', () => {
         email: 'test@bentonow.com',
         fields: {},
         cached_tag_ids: [],
+      },
+    });
+  });
+});
+
+describe('Post Subscribers [/fetch/subscribers]', () => {
+  it('Works with an email.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Subscribers.createSubscriber({
+        email: 'test@bentonow.com',
+      })
+    ).resolves.toMatchObject({
+      id: '444792648',
+      type: 'visitors',
+      attributes: {
+        uuid: '4b6bede6f4271f8d033ca9a2d4f365eb',
+        email: 'test@bentonow.com',
+        fields: null,
+        cached_tag_ids: [],
+        unsubscribed_at: null,
       },
     });
   });
