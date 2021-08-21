@@ -11,7 +11,6 @@ export const handlers = [
       }
 
       const id = req.url.searchParams.get('id');
-      console.log(req.url.searchParams.get('id'));
 
       return res(
         ctx.status(200),

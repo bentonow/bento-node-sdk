@@ -13,17 +13,17 @@ export type RemoveTagParameters = {
   tagName: string;
 };
 
-export type AddFieldParameters = {
+export type AddFieldParameters<S> = {
   email: string;
   field: {
-    key: string;
+    key: keyof S;
     value: string;
   };
 };
 
-export type RemoveFieldParameters = {
+export type RemoveFieldParameters<S> = {
   email: string;
-  fieldName: string;
+  fieldName: keyof S;
 };
 
 export type SubscribeParameters = {

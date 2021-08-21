@@ -85,7 +85,7 @@ export class BentoCommands<S> {
    * @returns Promise<Subscriber> | null
    */
   public async addField(
-    parameters: AddFieldParameters
+    parameters: AddFieldParameters<S>
   ): Promise<Subscriber<S> | null> {
     try {
       const result = await this._client.post<DataResponse<Subscriber<S>>>(
@@ -113,7 +113,7 @@ export class BentoCommands<S> {
    * @returns Promise<Subscriber> | null
    */
   public async removeField(
-    parameters: RemoveFieldParameters
+    parameters: RemoveFieldParameters<S>
   ): Promise<Subscriber<S> | null> {
     try {
       const result = await this._client.post<DataResponse<Subscriber<S>>>(
