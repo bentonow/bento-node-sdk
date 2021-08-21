@@ -1,5 +1,7 @@
 import { ResponseComposition, rest, RestContext } from 'msw';
 
+import { basicAuthError } from './_shared';
+
 export const handlers = [
   rest.get(
     'https://app.bentonow.com/api/v1/fetch/subscribers',
@@ -59,7 +61,3 @@ export const handlers = [
     }
   ),
 ];
-
-function basicAuthError(res: ResponseComposition<any>, ctx: RestContext) {
-  return res(ctx.status(401), ctx.body('HTTP Basic: Access denied.'));
-}

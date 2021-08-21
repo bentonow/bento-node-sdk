@@ -10,6 +10,7 @@ describe('Analytics', () => {
       siteUuid: 'test',
     });
 
+    expect(bento.Fields).toBeTruthy();
     expect(bento.Subscribers).toBeTruthy();
     expect(bento.Tags).toBeTruthy();
   });
