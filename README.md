@@ -481,6 +481,38 @@ Reference Types: [FormResponse](#FormResponse)
 bento.V1.Forms.getResponses('test-formid-1234');
 ```
 
+## Subscribers
+
+### `Subscribers.getSubscribers(parameters?: GetSubscribersParameters): Promise<Subscriber<S> | null>`
+
+Returns the subscriber with the specified email or UUID.
+
+Reference Types: [GetSubscribersParameters](#GetSubscribersParameters), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Subscribers.getSubscribers({
+  uuid: '1234',
+});
+
+bento.V1.Subscribers.getSubscribers({
+  email: 'test@bentonow.com',
+});
+```
+
+---
+
+### `Subscribers.createSubscriber(parameters: CreateSubscriberParameters): Promise<Subscriber<S> | null>`
+
+Creates a subscriber inside of Bento.
+
+Reference Types: [CreateSubscriberParameters](#CreateSubscriberParameters), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Subscribers.createSubscriber({
+  email: 'test@bentonow.com',
+});
+```
+
 ---
 
 ## Types References
@@ -639,6 +671,14 @@ The results is an object where the key is the name of the blacklist that was che
 
 ---
 
+### `CreateSubscriberParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| email    | `string` | _none_  | ✔️       |
+
+---
+
 ### `Field`
 
 | Property   | Type                                  | Default | Required |
@@ -696,6 +736,20 @@ The results is an object where the key is the name of the blacklist that was che
 | type     | `string`                        | _none_  | ✔️       |
 | visit    | `string`                        | _none_  | ✔️       |
 | visitor  | `string`                        | _none_  | ✔️       |
+
+---
+
+### `GetSubscribersParameters`
+
+Note that this takes either `email` _or_ `uuid`, but never both.
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| email    | `string` | _none_  | ✔️       |
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| uuid     | `string` | _none_  | ✔️       |
 
 ---
 
