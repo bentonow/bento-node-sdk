@@ -26,7 +26,7 @@ export class BentoExperimental {
    * If a name is provided, it compares it against the US Census Data, and so the results
    * may be biased.
    *
-   * @param parameter
+   * @param parameters
    * @returns Promise<boolean>
    */
   public async validateEmail(
@@ -54,7 +54,7 @@ export class BentoExperimental {
    * It is possible for the gender to be unknown if the system cannot confidently
    * conclude what gender it may be.
    *
-   * @param parameter
+   * @param parameters
    * @returns Promise<GuessGenderResponse>
    */
   public async guessGender(
@@ -78,7 +78,7 @@ export class BentoExperimental {
    *
    * Attempts to provide location data given a provided IP address.
    *
-   * @param parameter
+   * @param parameters
    * @returns Promise<GeolocateResponse>
    */
   public async geolocate(
@@ -104,7 +104,7 @@ export class BentoExperimental {
    * Looks up the provided URL or IP Address against various blacklists to see if the site has been
    * blacklisted anywhere.
    *
-   * @param parameter
+   * @param parameters
    * @returns Promise<BlacklistResponse>
    */
   public async checkBlacklist(

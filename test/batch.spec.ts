@@ -83,19 +83,19 @@ describe('[V1] Batch Import Events [/batch/events]', () => {
       bento.V1.Batch.importEvents({
         events: [
           {
+            email: 'test@bentonow.com',
             type: BentoEvents.SUBSCRIBE,
-            email: 'test@bentonow.com',
           },
           {
+            email: 'test@bentonow.com',
             type: BentoEvents.UNSUBSCRIBE,
-            email: 'test@bentonow.com',
           },
           {
-            type: BentoEvents.TAG,
             email: 'test@bentonow.com',
             details: {
               tag: 'Test Tag',
             },
+            type: BentoEvents.TAG,
           },
         ],
       })

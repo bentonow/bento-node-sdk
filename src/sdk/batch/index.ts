@@ -33,7 +33,7 @@ export class BentoBatch<S, E> {
    *
    * Returns the number of subscribers that were imported.
    *
-   * @param parameter
+   * @param parameters
    * @returns Promise<number>
    */
   public async importSubscribers(
@@ -73,7 +73,7 @@ export class BentoBatch<S, E> {
    *
    * Returns the number of subscribers that were imported.
    *
-   * @param parameter
+   * @param parameters
    * @returns Promise<number>
    */
   public async importEvents(
