@@ -1,5 +1,3 @@
-import { BaseEntity } from '../types';
-
 /**
  * Command Method Parameter Types
  */

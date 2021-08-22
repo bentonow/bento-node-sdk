@@ -1,5 +1,3 @@
-import { BaseEntity } from '../types';
-import { BentoEvents } from './enums';
 import { BentoEvent } from './events';
 
 /**

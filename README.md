@@ -434,6 +434,41 @@ bento.V1.Experimental.checkBlacklist({
 });
 ```
 
+## Fields
+
+### `Fields.getFields(): Promise<Field[]>`
+
+Returns all of the fields for the site.
+
+Reference Types: [Field](#Field)
+
+```ts
+bento.V1.Experimental.validateEmail({
+  email: 'test@bentonow.com',
+});
+```
+
+---
+
+### `Fields.createField(parameters: CreateFieldParameters): Promise<Field[]>`
+
+Creates a field inside of Bento. The name of the field is automatically generated from the key that is passed in upon creation. For example:
+
+| Key               | Name              |
+| ----------------- | ----------------- |
+| `'thisIsAKey'`    | `'This Is A Key'` |
+| `'this is a key'` | `'This Is A Key'` |
+| `'this-is-a-key'` | `'This Is A Key'` |
+| `'this_is_a_key'` | `'This Is A Key'` |
+
+Reference Types: [CreateFieldParameters](#CreateFieldParameters), [Field](#Field)
+
+```ts
+bento.V1.Fields.createField({
+  key: 'testKey',
+});
+```
+
 ---
 
 ## Types References
@@ -574,6 +609,35 @@ The results is an object where the key is the name of the blacklist that was che
 
 ---
 
+### `CreateFieldParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| key      | `string` | _none_  | ✔️       |
+
+---
+
+### `Field`
+
+| Property   | Type                                  | Default | Required |
+| ---------- | ------------------------------------- | ------- | -------- |
+| attributes | [`FieldAttributes`](#FieldAttributes) | _none_  | ✔️       |
+| id         | `string`                              | _none_  | ✔️       |
+| type       | [`EntityType`](#EntityType)           | _none_  | ✔️       |
+
+---
+
+### `FieldAttributes`
+
+| Property    | Type                | Default | Required |
+| ----------- | ------------------- | ------- | -------- |
+| created_at  | `string`            | _none_  | ✔️       |
+| key         | `string`            | _none_  | ✔️       |
+| name        | `string`            | _none_  | ✔️       |
+| whitelisted | `boolean` \| `null` | _none_  | ✔️       |
+
+---
+
 ### `GeolocateParameters`
 
 | Property | Type     | Default | Required |
@@ -682,11 +746,11 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
 
-| Property   | Type                                                  | Default | Required |
-| ---------- | ----------------------------------------------------- | ------- | -------- |
-| attributes | [`SubscriberAttributes<S>`](#SubscriberAttributes<S>) | _none_  | ✔️       |
-| id         | `string`                                              | _none_  | ✔️       |
-| type       | [`EntityType`](#EntityType)                           | _none_  | ✔️       |
+| Property   | Type                                                | Default | Required |
+| ---------- | --------------------------------------------------- | ------- | -------- |
+| attributes | [`SubscriberAttributes<S>`](#subscriberattributess) | _none_  | ✔️       |
+| id         | `string`                                            | _none_  | ✔️       |
+| type       | [`EntityType`](#EntityType)                         | _none_  | ✔️       |
 
 ### `SubscriberAttributes<S>`
 

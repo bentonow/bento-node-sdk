@@ -1,4 +1,4 @@
-import { BaseEntity, LocationData } from '../types';
+import { LocationData } from '../types';
 
 /**
  * Experimental Method Parameter Types

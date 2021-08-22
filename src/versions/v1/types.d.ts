@@ -1,7 +1,4 @@
 import { BaseEvent, PurchaseDetails } from '../../sdk/batch/events';
-import { BaseEntity } from '../types';
-import { BentoEvents } from './enums';
-import { BentoEvent } from './events';
 
 /**
  * API Method Parameter Types
