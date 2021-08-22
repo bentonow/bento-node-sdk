@@ -32,6 +32,35 @@ export const handlers = [
       return res(ctx.status(201), ctx.json(getGenderResult(name)));
     }
   ),
+  rest.get(
+    'https://app.bentonow.com/api/v1/experimental/geolocation',
+    (req, res: ResponseComposition<any>, ctx: RestContext) => {
+      if (req.headers.get('Authorization') !== 'Basic dGVzdDp0ZXN0') {
+        return basicAuthError(res, ctx);
+      }
+
+      const ip = req.url.searchParams.get('ip');
+
+      if (ip === '127.0.0.1') return res(ctx.status(201), ctx.json({}));
+      return res(
+        ctx.status(201),
+        ctx.json({
+          ip: 'XXX.XX.XXX.XX',
+          request: 'XXX.XX.XXX.XX',
+          latitude: 0.0,
+          city_name: 'Earth',
+          longitude: 0.0,
+          postal_code: '00000',
+          region_name: '00',
+          country_name: 'Country',
+          country_code2: 'CO',
+          country_code3: 'COU',
+          continent_code: 'EA',
+          real_region_name: 'Earth',
+        })
+      );
+    }
+  ),
 ];
 
 function getGenderResult(name: string) {

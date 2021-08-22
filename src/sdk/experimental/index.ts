@@ -1,10 +1,13 @@
 import {
+  GeolocateParameters,
+  GeolocateResponse,
   GuessGenderParameters,
   GuessGenderResponse,
   ValidateEmailParameters,
   ValidateEmailResponse,
 } from './types';
 import { BentoClient } from '../client';
+import { LocationData } from '../types';
 
 export class BentoExperimental {
   private readonly _url = '/experimental';
@@ -62,6 +65,31 @@ export class BentoExperimental {
       );
 
       return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * **EXPERIMENTAL** -
+   * This functionality is experimental and may change or stop working at any time.
+   *
+   * Attempts to provide location data given a provided IP address.
+   *
+   * @param parameter
+   * @returns Promise<GeolocateResponse>
+   */
+  public async geolocate(
+    parameters: GeolocateParameters
+  ): Promise<LocationData | null> {
+    try {
+      const result = await this._client.get<GeolocateResponse>(
+        `${this._url}/geolocation`,
+        parameters
+      );
+
+      if (Object.keys(result).length === 0) return null;
+      return result as LocationData;
     } catch (error) {
       throw error;
     }

@@ -1,4 +1,4 @@
-import { BaseEntity } from '../types';
+import { BaseEntity, LocationData } from '../types';
 
 /**
  * Experimental Method Parameter Types
@@ -14,6 +14,10 @@ export type GuessGenderParameters = {
   name: string;
 };
 
+export type GeolocateParameters = {
+  ip: string;
+};
+
 /**
  * Experimental Method Response Types
  */
@@ -25,3 +29,5 @@ export type GuessGenderResponse = {
   confidence: number;
   gender: string | null;
 };
+
+export type GeolocateResponse = Partial<LocationData>;
