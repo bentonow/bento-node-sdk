@@ -4,7 +4,7 @@
 
 🍱 Simple, powerful analytics for Node.JS projects!
 
-Track events, update data, record LTV and more in Ruby. Data is stored in your Bento account so you can easily research and investigate what's going on.
+Track events, update data, record LTV and more in Node.JS. Data is stored in your Bento account so you can easily research and investigate what's going on.
 
 👋 To get personalized support, please tweet @bento or email jesse@bentonow.com!
 
