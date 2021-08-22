@@ -17,10 +17,14 @@ export class BentoCommands<S> {
   constructor(private readonly _client: BentoClient) {}
 
   /**
+   * **This does not trigger automations!** - If you wish to trigger automations, please use the
+   * core module's `tagSubscriber` method.
+   *
    * Adds a tag to the subscriber with the matching email.
    *
    * Note that both the tag and the subscriber will be created if either is missing
    * from system.
+   *
    *
    * @param parameters \{ email: string, tagName: string \}
    * @returns Promise<Subscriber> | null
@@ -76,6 +80,9 @@ export class BentoCommands<S> {
   }
 
   /**
+   * **This does not trigger automations!** - If you wish to trigger automations, please send a custom
+   * event and then add an automation that updates the custom field on the subscriber.
+   *
    * Adds a field to the subscriber with the matching email.
    *
    * Note that both the field and the subscriber will be created if either is missing
@@ -135,6 +142,9 @@ export class BentoCommands<S> {
   }
 
   /**
+   * **This does not trigger automations!** - If you wish to trigger automations, please use the
+   * core module's `addSubscriber` method.
+   *
    * Subscribes the supplied email to Bento. If the email does not exist, it is created.
    * If the subscriber had previously unsubscribed, they will be re-subscribed.
    *
@@ -163,6 +173,9 @@ export class BentoCommands<S> {
   }
 
   /**
+   * **This does not trigger automations!** - If you wish to trigger automations, please use the
+   * core module's `removeSubscriber` method.
+   *
    * Unsubscribes the supplied email to Bento. If the email does not exist, it is created and
    * immediately unsubscribed. If they had already unsubscribed, the `unsubscribed_at` property
    * is updated.

@@ -1,4 +1,6 @@
-import { BaseEntity, LocationData } from '../types';
+import { BaseEntity } from '../types';
+import { BentoEvents } from './enums';
+import { BentoEvent } from './events';
 
 /**
  * Batch Method Parameter Types
@@ -9,9 +11,17 @@ export type BatchImportSubscribersParameter<S> = {
   } & Partial<S>)[];
 };
 
+export type BatchImportEventsParameter<S, E> = {
+  events: BentoEvent<S, E>[];
+};
+
 /**
  * Batch Method Response Types
  */
 export type BatchImportSubscribersResponse = {
+  results: number;
+};
+
+export type BatchImportEventsResponse = {
   results: number;
 };

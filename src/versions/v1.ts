@@ -10,10 +10,10 @@ import {
   BentoTags,
 } from '../sdk';
 
-export class BentoAPIV1<S = { [key: string]: string }> {
+export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
   private readonly _client: BentoClient;
 
-  public readonly Batch: BentoBatch<S>;
+  public readonly Batch: BentoBatch<S, E>;
   public readonly Commands: BentoCommands<S>;
   public readonly Experimental: BentoExperimental;
   public readonly Fields: BentoFields;

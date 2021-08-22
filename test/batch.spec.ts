@@ -1,6 +1,9 @@
 import { Analytics } from '../src';
+import { BentoEvents } from '../src/sdk/batch/enums';
 import {
+  TooFewEventsError,
   TooFewSubscribersError,
+  TooManyEventsError,
   TooManySubscribersError,
 } from '../src/sdk/batch/errors';
 
@@ -63,5 +66,71 @@ describe('[V1] Batch Import Subscribers [/batch/subscribers]', () => {
         subscribers: new Array(1001),
       })
     ).rejects.toThrow(TooManySubscribersError);
+  });
+});
+
+describe('[V1] Batch Import Events [/batch/events]', () => {
+  it('Can import between 1 and 1,000 events', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.V1.Batch.importEvents({
+        events: [
+          {
+            type: BentoEvents.SUBSCRIBE,
+            email: 'test@bentonow.com',
+          },
+          {
+            type: BentoEvents.UNSUBSCRIBE,
+            email: 'test@bentonow.com',
+          },
+          {
+            type: BentoEvents.TAG,
+            email: 'test@bentonow.com',
+            details: {
+              tag: 'Test Tag',
+            },
+          },
+        ],
+      })
+    ).resolves.toBe(3);
+  });
+
+  it('Errors out when importing 0 events.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.V1.Batch.importEvents({
+        events: [],
+      })
+    ).rejects.toThrow(TooFewEventsError);
+  });
+
+  it('Errors out when importing 1,001 events.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.V1.Batch.importEvents({
+        events: new Array(1001),
+      })
+    ).rejects.toThrow(TooManyEventsError);
   });
 });
