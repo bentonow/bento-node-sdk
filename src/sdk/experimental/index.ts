@@ -21,7 +21,7 @@ export class BentoExperimental {
    * This functionality is experimental and may change or stop working at any time.
    *
    * Attempts to validate the email. You can provide additional information to further
-   * refine the validation
+   * refine the validation.
    *
    * If a name is provided, it compares it against the US Census Data, and so the results
    * may be biased.
@@ -35,7 +35,12 @@ export class BentoExperimental {
     try {
       const result = await this._client.post<ValidateEmailResponse>(
         `${this._url}/validation`,
-        parameters
+        {
+          email: parameters.email,
+          ip: parameters.ip,
+          name: parameters.name,
+          user_agent: parameters.userAgent,
+        }
       );
 
       return result.valid;

@@ -64,7 +64,7 @@ The `Analytics` module also provides access to various versions of the API (curr
 
 ### `tagSubscriber(parameters: TagSubscriberParameters): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addTag`](#commandsaddtagparameters-addtagparameters-promisesubscribers-null) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addTag`](#commandsaddtagparameters-addtagparameters-promisesubscribers--null) method.
 
 Tags a subscriber with the specified email and tag. If either the tag or the user do not exist, they will be created in the system. If the user already has the tag, another tag event will be sent, triggering any automations that take place upon a tag being added to a subscriber. Please be aware of the potential consequences.
 
@@ -85,7 +85,7 @@ bento.tagSubscriber({
 
 ### `addSubscriber(parameters: AddSubscriberParameters): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.subscribe`](#commandssubscribeparameters-subscribeparameters-promisesubscribers-null) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.subscribe`](#commandssubscribeparameters-subscribeparameters-promisesubscribers--null) method.
 
 Creates a subscriber in the system. If the subscriber already exists, another subscribe event will be sent, triggering any automations that take place upon subscription. Please be aware of the potential consequences.
 
@@ -105,7 +105,7 @@ bento.addSubscriber({
 
 ### `async removeSubscriber(parameters: RemoveSubscriberParameters): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.unsubscribe`](#commandsunsubscribeparameters-unsubscribeparameters-promisesubscribers-null) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.unsubscribe`](#commandsunsubscribeparameters-unsubscribeparameters-promisesubscribers--null) method.
 
 Unsubscribes an email in the system. If the email is already unsubscribed, another unsubscribe event will be sent, triggering any automations that take place upon an unsubscribe happening. Please be aware of the potential consequences.
 
@@ -125,7 +125,7 @@ bento.removeSubscriber({
 
 ### `updateFields(parameters: UpdateFieldsParameters<S>): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addField`](#commandsaddfieldparameters-addfieldparameterss-promisesubscribers-null) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addField`](#commandsaddfieldparameters-addfieldparameterss-promisesubscribers--null) method.
 
 Sets the passed-in custom fields on the subscriber, creating the subscriber if it does not exist. If the fields are already set on the subscriber, the event will be sent, triggering any automations that take place upon fields being updated. Please be aware of the potential consequences.
 
@@ -366,6 +366,74 @@ bento.V1.Commands.unsubscribe({
 });
 ```
 
+## Experimental
+
+### `Experimental.validateEmail(parameters: ValidateEmailParameters): Promise<boolean>`
+
+**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
+
+Attempts to validate the email. You can provide additional information to further refine the validation.
+
+If a name is provided, it compares it against the US Census Data, and so the results may be biased.
+
+Reference Types: [ValidateEmailParameters](#ValidateEmailParameters)
+
+```ts
+bento.V1.Experimental.validateEmail({
+  email: 'test@bentonow.com',
+});
+```
+
+---
+
+### `Experimental.guessGender(parameters: GuessGenderParameters): Promise<GuessGenderResponse>`
+
+**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
+
+Attempts to guess the gender of the person given a provided name. It compares the name against the US Census Data, and so the results may be biased.
+
+It is possible for the gender to be unknown if the system cannot confidently conclude what gender it may be.
+
+Reference Types: [GuessGenderParameters](#GuessGenderParameters), [GuessGenderResponse](#GuessGenderResponse)
+
+```ts
+bento.V1.Experimental.guessGender({
+  name: 'Jesse',
+});
+```
+
+---
+
+### `Experimental.geolocate(parameters: GeolocateParameters): Promise<LocationData | null>`
+
+**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
+
+Attempts to provide location data given a provided IP address.
+
+Reference Types: [GeolocateParameters](#GeolocateParameters), [LocationData](#LocationData)
+
+```ts
+bento.V1.Experimental.geolocate({
+  ip: '127.0.0.1',
+});
+```
+
+---
+
+### `Experimental.checkBlacklist(parameters: BlacklistParameters): Promise<BlacklistResponse>`
+
+**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
+
+Looks up the provided URL or IP Address against various blacklists to see if the site has been blacklisted anywhere.
+
+Reference Types: [BlacklistParameters](#BlacklistParameters), [BlacklistResponse](#BlacklistResponse)
+
+```ts
+bento.V1.Experimental.checkBlacklist({
+  domain: 'bentonow.com',
+});
+```
+
 ---
 
 ## Types References
@@ -477,6 +545,76 @@ This is an enum with the following values:
 | TAGS            | `'tags'`            |
 | VISITORS        | `'visitors'`        |
 | VISITORS_FIELDS | `'visitors-fields'` |
+
+---
+
+### `BlacklistParameters`
+
+Note that this takes either `domain` _or_ `ip`, but never both.
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| domain   | `string` | _none_  | ✔️       |
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| ip       | `string` | _none_  | ✔️       |
+
+---
+
+### `BlacklistResponse`
+
+The results is an object where the key is the name of the blacklist that was checked, and the value is whether or not the domain/IP appeared on that blacklist.
+
+| Property    | Type                         | Default | Required |
+| ----------- | ---------------------------- | ------- | -------- |
+| description | `string`                     | _none_  | ✔️       |
+| query       | `string`                     | _none_  | ✔️       |
+| results     | `{ [key: string]: boolean }` | _none_  | ✔️       |
+
+---
+
+### `GeolocateParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| ip       | `string` | _none_  | ✔️       |
+
+---
+
+### `GuessGenderParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| name     | `string` | _none_  | ✔️       |
+
+---
+
+### `GuessGenderResponse`
+
+| Property   | Type               | Default | Required |
+| ---------- | ------------------ | ------- | -------- |
+| confidence | `number` \| `null` | _none_  | ✔️       |
+| gender     | `string` \| `null` | _none_  | ✔️       |
+
+---
+
+### `LocationData`
+
+| Property         | Type     | Default | Required |
+| ---------------- | -------- | ------- | -------- |
+| city_name        | `string` | _none_  | ❌       |
+| continent_code   | `string` | _none_  | ❌       |
+| country_code2    | `string` | _none_  | ❌       |
+| country_code3    | `string` | _none_  | ❌       |
+| country_name     | `string` | _none_  | ❌       |
+| ip               | `string` | _none_  | ❌       |
+| latitude         | `number` | _none_  | ❌       |
+| longitude        | `number` | _none_  | ❌       |
+| postal_code      | `string` | _none_  | ❌       |
+| real_region_name | `string` | _none_  | ❌       |
+| region_name      | `string` | _none_  | ❌       |
+| request          | `string` | _none_  | ❌       |
 
 ---
 
@@ -598,6 +736,8 @@ The `E` from above represents the prefix that is used to define your custom even
 | -------- | -------- | ------- | -------- |
 | email    | `string` | _none_  | ✔️       |
 
+---
+
 ### `UpdateFieldsParameters<S>`
 
 The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
@@ -606,6 +746,17 @@ The `S` from above represents the type of your subscriber's custom fields in Ben
 | -------- | ------------------------------- | ------- | -------- |
 | email    | `string`                        | _none_  | ✔️       |
 | fields   | `S` \| `{ [key: string]: any }` | _none_  | ✔️       |
+
+---
+
+### `ValidateEmailParameters`
+
+| Property  | Type     | Default | Required |
+| --------- | -------- | ------- | -------- |
+| email     | `string` | _none_  | ✔️       |
+| ip        | `string` | _none_  | ❌       |
+| name      | `string` | _none_  | ❌       |
+| userAgent | `string` | _none_  | ❌       |
 
 ## TypeScript
 

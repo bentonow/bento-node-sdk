@@ -36,7 +36,7 @@ export type ValidateEmailResponse = {
 };
 
 export type GuessGenderResponse = {
-  confidence: number;
+  confidence: number | null;
   gender: string | null;
 };
 
