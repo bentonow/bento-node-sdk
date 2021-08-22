@@ -10,6 +10,18 @@ Track events, update data, record LTV and more in Ruby. Data is stored in your B
 
 🐶 Battle-tested on Bento Production (we dog food this package ourselves)!
 
+- [Installation](#Installation)
+- [Get Started](#Get-Started)
+- [Modules](#Modules)
+  - [Analytics (Base Module)](#analytics-base-module)
+  - [Batch](#Batch)
+  - [Commands](#Commands)
+  - [Experimental](#Experimental)
+  - [Fields](#Fields)
+  - [Forms](#Forms)
+  - [Subscribers](#Subscribers)
+  - [Tags](#Tags)
+
 ## Installation
 
 Run the following command in your project folder.
@@ -513,6 +525,32 @@ bento.V1.Subscribers.createSubscriber({
 });
 ```
 
+## Tags
+
+### `Tags.getTags(): Promise<Tag[] | null>`
+
+Returns all of the fields for the site.
+
+Reference Types: [Tag](#Tag)
+
+```ts
+bento.V1.Tags.getTags();
+```
+
+---
+
+### `Tags.createTag(parameters: CreateTagParameters): Promise<Tag[] | null>`
+
+Creates a tag inside of Bento.
+
+Reference Types: [Tag](#Tag)
+
+```ts
+bento.V1.Tags.createTag({
+  name: 'test tag',
+});
+```
+
 ---
 
 ## Types References
@@ -621,6 +659,7 @@ This is an enum with the following values:
 
 | Name            | Value               |
 | --------------- | ------------------- |
+| EVENTS          | `'events'`          |
 | TAGS            | `'tags'`            |
 | VISITORS        | `'visitors'`        |
 | VISITORS_FIELDS | `'visitors-fields'` |
@@ -677,15 +716,21 @@ The results is an object where the key is the name of the blacklist that was che
 | -------- | -------- | ------- | -------- |
 | email    | `string` | _none_  | ✔️       |
 
+### `CreateTagParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| name     | `string` | _none_  | ✔️       |
+
 ---
 
 ### `Field`
 
-| Property   | Type                                  | Default | Required |
-| ---------- | ------------------------------------- | ------- | -------- |
-| attributes | [`FieldAttributes`](#FieldAttributes) | _none_  | ✔️       |
-| id         | `string`                              | _none_  | ✔️       |
-| type       | [`EntityType`](#EntityType)           | _none_  | ✔️       |
+| Property   | Type                                        | Default | Required |
+| ---------- | ------------------------------------------- | ------- | -------- |
+| attributes | [`FieldAttributes`](#FieldAttributes)       | _none_  | ✔️       |
+| id         | `string`                                    | _none_  | ✔️       |
+| type       | [`EntityType.VISITORS_FIELDS`](#EntityType) | _none_  | ✔️       |
 
 ---
 
@@ -706,7 +751,7 @@ The results is an object where the key is the name of the blacklist that was che
 | ---------- | --------------------------------------------------- | ------- | -------- |
 | attributes | [`FormResponseAttributes`](#FormResponseAttributes) | _none_  | ✔️       |
 | id         | `string`                                            | _none_  | ✔️       |
-| type       | [`EntityType`](#EntityType)                         | _none_  | ✔️       |
+| type       | [`EntityType.EVENTS`](#EntityType)                  | _none_  | ✔️       |
 
 ---
 
@@ -885,7 +930,7 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 | ---------- | --------------------------------------------------- | ------- | -------- |
 | attributes | [`SubscriberAttributes<S>`](#subscriberattributess) | _none_  | ✔️       |
 | id         | `string`                                            | _none_  | ✔️       |
-| type       | [`EntityType`](#EntityType)                         | _none_  | ✔️       |
+| type       | [`EntityType.VISITOR`](#EntityType)                 | _none_  | ✔️       |
 
 ### `SubscriberAttributes<S>`
 
@@ -898,6 +943,27 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 | fields          | `S` \| `null` | _none_  | ✔️       |
 | unsubscribed_at | `string`      | _none_  | ✔️       |
 | uuid            | `string`      | _none_  | ✔️       |
+
+### `Tag`
+
+| Property     | Type               | Default | Required |
+| ------------ | ------------------ | ------- | -------- |
+| created_at   | `string`           | _none_  | ✔️       |
+| discarded_at | `string` \| `null` | _none_  | ✔️       |
+| name         | `string` \| `null` | _none_  | ✔️       |
+| site_id      | `string`           | _none_  | ✔️       |
+
+---
+
+### `TagAttributes`
+
+| Property   | Type                              | Default | Required |
+| ---------- | --------------------------------- | ------- | -------- |
+| attributes | [`TagAttributes`](#TagAttributes) | _none_  | ✔️       |
+| id         | `string`                          | _none_  | ✔️       |
+| type       | [`EntityType.TAG`](#EntityType)   | _none_  | ✔️       |
+
+---
 
 ### `TagSubscriberParameters`
 
