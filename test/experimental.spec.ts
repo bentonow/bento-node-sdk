@@ -34,3 +34,62 @@ describe('Validate Email [/experimental/validation]', () => {
     ).resolves.toBe(false);
   });
 });
+
+describe('Guess Gender [/experimental/gender]', () => {
+  it('Works with male.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Experimental.guessGender({
+        name: 'Jesse',
+      })
+    ).resolves.toMatchObject({
+      confidence: 0.9631336405529953,
+      gender: 'male',
+    });
+  });
+
+  it('Works with female.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Experimental.guessGender({
+        name: 'Barb',
+      })
+    ).resolves.toMatchObject({
+      confidence: 0.9230769230769231,
+      gender: 'female',
+    });
+  });
+
+  it('Works with unknown.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Experimental.guessGender({
+        name: 'Who?',
+      })
+    ).resolves.toMatchObject({
+      confidence: null,
+      gender: 'unknown',
+    });
+  });
+});

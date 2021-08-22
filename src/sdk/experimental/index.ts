@@ -1,4 +1,9 @@
-import { ValidateEmailParameters, ValidateEmailResponse } from './types';
+import {
+  GuessGenderParameters,
+  GuessGenderResponse,
+  ValidateEmailParameters,
+  ValidateEmailResponse,
+} from './types';
 import { BentoClient } from '../client';
 
 export class BentoExperimental {
@@ -29,6 +34,34 @@ export class BentoExperimental {
       );
 
       return result.valid;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * **EXPERIMENTAL** -
+   * This functionality is experimental and may change or stop working at any time.
+   *
+   * Attempts to guess the gender of the person given a provided name. It compares
+   * the name against the US Census Data, and so the results may be biased.
+   *
+   * It is possible for the gender to be unknown if the system cannot confidently
+   * conclude what gender it may be.
+   *
+   * @param parameter
+   * @returns Promise<GuessGenderResponse>
+   */
+  public async guessGender(
+    parameters: GuessGenderParameters
+  ): Promise<GuessGenderResponse> {
+    try {
+      const result = await this._client.post<GuessGenderResponse>(
+        `${this._url}/gender`,
+        parameters
+      );
+
+      return result;
     } catch (error) {
       throw error;
     }
