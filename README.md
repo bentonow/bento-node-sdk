@@ -14,13 +14,91 @@ Track events, update data, record LTV and more in Ruby. Data is stored in your B
 - [Get Started](#Get-Started)
 - [Modules](#Modules)
   - [Analytics (Base Module)](#analytics-base-module)
+    - [tagSubscriber(parameters: TagSubscriberParameters): Promise\<boolean\>](#tagsubscriberparameters-tagsubscriberparameters-promiseboolean)
+    - [addSubscriber(parameters: AddSubscriberParameters): Promise\<boolean\>](#addsubscriberparameters-addsubscriberparameters-promiseboolean)
+    - [removeSubscriber(parameters: RemoveSubscriberParameters): Promise\<boolean\>](#removesubscriberparameters-removesubscriberparameters-promiseboolean)
+    - [updateFields(parameters: UpdateFieldsParameters\<S\>): Promise\<boolean\>](#updatefieldsparameters-updatefieldsparameterss-promiseboolean)
+    - [trackPurchase(parameters: TrackPurchaseParameters): Promise\<boolean\>](#trackpurchaseparameters-trackpurchaseparameters-promiseboolean)
   - [Batch](#Batch)
+    - [.importSubscribers(parameters: BatchImportSubscribersParameter\<S\>): Promise\<number\>](#batchimportsubscribersparameters-batchimportsubscribersparameters-promisenumber)
+    - [.importEvents(parameters: BatchImportEventsParameter\<S, E\>): Promise\<number\>](#batchimporteventsparameters-batchimporteventsparameters-e-promisenumber)
   - [Commands](#Commands)
+    - [.addTag(parameters: AddTagParameters): Promise\<Subscriber\<S\> | null\>](#commandsaddtagparameters-addtagparameters-promisesubscribers--null)
+    - [.removeTag(parameters: RemoveTagParameters): Promise\<Subscriber\<S\> | null\>](#commandsremovetagparameters-removetagparameters-promisesubscribers--null)
+    - [.removeField(parameters: RemoveFieldParameters\<S\>): Promise\<Subscriber\<S\> | null\>](#commandsremovefieldparameters-removefieldparameterss-promisesubscribers--null)
+    - [.subscribe(parameters: SubscribeParameters): Promise\<Subscriber\<S\> | null\>](#commandssubscribeparameters-subscribeparameters-promisesubscribers--null)
+    - [.unsubscribe(parameters: UnsubscribeParameters): Promise\<Subscriber\<S\> | null\>](#commandsunsubscribeparameters-unsubscribeparameters-promisesubscribers--null)
   - [Experimental](#Experimental)
+    - [.validateEmail(parameters: ValidateEmailParameters): Promise\<boolean\>](#experimentalvalidateemailparameters-validateemailparameters-promiseboolean)
+    - [.guessGender(parameters: GuessGenderParameters): Promise\<GuessGenderResponse\>](#experimentalguessgenderparameters-guessgenderparameters-promiseguessgenderresponse)
+    - [.geolocate(parameters: GeolocateParameters): Promise\<LocationData | null\>](#experimentalgeolocateparameters-geolocateparameters-promiselocationdata--null)
+    - [.checkBlacklist(parameters: BlacklistParameters): Promise\<BlacklistResponse\>](#experimentalcheckblacklistparameters-blacklistparameters-promiseblacklistresponse)
   - [Fields](#Fields)
+    - [.getFields(): Promise\<Field[] | null\>](#fieldsgetfields-promisefield--null)
+    - [.createField(parameters: CreateFieldParameters): Promise\<Field[] | null\>](#fieldscreatefieldparameters-createfieldparameters-promisefield--null)
   - [Forms](#Forms)
+    - [.getResponses(formIdentifier: string): Promise\<FormResponse[] | null\>](#formsgetresponsesformidentifier-string-promiseformresponse--null)
   - [Subscribers](#Subscribers)
+    - [.getSubscribers(parameters?: GetSubscribersParameters): Promise\<Subscriber\<S\> | null\>](#subscribersgetsubscribersparameters-getsubscribersparameters-promisesubscribers--null)
+    - [.createSubscriber(parameters: CreateSubscriberParameters): Promise\<Subscriber\<S\> | null\>](#subscriberscreatesubscriberparameters-createsubscriberparameters-promisesubscribers--null)
   - [Tags](#Tags)
+    - [.getTags(): Promise\<Tag[] | null\>](#tagsgettags-promisetag--null)
+    - [.createTag(parameters: CreateTagParameters): Promise\<Tag[] | null\>](#tagscreatetagparameters-createtagparameters-promisetag--null)
+- [Types Reference](#Types-Reference)
+  - [AddFieldParameters\<S\>](#addfieldparameterss)
+  - [AddSubscriberParameters](#AddSubscriberParameters)
+  - [AddTagParameters](#AddTagParameters)
+  - [BatchImportEventsParameter\<S, E\>](#batchimporteventsparameterse)
+  - [BatchImportSubscribersParameter\<S\>](#batchimportsubscribersparameters)
+  - [BentoEvent\<S, E\>](#bentoevents-e)
+    - [BaseEvent\<E\>](#baseevente)
+    - [PurchaseEvent](#PurchaseEvent)
+    - [SubscribeEvent](#SubscribeEvent)
+    - [TagEvent](#TagEvent)
+    - [UnsubscribeEvent](#UnsubscribeEvent)
+    - [UpdateFieldsEvent\<S\>](#updatefieldsevents)
+  - [BlacklistParameters](#BlacklistParameters)
+  - [BlacklistResponse](#BlacklistResponse)
+  - [BrowserData](#BrowserData)
+  - [CreateFieldParameters](#CreateFieldParameters)
+  - [CreateSubscriberParameters](#CreateSubscriberParameters)
+  - [CreateTagParameters](#CreateTagParameters)
+  - [EntityType](#EntityType)
+  - [Field](#Field)
+  - [FieldAttributes](#FieldAttributes)
+  - [FormResponse](#FormResponse)
+  - [FormResponseAttributes](#FormResponseAttributes)
+  - [FormResponseData](#FormResponseData)
+  - [GetSubscribersParameters](#GetSubscribersParameters)
+  - [GeolocateParameters](#GeolocateParameters)
+  - [GuessGenderParameters](#GuessGenderParameters)
+  - [GuessGenderResponse](#GuessGenderResponse)
+  - [IdentityData](#IdentityData)
+  - [LocationData](#LocationData)
+  - [PageData](#PageData)
+  - [PurchaseDetails](#PurchaseDetails)
+  - [PurchaseItem](#PurchaseItem)
+  - [RemoveFieldParameters\<S\>](#removefieldparameterss)
+  - [RemoveSubscriberParameters](#RemoveSubscriberParameters)
+  - [RemoveTagParameters](#RemoveTagParameters)
+  - [SubscribeParameters](#SubscribeParameters)
+  - [Subscriber\<S\>](#subscribers)
+  - [SubscriberAttributes\<S\>](#subscriberattributess)
+  - [Tag](#Tag)
+  - [TagAttributes](#TagAttributes)
+  - [TagSubscriberParameters](#TagSubscriberParameters)
+  - [TrackParameters\<S, E\>](#trackparametersse)
+  - [TrackPurchaseParameters](#TrackPurchaseParameters)
+  - [UnsubscribeParameters](#UnsubscribeParameters)
+  - [UpdateFieldsParameters\<S\>](#updatefieldsparameterss)
+  - [ValidateEmailParameters](#ValidateEmailParameters)
+- [TypeScript](#TypeScript)
+  - [Generics](#Generics)
+    - [S](#s)
+    - [E](#e)
+- [Things to Know](#Things-to-Know)
+- [Contributing](#Contributing)
+- [License](#License)
 
 ## Installation
 
@@ -87,10 +165,13 @@ Returns `true` if the event was successfully dispatched. Returns `false` otherwi
 Reference Types: [TagSubscriberParameters](#TagSubscriberParameters)
 
 ```ts
-bento.tagSubscriber({
-  email: 'test@bentonow.com',
-  tagName: 'Test Tag',
-});
+bento
+  .tagSubscriber({
+    email: 'test@bentonow.com',
+    tagName: 'Test Tag',
+  })
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -108,14 +189,17 @@ Returns `true` if the event was successfully dispatched. Returns `false` otherwi
 Reference Types: [AddSubscriberParameters](#AddSubscriberParameters)
 
 ```ts
-bento.addSubscriber({
-  email: 'test@bentonow.com',
-});
+bento
+  .addSubscriber({
+    email: 'test@bentonow.com',
+  })
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
 
-### `async removeSubscriber(parameters: RemoveSubscriberParameters): Promise<boolean>`
+### `removeSubscriber(parameters: RemoveSubscriberParameters): Promise<boolean>`
 
 **This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.unsubscribe`](#commandsunsubscribeparameters-unsubscribeparameters-promisesubscribers--null) method.
 
@@ -128,9 +212,12 @@ Returns `true` if the event was successfully dispatched. Returns `false` otherwi
 Reference Types: [RemoveSubscriberParameters](#RemoveSubscriberParameters)
 
 ```ts
-bento.removeSubscriber({
-  email: 'test@bentonow.com',
-});
+bento
+  .removeSubscriber({
+    email: 'test@bentonow.com',
+  })
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -148,12 +235,15 @@ Returns `true` if the event was successfully dispatched. Returns `false` otherwi
 Reference Types: [UpdateFieldsParameters\<S\>](#updatefieldsparameterss)
 
 ```ts
-bento.updateFields({
-  email: 'test@bentonow.com',
-  fields: {
-    firstName: 'Test',
-  },
-});
+bento
+  .updateFields({
+    email: 'test@bentonow.com',
+    fields: {
+      firstName: 'Test',
+    },
+  })
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -171,18 +261,21 @@ Returns `true` if the event was successfully dispatched. Returns `false` otherwi
 Reference Types: [TrackPurchaseParameters](#TrackPurchaseParameters)
 
 ```ts
-bento.trackPurchase({
-  email: 'test@bentonow.com',
-  purchaseDetails: {
-    unique: {
-      key: 1234,
+bento
+  .trackPurchase({
+    email: 'test@bentonow.com',
+    purchaseDetails: {
+      unique: {
+        key: 1234,
+      },
+      value: {
+        amount: 100,
+        currency: 'USD',
+      },
     },
-    value: {
-      amount: 100,
-      currency: 'USD',
-    },
-  },
-});
+  })
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -200,13 +293,16 @@ Returns `true` if the event was successfully dispatched. Returns `false` otherwi
 Reference Types: [TrackParameters<S, E>](#trackparametersse)
 
 ```ts
-bento.track({
-  email: 'test@bentonow.com',
-  type: '$custom.event',
-  details: {
-    fromCustomEvent: true,
-  },
-});
+bento
+  .track({
+    email: 'test@bentonow.com',
+    type: '$custom.event',
+    details: {
+      fromCustomEvent: true,
+    },
+  })
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Batch
@@ -238,7 +334,9 @@ bento.V1.Batch.importSubscribers({
       name: 'Test User',
     },
   ],
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -270,7 +368,9 @@ bento.V1.Batch.importEvents({
       type: '$custom.myEvent,
     },
   ],
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Commands
@@ -289,7 +389,9 @@ Reference Types: [AddTagParameters](#AddTagParameters), [Subscriber\<S\>](#subsc
 bento.V1.Commands.addTag({
   email: 'test@bentonow.com',
   tagName: 'Test Tag',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -304,7 +406,9 @@ Reference Types: [RemoveTagParameters](#RemoveTagParameters), [Subscriber\<S\>](
 bento.V1.Commands.removeTag({
   email: 'test@bentonow.com',
   tagName: 'Test Tag',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -326,7 +430,9 @@ bento.V1.Commands.addField({
     key: 'testKey',
     value: 'testValue',
   },
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -341,7 +447,9 @@ Reference Types: [RemoveFieldParameters\<S\>](#removefieldparameterss), [Subscri
 bento.V1.Commands.removeField({
   email: 'test@bentonow.com',
   fieldName: 'testField',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -359,7 +467,9 @@ Reference Types: [SubscribeParameters](#SubscribeParameters), [Subscriber\<S\>](
 ```ts
 bento.V1.Commands.subscribe({
   email: 'test@bentonow.com',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -375,7 +485,9 @@ Reference Types: [UnsubscribeParameters](#UnsubscribeParameters), [Subscriber\<S
 ```ts
 bento.V1.Commands.unsubscribe({
   email: 'test@bentonow.com',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Experimental
@@ -393,7 +505,9 @@ Reference Types: [ValidateEmailParameters](#ValidateEmailParameters)
 ```ts
 bento.V1.Experimental.validateEmail({
   email: 'test@bentonow.com',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -411,7 +525,9 @@ Reference Types: [GuessGenderParameters](#GuessGenderParameters), [GuessGenderRe
 ```ts
 bento.V1.Experimental.guessGender({
   name: 'Jesse',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -427,7 +543,9 @@ Reference Types: [GeolocateParameters](#GeolocateParameters), [LocationData](#Lo
 ```ts
 bento.V1.Experimental.geolocate({
   ip: '127.0.0.1',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -443,7 +561,9 @@ Reference Types: [BlacklistParameters](#BlacklistParameters), [BlacklistResponse
 ```ts
 bento.V1.Experimental.checkBlacklist({
   domain: 'bentonow.com',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Fields
@@ -457,7 +577,9 @@ Reference Types: [Field](#Field)
 ```ts
 bento.V1.Experimental.validateEmail({
   email: 'test@bentonow.com',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -478,7 +600,9 @@ Reference Types: [CreateFieldParameters](#CreateFieldParameters), [Field](#Field
 ```ts
 bento.V1.Fields.createField({
   key: 'testKey',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Forms
@@ -490,7 +614,9 @@ Returns all of the responses for the form with the specified identifier.
 Reference Types: [FormResponse](#FormResponse)
 
 ```ts
-bento.V1.Forms.getResponses('test-formid-1234');
+bento.V1.Forms.getResponses('test-formid-1234')
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Subscribers
@@ -504,11 +630,15 @@ Reference Types: [GetSubscribersParameters](#GetSubscribersParameters), [Subscri
 ```ts
 bento.V1.Subscribers.getSubscribers({
   uuid: '1234',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 
 bento.V1.Subscribers.getSubscribers({
   email: 'test@bentonow.com',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -522,7 +652,9 @@ Reference Types: [CreateSubscriberParameters](#CreateSubscriberParameters), [Sub
 ```ts
 bento.V1.Subscribers.createSubscriber({
   email: 'test@bentonow.com',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Tags
@@ -534,7 +666,9 @@ Returns all of the fields for the site.
 Reference Types: [Tag](#Tag)
 
 ```ts
-bento.V1.Tags.getTags();
+bento.V1.Tags.getTags()
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -548,10 +682,10 @@ Reference Types: [Tag](#Tag)
 ```ts
 bento.V1.Tags.createTag({
   name: 'test tag',
-});
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
-
----
 
 ## Types References
 
@@ -583,11 +717,11 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 ---
 
-### `BatchImportEventsParameter<S,E>`
+### `BatchImportEventsParameter<S, E>`
 
-| Property | Type                                     | Default | Required |
-| -------- | ---------------------------------------- | ------- | -------- |
-| events   | [`BentoEvent<S, E>[]`](#BentoEvent<S,E>) | _none_  | ✔️       |
+| Property | Type                                      | Default | Required |
+| -------- | ----------------------------------------- | ------- | -------- |
+| events   | [`BentoEvent<S, E>[]`](#BentoEvent<S, E>) | _none_  | ✔️       |
 
 ---
 
@@ -653,19 +787,6 @@ Note that the type below requires that it starts with the configured prefix if o
 
 ---
 
-#### `EntityType`
-
-This is an enum with the following values:
-
-| Name            | Value               |
-| --------------- | ------------------- |
-| EVENTS          | `'events'`          |
-| TAGS            | `'tags'`            |
-| VISITORS        | `'visitors'`        |
-| VISITORS_FIELDS | `'visitors-fields'` |
-
----
-
 ### `BlacklistParameters`
 
 Note that this takes either `domain` _or_ `ip`, but never both.
@@ -721,6 +842,19 @@ The results is an object where the key is the name of the blacklist that was che
 | Property | Type     | Default | Required |
 | -------- | -------- | ------- | -------- |
 | name     | `string` | _none_  | ✔️       |
+
+---
+
+### `EntityType`
+
+This is an enum with the following values:
+
+| Name            | Value               |
+| --------------- | ------------------- |
+| EVENTS          | `'events'`          |
+| TAGS            | `'tags'`            |
+| VISITORS        | `'visitors'`        |
+| VISITORS_FIELDS | `'visitors-fields'` |
 
 ---
 
@@ -974,7 +1108,7 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 ---
 
-### `TrackParameters<S,E>`
+### `TrackParameters<S, E>`
 
 The `E` from above represents the prefix that is used to define your custom events. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
