@@ -64,7 +64,7 @@ The `Analytics` module also provides access to various versions of the API (curr
 
 ### `tagSubscriber(parameters: TagSubscriberParameters): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addTag`](#Commands.addTag) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addTag`](#commandsaddtagparameters-addtagparameters-promisesubscribers-null) method.
 
 Tags a subscriber with the specified email and tag. If either the tag or the user do not exist, they will be created in the system. If the user already has the tag, another tag event will be sent, triggering any automations that take place upon a tag being added to a subscriber. Please be aware of the potential consequences.
 
@@ -85,7 +85,7 @@ bento.tagSubscriber({
 
 ### `addSubscriber(parameters: AddSubscriberParameters): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.subscribe`](#Commands.subscribe) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.subscribe`](#commandssubscribeparameters-subscribeparameters-promisesubscribers-null) method.
 
 Creates a subscriber in the system. If the subscriber already exists, another subscribe event will be sent, triggering any automations that take place upon subscription. Please be aware of the potential consequences.
 
@@ -105,7 +105,7 @@ bento.addSubscriber({
 
 ### `async removeSubscriber(parameters: RemoveSubscriberParameters): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.unsubscribe`](#Commands.unsubscribe) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.unsubscribe`](#commandsunsubscribeparameters-unsubscribeparameters-promisesubscribers-null) method.
 
 Unsubscribes an email in the system. If the email is already unsubscribed, another unsubscribe event will be sent, triggering any automations that take place upon an unsubscribe happening. Please be aware of the potential consequences.
 
@@ -125,7 +125,7 @@ bento.removeSubscriber({
 
 ### `updateFields(parameters: UpdateFieldsParameters<S>): Promise<boolean>`
 
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addField`](#Commands.addField) method.
+**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addField`](#commandsaddfieldparameters-addfieldparameterss-promisesubscribers-null) method.
 
 Sets the passed-in custom fields on the subscriber, creating the subscriber if it does not exist. If the fields are already set on the subscriber, the event will be sent, triggering any automations that take place upon fields being updated. Please be aware of the potential consequences.
 
@@ -133,7 +133,7 @@ Because this method uses the batch API, the tag may take between 1 and 3 minutes
 
 Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
 
-Reference Types: [UpdateFieldsParameters\<S\>](#UpdateFieldsParameters<S>)
+Reference Types: [UpdateFieldsParameters\<S\>](#updatefieldsparameterss)
 
 ```ts
 bento.updateFields({
@@ -185,7 +185,7 @@ Because this method uses the batch API, the tag may take between 1 and 3 minutes
 
 Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
 
-Reference Types: [TrackParameters<S, E>](#TrackParameters<S,E>)
+Reference Types: [TrackParameters<S, E>](#trackparametersse)
 
 ```ts
 bento.track({
@@ -196,8 +196,6 @@ bento.track({
   },
 });
 ```
-
----
 
 ## Batch
 
@@ -211,7 +209,7 @@ This method is processed by the Bento import queues and it may take between 1 an
 
 Returns the number of subscribers that were imported.
 
-Reference Types: [BatchImportSubscribersParameter\<S\>](#BatchImportSubscribersParameter<S>)
+Reference Types: [BatchImportSubscribersParameter\<S\>](#batchimportsubscribersparameters)
 
 ```ts
 bento.V1.Batch.importSubscribers({
@@ -231,13 +229,15 @@ bento.V1.Batch.importSubscribers({
 });
 ```
 
+---
+
 ### `Batch.importEvents(parameters: BatchImportEventsParameter<S, E>): Promise<number>`
 
 Creates a batch job to import events into the system. You can pass in between 1 and 1,000 events to import. Each event must have an email and a type. In addition to this, you my pass in additional data in the `details` property,
 
 Returns the number of events that were imported.
 
-Reference Types: [BatchImportEventsParameter<S, E>](#BatchImportEventsParameter<S,E>)
+Reference Types: [BatchImportEventsParameter<S, E>](#batchimporteventsparameterse)
 
 ```ts
 bento.V1.Batch.importEvents({
@@ -261,9 +261,123 @@ bento.V1.Batch.importEvents({
 });
 ```
 
+## Commands
+
+### `Commands.addTag(parameters: AddTagParameters): Promise<Subscriber<S> | null>`
+
+**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `tagSubscriber` method.
+
+Adds a tag to the subscriber with the matching email.
+
+Note that both the tag and the subscriber will be created if either is missing from system.
+
+Reference Types: [AddTagParameters](#AddTagParameters), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Commands.addTag({
+  email: 'test@bentonow.com',
+  tagName: 'Test Tag',
+});
+```
+
+---
+
+### `Commands.removeTag(parameters: RemoveTagParameters): Promise<Subscriber<S> | null>`
+
+Removes the specified tag from the subscriber with the matching email.
+
+Reference Types: [RemoveTagParameters](#RemoveTagParameters), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Commands.removeTag({
+  email: 'test@bentonow.com',
+  tagName: 'Test Tag',
+});
+```
+
+---
+
+### `Commands.addField(parameters: AddFieldParameters<S>): Promise<Subscriber<S> | null>`
+
+**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `updateFields` method.
+
+Adds a field to the subscriber with the matching email.
+
+Note that both the field and the subscriber will be created if either is missing from system.
+
+Reference Types: [AddFieldParameters\<S\>](#addfieldparameterss), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Commands.addField({
+  email: 'test@bentonow.com',
+  field: {
+    key: 'testKey',
+    value: 'testValue',
+  },
+});
+```
+
+---
+
+### `Commands.removeField(parameters: RemoveFieldParameters<S>): Promise<Subscriber<S> | null>`
+
+Removes a field to the subscriber with the matching email.
+
+Reference Types: [RemoveFieldParameters\<S\>](#removefieldparameterss), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Commands.removeField({
+  email: 'test@bentonow.com',
+  fieldName: 'testField',
+});
+```
+
+---
+
+### `Commands.subscribe(parameters: SubscribeParameters): Promise<Subscriber<S> | null>`
+
+**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `addSubscriber` method.
+
+Subscribes the supplied email to Bento. If the email does not exist, it is created.
+
+If the subscriber had previously unsubscribed, they will be re-subscribed.
+
+Reference Types: [SubscribeParameters](#SubscribeParameters), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Commands.subscribe({
+  email: 'test@bentonow.com',
+});
+```
+
+---
+
+### `Commands.unsubscribe(parameters: UnsubscribeParameters): Promise<Subscriber<S> | null>`
+
+**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `removeSubscriber` method.
+
+Unsubscribes the supplied email to Bento. If the email does not exist, it is created and immediately unsubscribed. If they had already unsubscribed, the `unsubscribed_at` property is updated.
+
+Reference Types: [UnsubscribeParameters](#UnsubscribeParameters), [Subscriber\<S\>](#subscribers)
+
+```ts
+bento.V1.Commands.unsubscribe({
+  email: 'test@bentonow.com',
+});
+```
+
 ---
 
 ## Types References
+
+### `AddFieldParameters<S>`
+
+Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+
+| Property | Type                           | Default | Required |
+| -------- | ------------------------------ | ------- | -------- |
+| email    | `string`                       | _none_  | ✔️       |
+| field    | `{ key: keyof S; value: any }` | _none_  | ✔️       |
 
 ---
 
@@ -272,6 +386,15 @@ bento.V1.Batch.importEvents({
 | Property | Type     | Default | Required |
 | -------- | -------- | ------- | -------- |
 | email    | `string` | _none_  | ✔️       |
+
+---
+
+### `AddTagParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| email    | `string` | _none_  | ✔️       |
+| tagName  | `string` | _none_  | ✔️       |
 
 ---
 
@@ -345,6 +468,18 @@ Note that the type below requires that it starts with the configured prefix if o
 
 ---
 
+#### `EntityType`
+
+This is an enum with the following values:
+
+| Name            | Value               |
+| --------------- | ------------------- |
+| TAGS            | `'tags'`            |
+| VISITORS        | `'visitors'`        |
+| VISITORS_FIELDS | `'visitors-fields'` |
+
+---
+
 ### `PurchaseDetails`
 
 | Property | Type                                    | Default | Required |
@@ -357,6 +492,8 @@ Note that the type below requires that it starts with the configured prefix if o
 
 ### `PurchaseItem`
 
+In addition to the properties below, you can pass any other properties that you want as part of the `PurchaseItem`.
+
 | Property      | Type     | Default | Required |
 | ------------- | -------- | ------- | -------- |
 | product_sku   | `string` | _none_  | ❌       |
@@ -367,6 +504,17 @@ Note that the type below requires that it starts with the configured prefix if o
 
 ---
 
+### `RemoveFieldParameters<S>`
+
+Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+
+| Property  | Type      | Default | Required |
+| --------- | --------- | ------- | -------- |
+| email     | `string`  | _none_  | ✔️       |
+| fieldName | `keyof S` | _none_  | ✔️       |
+
+---
+
 ### `RemoveSubscriberParameters`
 
 | Property | Type     | Default | Required |
@@ -374,6 +522,45 @@ Note that the type below requires that it starts with the configured prefix if o
 | email    | `string` | _none_  | ✔️       |
 
 ---
+
+### `RemoveTagParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| email    | `string` | _none_  | ✔️       |
+| tagName  | `string` | _none_  | ✔️       |
+
+---
+
+### `SubscribeParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| email    | `string` | _none_  | ✔️       |
+
+---
+
+### `Subscriber<S>`
+
+Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+
+| Property   | Type                                                  | Default | Required |
+| ---------- | ----------------------------------------------------- | ------- | -------- |
+| attributes | [`SubscriberAttributes<S>`](#SubscriberAttributes<S>) | _none_  | ✔️       |
+| id         | `string`                                              | _none_  | ✔️       |
+| type       | [`EntityType`](#EntityType)                           | _none_  | ✔️       |
+
+### `SubscriberAttributes<S>`
+
+Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+
+| Property        | Type          | Default | Required |
+| --------------- | ------------- | ------- | -------- |
+| cached_tag_ids  | `string[]`    | _none_  | ✔️       |
+| email           | `string`      | _none_  | ✔️       |
+| fields          | `S` \| `null` | _none_  | ✔️       |
+| unsubscribed_at | `string`      | _none_  | ✔️       |
+| uuid            | `string`      | _none_  | ✔️       |
 
 ### `TagSubscriberParameters`
 
@@ -404,6 +591,12 @@ The `E` from above represents the prefix that is used to define your custom even
 | purchaseDetails | [`PurchaseDetails`](#PurchaseDetails) | _none_  | ✔️       |
 
 ---
+
+### `UnsubscribeParameters`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| email    | `string` | _none_  | ✔️       |
 
 ### `UpdateFieldsParameters<S>`
 
