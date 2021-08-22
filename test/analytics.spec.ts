@@ -11,6 +11,7 @@ describe('Analytics', () => {
     });
 
     expect(bento.Commands).toBeTruthy();
+    expect(bento.Experimental).toBeTruthy();
     expect(bento.Fields).toBeTruthy();
     expect(bento.Forms).toBeTruthy();
     expect(bento.Subscribers).toBeTruthy();
