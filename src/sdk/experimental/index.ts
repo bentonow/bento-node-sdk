@@ -1,4 +1,6 @@
 import {
+  BlacklistParameters,
+  BlacklistResponse,
   GeolocateParameters,
   GeolocateResponse,
   GuessGenderParameters,
@@ -90,6 +92,31 @@ export class BentoExperimental {
 
       if (Object.keys(result).length === 0) return null;
       return result as LocationData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * **EXPERIMENTAL** -
+   * This functionality is experimental and may change or stop working at any time.
+   *
+   * Looks up the provided URL or IP Address against various blacklists to see if the site has been
+   * blacklisted anywhere.
+   *
+   * @param parameter
+   * @returns Promise<BlacklistResponse>
+   */
+  public async checkBlacklist(
+    parameters: BlacklistParameters
+  ): Promise<BlacklistResponse> {
+    try {
+      const result = await this._client.get<BlacklistResponse>(
+        `${this._url}/blacklist.json`,
+        parameters
+      );
+
+      return result;
     } catch (error) {
       throw error;
     }

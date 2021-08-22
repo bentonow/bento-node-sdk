@@ -18,6 +18,16 @@ export type GeolocateParameters = {
   ip: string;
 };
 
+export type BlacklistParameters =
+  | {
+      domain: string;
+      ip?: never;
+    }
+  | {
+      domain?: never;
+      ip: string;
+    };
+
 /**
  * Experimental Method Response Types
  */
@@ -31,3 +41,9 @@ export type GuessGenderResponse = {
 };
 
 export type GeolocateResponse = Partial<LocationData>;
+
+export type BlacklistResponse = {
+  description: string;
+  query: string;
+  results: { [key: string]: boolean };
+};

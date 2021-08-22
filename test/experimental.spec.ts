@@ -140,3 +140,57 @@ describe('Geolocate [/experimental/geolocation]', () => {
     });
   });
 });
+
+describe('Blacklist [/experimental/blacklist.json]', () => {
+  it('Returns a blacklist for any IP address', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Experimental.checkBlacklist({
+        ip: '127.0.0.1',
+      })
+    ).resolves.toMatchObject({
+      query: '127.0.0.1',
+      description:
+        'If any of the following blacklist providers contains true you have a problem on your hand.',
+      results: {
+        spamhaus: false,
+        nordspam: true,
+      },
+    });
+  });
+
+  it('Returns no blacklist for a domain.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.Experimental.checkBlacklist({
+        domain: 'bentonow.com',
+      })
+    ).resolves.toMatchObject({
+      query: 'bentonow.com',
+      description:
+        'If any of the following blacklist providers contains true you have a problem on your hand.',
+      results: {
+        just_registered: false,
+        spamhaus: false,
+        nordspam: false,
+        spfbl: false,
+        sorbs: false,
+        abusix: false,
+      },
+    });
+  });
+});
