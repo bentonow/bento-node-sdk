@@ -469,6 +469,18 @@ bento.V1.Fields.createField({
 });
 ```
 
+## Forms
+
+### `Forms.getResponses(formIdentifier: string): Promise<FormResponse[] | null>`
+
+Returns all of the responses for the form with the specified identifier.
+
+Reference Types: [FormResponse](#FormResponse)
+
+```ts
+bento.V1.Forms.getResponses('test-formid-1234');
+```
+
 ---
 
 ## Types References
@@ -609,6 +621,16 @@ The results is an object where the key is the name of the blacklist that was che
 
 ---
 
+### `BrowserData`
+
+| Property   | Type     | Default | Required |
+| ---------- | -------- | ------- | -------- |
+| height     | `string` | _none_  | ✔️       |
+| user_agent | `string` | _none_  | ✔️       |
+| width      | `string` | _none_  | ✔️       |
+
+---
+
 ### `CreateFieldParameters`
 
 | Property | Type     | Default | Required |
@@ -638,6 +660,45 @@ The results is an object where the key is the name of the blacklist that was che
 
 ---
 
+### `FormResponse`
+
+| Property   | Type                                                | Default | Required |
+| ---------- | --------------------------------------------------- | ------- | -------- |
+| attributes | [`FormResponseAttributes`](#FormResponseAttributes) | _none_  | ✔️       |
+| id         | `string`                                            | _none_  | ✔️       |
+| type       | [`EntityType`](#EntityType)                         | _none_  | ✔️       |
+
+---
+
+### `FormResponseAttributes`
+
+| Property | Type                                    | Default | Required |
+| -------- | --------------------------------------- | ------- | -------- |
+| data     | [`FormResponseData`](#FormResponseData) | _none_  | ✔️       |
+| uuid     | `string`                                | _none_  | ✔️       |
+
+---
+
+### `FormResponseData`
+
+| Property | Type                            | Default | Required |
+| -------- | ------------------------------- | ------- | -------- |
+| browser  | [`BrowserData`](#BrowserData)   | _none_  | ✔️       |
+| date     | `string`                        | _none_  | ✔️       |
+| details  | `{ [key: string]: any }`        | _none_  | ✔️       |
+| fields   | `{ [key: string]: any }`        | _none_  | ✔️       |
+| id       | `string`                        | _none_  | ✔️       |
+| identity | [`IdentityData`](#IdentityData) | _none_  | ✔️       |
+| ip       | `string`                        | _none_  | ✔️       |
+| location | [`LocationData`](#LocationData) | _none_  | ✔️       |
+| page     | [`PageData`](#PageData)         | _none_  | ✔️       |
+| site     | `string`                        | _none_  | ✔️       |
+| type     | `string`                        | _none_  | ✔️       |
+| visit    | `string`                        | _none_  | ✔️       |
+| visitor  | `string`                        | _none_  | ✔️       |
+
+---
+
 ### `GeolocateParameters`
 
 | Property | Type     | Default | Required |
@@ -663,6 +724,14 @@ The results is an object where the key is the name of the blacklist that was che
 
 ---
 
+### `IdentityData`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| email    | `string` | _none_  | ✔️       |
+
+---
+
 ### `LocationData`
 
 | Property         | Type     | Default | Required |
@@ -679,6 +748,18 @@ The results is an object where the key is the name of the blacklist that was che
 | real_region_name | `string` | _none_  | ❌       |
 | region_name      | `string` | _none_  | ❌       |
 | request          | `string` | _none_  | ❌       |
+
+---
+
+### `PageData`
+
+| Property | Type     | Default | Required |
+| -------- | -------- | ------- | -------- |
+| host     | `string` | _none_  | ✔️       |
+| path     | `string` | _none_  | ✔️       |
+| protocol | `string` | _none_  | ✔️       |
+| referrer | `string` | _none_  | ✔️       |
+| url      | `string` | _none_  | ✔️       |
 
 ---
 
