@@ -48,6 +48,8 @@
     "@size-limit/preset-small-lib": "^5.0.3",
     "@types/isomorphic-fetch": "^0.0.35",
     "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
     "@weiran.zsd/tsdx": "^0.15.2",
     "husky": "^7.0.1",
     "msw": "^0.34.0",

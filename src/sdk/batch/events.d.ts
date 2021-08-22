@@ -59,6 +59,7 @@ export type InternalEvents<S> =
 export type BaseEvent<E> = {
   details?: { [key: string]: any };
   email: string;
+  /* eslint-disable */
   type: `${E}${string}`;
 };
 
