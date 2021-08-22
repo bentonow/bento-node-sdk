@@ -43,18 +43,23 @@ export type UnsubscribeEvent = {
   type: BentoEvents.UNSUBSCRIBE | '$unsubscribe';
 };
 
-export type InternalEvents =
+export type UpdateFieldsEvent<S> = {
+  email: string;
+  type: BentoEvents.UPDATE_FIELDS | '$update_fields';
+  fields: Partial<S>;
+};
+
+export type InternalEvents<S> =
   | PurchaseEvent
   | SubscribeEvent
   | TagEvent
-  | UnsubscribeEvent;
+  | UnsubscribeEvent
+  | UpdateFieldsEvent<S>;
 
-export type BaseEvent<S, E> = {
+export type BaseEvent<E> = {
   details?: { [key: string]: any };
   email: string;
-  fields?: S;
-  page?: { [key: string]: any };
   type: `${E}${string}`;
 };
 
-export type BentoEvent<S, E> = InternalEvents | BaseEvent<S, E>;
+export type BentoEvent<S, E> = InternalEvents<S> | BaseEvent<E>;

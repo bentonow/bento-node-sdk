@@ -15,6 +15,7 @@ import {
   TagSubscriberParameters,
   TrackParameters,
   TrackPurchaseParameters,
+  UpdateFieldsParameters,
 } from './types';
 import { BentoEvents } from '../../sdk/batch/enums';
 
@@ -79,10 +80,10 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
 
   /**
    * **This TRIGGERS automations!** - If you do not wish to trigger automations, please use the
-   * `Commands.unsubscribe` method.
+   * `Commands.subscribe` method.
    *
-   * Unsubscribes an email in the system. If the email is already unsubscribed, another unsubscribe event
-   * will be sent, triggering any automations that take place upon an unsubscribe happening. Please be aware
+   * Creates a subscriber in the system. If the subscriber already exists, another subscribe event
+   * will be sent, triggering any automations that take place upon subscription. Please be aware
    * of the potential consequences.
    *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
@@ -114,8 +115,8 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * **This TRIGGERS automations!** - If you do not wish to trigger automations, please use the
    * `Commands.unsubscribe` method.
    *
-   * Creates a subscriber in the system. If the subscriber already exists, another subscribe event
-   * will be sent, triggering any automations that take place upon subscription. Please be aware
+   * Unsubscribes an email in the system. If the email is already unsubscribed, another unsubscribe event
+   * will be sent, triggering any automations that take place upon an unsubscribe happening. Please be aware
    * of the potential consequences.
    *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
@@ -135,6 +136,40 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
           {
             email: parameters.email,
             type: BentoEvents.UNSUBSCRIBE,
+          },
+        ],
+      });
+
+      return result === 1;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  /**
+   * **This TRIGGERS automations!** - If you do not wish to trigger automations, please use the
+   * `Commands.addField` method.
+   *
+   * Sets the passed-in custom fields on the subscriber, creating the subscriber if it does not exist.
+   * If the fields are already set on the subscriber, the event will be sent, triggering any automations
+   * that take place upon fields being updated. Please be aware of the potential consequences.
+   *
+   * Because this method uses the batch API, the tag may take between 1 and 3 minutes
+   * to appear in the system.
+   *
+   * Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
+   *
+   * @param parameters UpdateFieldsParameters\<S\>
+   * @returns Promise\<boolean\>
+   */
+  async updateFields(parameters: UpdateFieldsParameters<S>): Promise<boolean> {
+    try {
+      const result = await this.Batch.importEvents({
+        events: [
+          {
+            email: parameters.email,
+            type: BentoEvents.UPDATE_FIELDS,
+            fields: parameters.fields,
           },
         ],
       });

@@ -7,7 +7,12 @@ export class BentoTags {
 
   constructor(private readonly _client: BentoClient) {}
 
-  public async getTags() {
+  /**
+   * Returns all of the fields for the site.
+   *
+   * @returns Promise\<Tag[] | null\>
+   */
+  public async getTags(): Promise<Tag[] | null> {
     try {
       const result = await this._client.get<DataResponse<Tag[]>>(this._url);
 
@@ -18,7 +23,15 @@ export class BentoTags {
     }
   }
 
-  public async createTag(parameters: CreateTagParameters) {
+  /**
+   * Creates a tag inside of Bento.
+   *
+   * @param parameters CreateTagParameters
+   * @returns Promise\<Tag[] | null\>
+   */
+  public async createTag(
+    parameters: CreateTagParameters
+  ): Promise<Tag[] | null> {
     try {
       const result = await this._client.post<DataResponse<Tag[]>>(this._url, {
         tag: parameters,

@@ -27,7 +27,7 @@ export class BentoCommands<S> {
    *
    *
    * @param parameters \{ email: string, tagName: string \}
-   * @returns Promise<Subscriber> | null
+   * @returns Promise\<Subscriber | null\>
    */
   public async addTag(
     parameters: AddTagParameters
@@ -55,7 +55,7 @@ export class BentoCommands<S> {
    * Removes the specified tag from the subscriber with the matching email.
    *
    * @param parameters \{ email: string, tagName: string \}
-   * @returns Promise<Subscriber> | null
+   * @returns Promise\<Subscriber | null\>
    */
   public async removeTag(
     parameters: RemoveTagParameters
@@ -80,8 +80,8 @@ export class BentoCommands<S> {
   }
 
   /**
-   * **This does not trigger automations!** - If you wish to trigger automations, please send a custom
-   * event and then add an automation that updates the custom field on the subscriber.
+   * **This does not trigger automations!** - If you wish to trigger automations, please use the
+   * core module's `updateFields` method.
    *
    * Adds a field to the subscriber with the matching email.
    *
@@ -89,7 +89,7 @@ export class BentoCommands<S> {
    * from system.
    *
    * @param parameters \{ email: string, field: \{ key: string; value: string; \} \}
-   * @returns Promise<Subscriber> | null
+   * @returns Promise\<Subscriber | null\>
    */
   public async addField(
     parameters: AddFieldParameters<S>
@@ -117,7 +117,7 @@ export class BentoCommands<S> {
    * Removes a field to the subscriber with the matching email.
    *
    * @param parameters \{ email: string, fieldName: string \}
-   * @returns Promise<Subscriber> | null
+   * @returns Promise\<Subscriber | null\>
    */
   public async removeField(
     parameters: RemoveFieldParameters<S>
@@ -149,7 +149,7 @@ export class BentoCommands<S> {
    * If the subscriber had previously unsubscribed, they will be re-subscribed.
    *
    * @param parameters \{ email: string \}
-   * @returns Promise<Subscriber> | null
+   * @returns Promise\<Subscriber | null\>
    */
   public async subscribe(
     parameters: SubscribeParameters
@@ -181,7 +181,7 @@ export class BentoCommands<S> {
    * is updated.
    *
    * @param parameters \{ email: string \}
-   * @returns Promise<Subscriber> | null
+   * @returns Promise\<Subscriber | null\>
    */
   public async unsubscribe(
     parameters: UnsubscribeParameters

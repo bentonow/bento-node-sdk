@@ -11,9 +11,11 @@ export class BentoForms {
    * Returns all of the responses for the form with the specified identifier.
    *
    * @param formIdentifier string
-   * @returns Promise<FormResponse[]>
+   * @returns Promise\<FormResponse[] | null\>
    */
-  public async getResponses(formIdentifier: string) {
+  public async getResponses(
+    formIdentifier: string
+  ): Promise<FormResponse[] | null> {
     try {
       const result = await this._client.get<DataResponse<FormResponse[]>>(
         this._url,

@@ -34,7 +34,7 @@ export class BentoBatch<S, E> {
    * Returns the number of subscribers that were imported.
    *
    * @param parameters
-   * @returns Promise<number>
+   * @returns Promise\<number\>
    */
   public async importSubscribers(
     parameters: BatchImportSubscribersParameter<S>
@@ -69,12 +69,12 @@ export class BentoBatch<S, E> {
    * Creates a batch job to import events into the system. You can pass in
    * between 1 and 1,000 events to import. Each event must have an email and
    * a type. In addition to this, you my pass in additional data in the
-   * `customFields`, `details`, `fields`,
+   * `details` property.
    *
-   * Returns the number of subscribers that were imported.
+   * Returns the number of events that were imported.
    *
    * @param parameters
-   * @returns Promise<number>
+   * @returns Promise\<number\>
    */
   public async importEvents(
     parameters: BatchImportEventsParameter<S, E>

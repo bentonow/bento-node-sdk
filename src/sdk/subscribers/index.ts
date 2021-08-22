@@ -11,7 +11,14 @@ export class BentoSubscribers<S> {
 
   constructor(private readonly _client: BentoClient) {}
 
-  public async getSubscribers(parameters?: GetSubscribersParameters) {
+  /**
+   * Returns the subscriber with the specified email or UUID.
+   *
+   * @returns Promise\<Subscriber\<S\> | null\>
+   */
+  public async getSubscribers(
+    parameters?: GetSubscribersParameters
+  ): Promise<Subscriber<S> | null> {
     try {
       const result = await this._client.get<DataResponse<Subscriber<S>>>(
         this._url,
@@ -25,7 +32,15 @@ export class BentoSubscribers<S> {
     }
   }
 
-  public async createSubscriber(parameters: CreateSubscriberParameters) {
+  /**
+   * Creates a subscriber inside of Bento.
+   *
+   * @param parameters CreateSubscriberParameters
+   * @returns Promise\<Subscriber\<S\> | null\>
+   */
+  public async createSubscriber(
+    parameters: CreateSubscriberParameters
+  ): Promise<Subscriber<S> | null> {
     try {
       const result = await this._client.post<DataResponse<Subscriber<S>>>(
         this._url,

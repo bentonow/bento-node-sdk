@@ -27,7 +27,7 @@ export class BentoExperimental {
    * may be biased.
    *
    * @param parameters
-   * @returns Promise<boolean>
+   * @returns Promise\<boolean\>
    */
   public async validateEmail(
     parameters: ValidateEmailParameters
@@ -55,7 +55,7 @@ export class BentoExperimental {
    * conclude what gender it may be.
    *
    * @param parameters
-   * @returns Promise<GuessGenderResponse>
+   * @returns Promise\<GuessGenderResponse\>
    */
   public async guessGender(
     parameters: GuessGenderParameters
@@ -79,7 +79,7 @@ export class BentoExperimental {
    * Attempts to provide location data given a provided IP address.
    *
    * @param parameters
-   * @returns Promise<GeolocateResponse>
+   * @returns Promise\<GeolocateResponse\>
    */
   public async geolocate(
     parameters: GeolocateParameters
@@ -105,7 +105,7 @@ export class BentoExperimental {
    * blacklisted anywhere.
    *
    * @param parameters
-   * @returns Promise<BlacklistResponse>
+   * @returns Promise\<BlacklistResponse\>
    */
   public async checkBlacklist(
     parameters: BlacklistParameters

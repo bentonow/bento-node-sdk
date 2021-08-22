@@ -24,4 +24,9 @@ export type TrackPurchaseParameters = {
   purchaseDetails: PurchaseDetails;
 };
 
+export type UpdateFieldsParameters<S> = {
+  email: string;
+  fields: S;
+};
+
 export type TrackParameters<S, E> = BaseEvent<S, E>;
