@@ -12,7 +12,7 @@ export class BentoFields {
    *
    * @returns Promise<Field[]>
    */
-  public async getFields(): Promise<Field[]> {
+  public async getFields(): Promise<Field[] | null> {
     try {
       const result = await this._client.get<DataResponse<Field[]>>(this._url);
 
@@ -40,7 +40,7 @@ export class BentoFields {
    */
   public async createField(
     parameters: CreateFieldParameters
-  ): Promise<Field[]> {
+  ): Promise<Field[] | null> {
     try {
       const result = await this._client.post<DataResponse<Field[]>>(this._url, {
         field: parameters,

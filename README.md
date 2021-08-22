@@ -436,7 +436,7 @@ bento.V1.Experimental.checkBlacklist({
 
 ## Fields
 
-### `Fields.getFields(): Promise<Field[]>`
+### `Fields.getFields(): Promise<Field[] | null>`
 
 Returns all of the fields for the site.
 
@@ -450,7 +450,7 @@ bento.V1.Experimental.validateEmail({
 
 ---
 
-### `Fields.createField(parameters: CreateFieldParameters): Promise<Field[]>`
+### `Fields.createField(parameters: CreateFieldParameters): Promise<Field[] | null>`
 
 Creates a field inside of Bento. The name of the field is automatically generated from the key that is passed in upon creation. For example:
 
