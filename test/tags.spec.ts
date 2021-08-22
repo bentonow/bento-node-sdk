@@ -1,6 +1,6 @@
 import { Analytics } from '../src';
 
-describe('Get Tags [/fetch/tags]', () => {
+describe('[V1] Get Tags [/fetch/tags]', () => {
   it('Works without any parameters', async () => {
     const bento = new Analytics({
       authentication: {
@@ -10,7 +10,7 @@ describe('Get Tags [/fetch/tags]', () => {
       siteUuid: 'test',
     });
 
-    await expect(bento.Tags.getTags()).resolves.toMatchObject([
+    await expect(bento.V1.Tags.getTags()).resolves.toMatchObject([
       {
         id: '174',
         type: 'tags',
@@ -24,7 +24,7 @@ describe('Get Tags [/fetch/tags]', () => {
   });
 });
 
-describe('Post Tags [/fetch/tags]', () => {
+describe('[V1] Post Tags [/fetch/tags]', () => {
   it('Works with a name.', async () => {
     const bento = new Analytics({
       authentication: {
@@ -35,7 +35,7 @@ describe('Post Tags [/fetch/tags]', () => {
     });
 
     await expect(
-      bento.Tags.createTag({
+      bento.V1.Tags.createTag({
         name: 'test tag',
       })
     ).resolves.toMatchObject([

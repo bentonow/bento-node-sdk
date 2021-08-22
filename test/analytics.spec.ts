@@ -10,11 +10,12 @@ describe('Analytics', () => {
       siteUuid: 'test',
     });
 
-    expect(bento.Commands).toBeTruthy();
-    expect(bento.Experimental).toBeTruthy();
-    expect(bento.Fields).toBeTruthy();
-    expect(bento.Forms).toBeTruthy();
-    expect(bento.Subscribers).toBeTruthy();
-    expect(bento.Tags).toBeTruthy();
+    expect(bento.V1.Batch).toBeTruthy();
+    expect(bento.V1.Commands).toBeTruthy();
+    expect(bento.V1.Experimental).toBeTruthy();
+    expect(bento.V1.Fields).toBeTruthy();
+    expect(bento.V1.Forms).toBeTruthy();
+    expect(bento.V1.Subscribers).toBeTruthy();
+    expect(bento.V1.Tags).toBeTruthy();
   });
 });

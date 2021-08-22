@@ -1,6 +1,6 @@
 import { Analytics } from '../src';
 
-describe('Validate Email [/experimental/validation]', () => {
+describe('[V1] Validate Email [/experimental/validation]', () => {
   it('Works with just an email.', async () => {
     const bento = new Analytics({
       authentication: {
@@ -11,7 +11,7 @@ describe('Validate Email [/experimental/validation]', () => {
     });
 
     await expect(
-      bento.Experimental.validateEmail({
+      bento.V1.Experimental.validateEmail({
         email: 'test@bentonow.com',
       })
     ).resolves.toBe(true);
@@ -27,7 +27,7 @@ describe('Validate Email [/experimental/validation]', () => {
     });
 
     await expect(
-      bento.Experimental.validateEmail({
+      bento.V1.Experimental.validateEmail({
         email: 'test@bentonow.com',
         ip: '0.0.0.0',
       })
@@ -35,7 +35,7 @@ describe('Validate Email [/experimental/validation]', () => {
   });
 });
 
-describe('Guess Gender [/experimental/gender]', () => {
+describe('[V1] Guess Gender [/experimental/gender]', () => {
   it('Works with male.', async () => {
     const bento = new Analytics({
       authentication: {
@@ -46,7 +46,7 @@ describe('Guess Gender [/experimental/gender]', () => {
     });
 
     await expect(
-      bento.Experimental.guessGender({
+      bento.V1.Experimental.guessGender({
         name: 'Jesse',
       })
     ).resolves.toMatchObject({
@@ -65,7 +65,7 @@ describe('Guess Gender [/experimental/gender]', () => {
     });
 
     await expect(
-      bento.Experimental.guessGender({
+      bento.V1.Experimental.guessGender({
         name: 'Barb',
       })
     ).resolves.toMatchObject({
@@ -84,7 +84,7 @@ describe('Guess Gender [/experimental/gender]', () => {
     });
 
     await expect(
-      bento.Experimental.guessGender({
+      bento.V1.Experimental.guessGender({
         name: 'Who?',
       })
     ).resolves.toMatchObject({
@@ -94,7 +94,7 @@ describe('Guess Gender [/experimental/gender]', () => {
   });
 });
 
-describe('Geolocate [/experimental/geolocation]', () => {
+describe('[V1] Geolocate [/experimental/geolocation]', () => {
   it('Returns null for 127.0.0.1.', async () => {
     const bento = new Analytics({
       authentication: {
@@ -105,7 +105,7 @@ describe('Geolocate [/experimental/geolocation]', () => {
     });
 
     await expect(
-      bento.Experimental.geolocate({
+      bento.V1.Experimental.geolocate({
         ip: '127.0.0.1',
       })
     ).resolves.toBeNull();
@@ -121,7 +121,7 @@ describe('Geolocate [/experimental/geolocation]', () => {
     });
 
     await expect(
-      bento.Experimental.geolocate({
+      bento.V1.Experimental.geolocate({
         ip: '0.0.0.0',
       })
     ).resolves.toMatchObject({
@@ -141,7 +141,7 @@ describe('Geolocate [/experimental/geolocation]', () => {
   });
 });
 
-describe('Blacklist [/experimental/blacklist.json]', () => {
+describe('[V1] Blacklist [/experimental/blacklist.json]', () => {
   it('Returns a blacklist for any IP address', async () => {
     const bento = new Analytics({
       authentication: {
@@ -152,7 +152,7 @@ describe('Blacklist [/experimental/blacklist.json]', () => {
     });
 
     await expect(
-      bento.Experimental.checkBlacklist({
+      bento.V1.Experimental.checkBlacklist({
         ip: '127.0.0.1',
       })
     ).resolves.toMatchObject({
@@ -176,7 +176,7 @@ describe('Blacklist [/experimental/blacklist.json]', () => {
     });
 
     await expect(
-      bento.Experimental.checkBlacklist({
+      bento.V1.Experimental.checkBlacklist({
         domain: 'bentonow.com',
       })
     ).resolves.toMatchObject({

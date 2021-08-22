@@ -1,6 +1,6 @@
 import { Analytics } from '../src';
 
-describe('Get Subscribers [/fetch/subscribers]', () => {
+describe('[V1] Get Subscribers [/fetch/subscribers]', () => {
   it('Works without any parameters', async () => {
     const bento = new Analytics({
       authentication: {
@@ -10,7 +10,7 @@ describe('Get Subscribers [/fetch/subscribers]', () => {
       siteUuid: 'test',
     });
 
-    await expect(bento.Subscribers.getSubscribers()).resolves.toBeNull();
+    await expect(bento.V1.Subscribers.getSubscribers()).resolves.toBeNull();
   });
 
   it('Works with a UUID', async () => {
@@ -23,7 +23,7 @@ describe('Get Subscribers [/fetch/subscribers]', () => {
     });
 
     await expect(
-      bento.Subscribers.getSubscribers({
+      bento.V1.Subscribers.getSubscribers({
         uuid: '1234',
       })
     ).resolves.toMatchObject({
@@ -48,7 +48,7 @@ describe('Get Subscribers [/fetch/subscribers]', () => {
     });
 
     await expect(
-      bento.Subscribers.getSubscribers({
+      bento.V1.Subscribers.getSubscribers({
         email: 'test@bentonow.com',
       })
     ).resolves.toMatchObject({
@@ -64,7 +64,7 @@ describe('Get Subscribers [/fetch/subscribers]', () => {
   });
 });
 
-describe('Post Subscribers [/fetch/subscribers]', () => {
+describe('[V1] Post Subscribers [/fetch/subscribers]', () => {
   it('Works with an email.', async () => {
     const bento = new Analytics({
       authentication: {
@@ -75,7 +75,7 @@ describe('Post Subscribers [/fetch/subscribers]', () => {
     });
 
     await expect(
-      bento.Subscribers.createSubscriber({
+      bento.V1.Subscribers.createSubscriber({
         email: 'test@bentonow.com',
       })
     ).resolves.toMatchObject({

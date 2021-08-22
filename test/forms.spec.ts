@@ -1,6 +1,6 @@
 import { Analytics } from '../src';
 
-describe('Get Form Responses [/fetch/responses]', () => {
+describe('[V1] Get Form Responses [/fetch/responses]', () => {
   it('Works with the form ID', async () => {
     const bento = new Analytics({
       authentication: {
@@ -11,7 +11,7 @@ describe('Get Form Responses [/fetch/responses]', () => {
     });
 
     await expect(
-      bento.Forms.getResponses('test-formid-1234')
+      bento.V1.Forms.getResponses('test-formid-1234')
     ).resolves.toMatchObject([
       {
         id: '159765112',
@@ -84,35 +84,6 @@ describe('Get Form Responses [/fetch/responses]', () => {
               real_region_name: 'Earth',
             },
           },
-        },
-      },
-    ]);
-  });
-});
-
-describe('Post Fields [/fetch/fields]', () => {
-  it('Works with a key.', async () => {
-    const bento = new Analytics({
-      authentication: {
-        secretKey: 'test',
-        publishableKey: 'test',
-      },
-      siteUuid: 'test',
-    });
-
-    await expect(
-      bento.Fields.createField({
-        key: 'test',
-      })
-    ).resolves.toMatchObject([
-      {
-        id: '2327',
-        type: 'visitors-fields',
-        attributes: {
-          name: 'Test',
-          key: 'test',
-          whitelisted: null,
-          created_at: '2021-08-21T02:08:30.364Z',
         },
       },
     ]);

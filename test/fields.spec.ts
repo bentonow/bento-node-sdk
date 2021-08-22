@@ -1,6 +1,6 @@
 import { Analytics } from '../src';
 
-describe('Get Fields [/fetch/fields]', () => {
+describe('[V1] Get Fields [/fetch/fields]', () => {
   it('Works without any parameters', async () => {
     const bento = new Analytics({
       authentication: {
@@ -10,7 +10,7 @@ describe('Get Fields [/fetch/fields]', () => {
       siteUuid: 'test',
     });
 
-    await expect(bento.Fields.getFields()).resolves.toMatchObject([
+    await expect(bento.V1.Fields.getFields()).resolves.toMatchObject([
       {
         id: '2327',
         type: 'visitors-fields',
@@ -45,7 +45,7 @@ describe('Get Fields [/fetch/fields]', () => {
   });
 });
 
-describe('Post Fields [/fetch/fields]', () => {
+describe('[V1] Post Fields [/fetch/fields]', () => {
   it('Works with a key.', async () => {
     const bento = new Analytics({
       authentication: {
@@ -56,7 +56,7 @@ describe('Post Fields [/fetch/fields]', () => {
     });
 
     await expect(
-      bento.Fields.createField({
+      bento.V1.Fields.createField({
         key: 'test',
       })
     ).resolves.toMatchObject([

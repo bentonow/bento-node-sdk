@@ -1,6 +1,6 @@
 import { Analytics } from '../src';
 
-describe('Post Commands [/fetch/commands]', () => {
+describe('[V1] Post Commands [/fetch/commands]', () => {
   it('Can add a tag', async () => {
     const bento = new Analytics({
       authentication: {
@@ -11,7 +11,7 @@ describe('Post Commands [/fetch/commands]', () => {
     });
 
     await expect(
-      bento.Commands.addTag({
+      bento.V1.Commands.addTag({
         email: 'test@bentonow.com',
         tagName: 'test-tag',
       })
@@ -38,7 +38,7 @@ describe('Post Commands [/fetch/commands]', () => {
     });
 
     await expect(
-      bento.Commands.removeTag({
+      bento.V1.Commands.removeTag({
         email: 'test@bentonow.com',
         tagName: 'test-tag',
       })
@@ -65,7 +65,7 @@ describe('Post Commands [/fetch/commands]', () => {
     });
 
     await expect(
-      bento.Commands.addField({
+      bento.V1.Commands.addField({
         email: 'test@bentonow.com',
         field: {
           key: 'testKey',
@@ -97,7 +97,7 @@ describe('Post Commands [/fetch/commands]', () => {
     });
 
     await expect(
-      bento.Commands.removeField({
+      bento.V1.Commands.removeField({
         email: 'test@bentonow.com',
         fieldName: 'testField',
       })
@@ -126,7 +126,7 @@ describe('Post Commands [/fetch/commands]', () => {
     });
 
     await expect(
-      bento.Commands.subscribe({
+      bento.V1.Commands.subscribe({
         email: 'test@bentonow.com',
       })
     ).resolves.toMatchObject({
@@ -152,7 +152,7 @@ describe('Post Commands [/fetch/commands]', () => {
     });
 
     await expect(
-      bento.Commands.unsubscribe({
+      bento.V1.Commands.unsubscribe({
         email: 'test@bentonow.com',
       })
     ).resolves.toMatchObject({
