@@ -94,4 +94,27 @@ describe('Analytics Integrated Events', () => {
       })
     ).resolves.toBe(true);
   });
+
+  it('Can track custom events.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.V1.track({
+        email: 'test@bentonow.com',
+        type: '$custom.event',
+        fields: {
+          myField: true,
+        },
+        details: {
+          fromCustomEvent: true,
+        },
+      })
+    ).resolves.toBe(true);
+  });
 });

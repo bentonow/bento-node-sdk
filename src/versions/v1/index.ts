@@ -13,6 +13,7 @@ import {
   AddSubscriberParameters,
   RemoveSubscriberParameters,
   TagSubscriberParameters,
+  TrackParameters,
   TrackPurchaseParameters,
 } from './types';
 import { BentoEvents } from '../../sdk/batch/enums';
@@ -169,6 +170,32 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
             details: parameters.purchaseDetails,
           },
         ],
+      });
+
+      return result === 1;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  /**
+   * **This TRIGGERS automations!** - There is no way to achieve this same behavior without triggering
+   * automations.
+   *
+   * Tracks a custom event in Bento.
+   *
+   * Because this method uses the batch API, the tag may take between 1 and 3 minutes
+   * to appear in the system.
+   *
+   * Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
+   *
+   * @param parameters TrackParameters<S, E>
+   * @returns Promise\<boolean\>
+   */
+  async track(parameters: TrackParameters<S, E>): Promise<boolean> {
+    try {
+      const result = await this.Batch.importEvents({
+        events: [parameters],
       });
 
       return result === 1;

@@ -1,4 +1,4 @@
-import { PurchaseDetails } from '../../sdk/batch/events';
+import { BaseEvent, PurchaseDetails } from '../../sdk/batch/events';
 import { BaseEntity } from '../types';
 import { BentoEvents } from './enums';
 import { BentoEvent } from './events';
@@ -23,3 +23,5 @@ export type TrackPurchaseParameters = {
   email: string;
   purchaseDetails: PurchaseDetails;
 };
+
+export type TrackParameters<S, E> = BaseEvent<S, E>;
