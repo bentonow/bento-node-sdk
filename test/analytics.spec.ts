@@ -53,4 +53,45 @@ describe('Analytics Integrated Events', () => {
       })
     ).resolves.toBe(true);
   });
+
+  it('Can unsubscribe an email.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.V1.removeSubscriber({
+        email: 'test@bentonow.com',
+      })
+    ).resolves.toBe(true);
+  });
+
+  it('Can track purchases.', async () => {
+    const bento = new Analytics({
+      authentication: {
+        secretKey: 'test',
+        publishableKey: 'test',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(
+      bento.V1.trackPurchase({
+        email: 'test@bentonow.com',
+        purchaseDetails: {
+          unique: {
+            key: 1234,
+          },
+          value: {
+            amount: 100,
+            currency: 'USD',
+          },
+        },
+      })
+    ).resolves.toBe(true);
+  });
 });

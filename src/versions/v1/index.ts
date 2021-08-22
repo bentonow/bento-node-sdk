@@ -9,7 +9,12 @@ import {
   BentoSubscribers,
   BentoTags,
 } from '../../sdk';
-import { AddSubscriberParameters, TagSubscriberParameters } from './types';
+import {
+  AddSubscriberParameters,
+  RemoveSubscriberParameters,
+  TagSubscriberParameters,
+  TrackPurchaseParameters,
+} from './types';
 import { BentoEvents } from '../../sdk/batch/enums';
 
 export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
@@ -39,7 +44,9 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * `Commands.addTag` method.
    *
    * Tags a subscriber with the specified email and tag. If either the tag or the user
-   * do not exist, they will be created in the system.
+   * do not exist, they will be created in the system. If the user already has the tag,
+   * another tag event will be sent, triggering any automations that take place upon a
+   * tag being added to a subscriber. Please be aware of the potential consequences.
    *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
    * to appear in the system.
@@ -71,10 +78,10 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
 
   /**
    * **This TRIGGERS automations!** - If you do not wish to trigger automations, please use the
-   * `Commands.subscribe` method.
+   * `Commands.unsubscribe` method.
    *
-   * Creates a subscriber in the system. If the subscriber already exists, another subscribe event
-   * will be sent, triggering any automations that take place upon subscription. Please be aware
+   * Unsubscribes an email in the system. If the email is already unsubscribed, another unsubscribe event
+   * will be sent, triggering any automations that take place upon an unsubscribe happening. Please be aware
    * of the potential consequences.
    *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
@@ -92,6 +99,74 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
           {
             email: parameters.email,
             type: BentoEvents.SUBSCRIBE,
+          },
+        ],
+      });
+
+      return result === 1;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  /**
+   * **This TRIGGERS automations!** - If you do not wish to trigger automations, please use the
+   * `Commands.unsubscribe` method.
+   *
+   * Creates a subscriber in the system. If the subscriber already exists, another subscribe event
+   * will be sent, triggering any automations that take place upon subscription. Please be aware
+   * of the potential consequences.
+   *
+   * Because this method uses the batch API, the tag may take between 1 and 3 minutes
+   * to appear in the system.
+   *
+   * Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
+   *
+   * @param parameters RemoveSubscriberParameters
+   * @returns Promise\<boolean\>
+   */
+  async removeSubscriber(
+    parameters: RemoveSubscriberParameters
+  ): Promise<boolean> {
+    try {
+      const result = await this.Batch.importEvents({
+        events: [
+          {
+            email: parameters.email,
+            type: BentoEvents.UNSUBSCRIBE,
+          },
+        ],
+      });
+
+      return result === 1;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  /**
+   * **This TRIGGERS automations!** - There is no way to achieve this same behavior without triggering
+   * automations.
+   *
+   * Tracks a purchase in Bento, used to calculate LTV for your subscribers. The values that are received
+   * should be numbers, in cents. For example, `$1.00` should be `100`.
+   *
+   * Because this method uses the batch API, the tag may take between 1 and 3 minutes
+   * to appear in the system.
+   *
+   * Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
+   *
+   * @param parameters TrackPurchaseParameters
+   * @returns Promise\<boolean\>
+   */
+  async trackPurchase(parameters: TrackPurchaseParameters): Promise<boolean> {
+    try {
+      const result = await this.Batch.importEvents({
+        events: [
+          {
+            email: parameters.email,
+            type: BentoEvents.PURCHASE,
+            details: parameters.purchaseDetails,
           },
         ],
       });

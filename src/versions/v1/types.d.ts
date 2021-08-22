@@ -1,3 +1,4 @@
+import { PurchaseDetails } from '../../sdk/batch/events';
 import { BaseEntity } from '../types';
 import { BentoEvents } from './enums';
 import { BentoEvent } from './events';
@@ -14,13 +15,11 @@ export type AddSubscriberParameters = {
   email: string;
 };
 
-/**
- * API Method Return Types
- */
-export type TagSubscriberResponse = {
-  success: boolean;
+export type RemoveSubscriberParameters = {
+  email: string;
 };
 
-export type AddSubscriberResponse = {
-  success: boolean;
+export type TrackPurchaseParameters = {
+  email: string;
+  purchaseDetails: PurchaseDetails;
 };
