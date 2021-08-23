@@ -31,7 +31,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "bento-node-sdk",
+  "name": "@bentonow/bento-node-sdk",
   "author": "Backpack Internet",
   "module": "dist/bento-node-sdk.esm.js",
   "description": "🍱 Bento Node.JS SDK and tracking library",
