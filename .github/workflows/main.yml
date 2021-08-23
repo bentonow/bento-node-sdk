@@ -21,12 +21,20 @@ jobs:
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Lint
         run: yarn lint
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Test
         run: yarn test --ci --coverage --maxWorkers=2
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build
         run: yarn build
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
