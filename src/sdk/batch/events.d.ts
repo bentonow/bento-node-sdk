@@ -8,6 +8,11 @@ export type PurchaseItem = {
   product_id?: string;
 } & { [key: string]: string };
 
+export type PurchaseCart = {
+  abandoned_checkout_url?: string;
+  items?: PurchaseItem[];
+};
+
 export type PurchaseDetails = {
   unique: {
     key: string | number;
@@ -16,7 +21,7 @@ export type PurchaseDetails = {
     currency: string;
     amount: number;
   };
-  cart?: PurchaseItem[];
+  cart?: PurchaseCart;
 };
 
 export type PurchaseEvent = {

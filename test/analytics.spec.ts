@@ -109,6 +109,9 @@ describe('Analytics Integrated Events', () => {
             amount: 100,
             currency: 'USD',
           },
+          cart: {
+            abandoned_checkout_url: '',
+          },
         },
       })
     ).resolves.toBe(true);

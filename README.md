@@ -1029,13 +1029,22 @@ Note that this takes either `email` _or_ `uuid`, but never both.
 
 ---
 
+### `PurchaseCart`
+
+| Property               | Type                              | Default | Required |
+| ---------------------- | --------------------------------- | ------- | -------- |
+| abandoned_checkout_url | `string`                          | _none_  | ❌       |
+| items                  | [`PurchaseItem[]`](#PurchaseItem) | _none_  | ❌       |
+
+---
+
 ### `PurchaseDetails`
 
 | Property | Type                                    | Default | Required |
 | -------- | --------------------------------------- | ------- | -------- |
 | unique   | `{ key: string \| number; }`            | _none_  | ✔️       |
 | value    | `{ currency: string; amount: number; }` | _none_  | ✔️       |
-| cart     | [`PurchaseItem[]`](#PurchaseItem)       | _none_  | ❌       |
+| cart     | [`PurchaseCart`](#PurchaseCart)         | _none_  | ❌       |
 
 ---
 
