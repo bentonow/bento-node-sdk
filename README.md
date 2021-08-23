@@ -8,7 +8,7 @@ Track events, update data, record LTV and more in Node.JS. Data is stored in you
 
 👋 To get personalized support, please tweet @bento or email jesse@bentonow.com!
 
-🐶 Battle-tested on Bento Production (we dog food this package ourselves)!
+🐶 Battle-tested by [NativShark](https://nativshark.com) Bento Production (a Bento customer)!
 
 - [Installation](#Installation)
 - [Get Started](#Get-Started)
