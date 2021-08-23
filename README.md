@@ -46,7 +46,7 @@ Track events, update data, record LTV and more in Node.JS. Data is stored in you
     - [.createTag(parameters: CreateTagParameters): Promise\<Tag[] | null\>](#tagscreatetagparameters-createtagparameters-promisetag--null)
 - [Types Reference](#Types-Reference)
   - [AddFieldParameters\<S\>](#addfieldparameterss)
-  - [AddSubscriberParameters](#AddSubscriberParameters)
+  - [AddSubscriberParameters\<S\>](#addsubscriberparameterss)
   - [AddTagParameters](#AddTagParameters)
   - [BatchImportEventsParameter\<S, E\>](#batchimporteventsparameterse)
   - [BatchImportSubscribersParameter\<S\>](#batchimportsubscribersparameters)
@@ -176,22 +176,36 @@ bento
 
 ---
 
-### `addSubscriber(parameters: AddSubscriberParameters): Promise<boolean>`
+### `addSubscriber(parameters: AddSubscriberParameters<S>): Promise<boolean>`
 
 **This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.subscribe`](#commandssubscribeparameters-subscribeparameters-promisesubscribers--null) method.
 
 Creates a subscriber in the system. If the subscriber already exists, another subscribe event will be sent, triggering any automations that take place upon subscription. Please be aware of the potential consequences.
 
+You may optionally pass any fields that you wish to be set on the subscriber during creation.
+
 Because this method uses the batch API, the tag may take between 1 and 3 minutes to appear in the system.
 
 Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
 
-Reference Types: [AddSubscriberParameters](#AddSubscriberParameters)
+Reference Types: [AddSubscriberParameters\<S\>](#addsubscriberparameterss)
 
 ```ts
 bento
   .addSubscriber({
     email: 'test@bentonow.com',
+  })
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+
+bento
+  .addSubscriber({
+    date: new Date('2021-08-20T01:32:57.530Z'),
+    email: 'test@bentonow.com',
+    fields: {
+      firstName: 'Test',
+      lastName: 'Subscriber',
+    },
   })
   .then(result => console.log(result))
   .catch(error => console.error(error));
@@ -691,7 +705,7 @@ bento.V1.Tags.createTag({
 
 ### `AddFieldParameters<S>`
 
-Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
 | Property | Type                           | Default | Required |
 | -------- | ------------------------------ | ------- | -------- |
@@ -700,11 +714,15 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 ---
 
-### `AddSubscriberParameters`
+### `AddSubscriberParameters<S>`
 
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+
+| Property | Type         | Default | Required |
+| -------- | ------------ | ------- | -------- |
+| date     | `Date`       | _none_  | ❌       |
+| email    | `string`     | _none_  | ✔️       |
+| fields   | `Partial<S>` | _none_  | ❌       |
 
 ---
 
@@ -719,6 +737,10 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 ### `BatchImportEventsParameter<S, E>`
 
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+
+The `E` from above represents the prefix that is used to define your custom events. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+
 | Property | Type                                      | Default | Required |
 | -------- | ----------------------------------------- | ------- | -------- |
 | events   | [`BentoEvent<S, E>[]`](#BentoEvent<S, E>) | _none_  | ✔️       |
@@ -726,6 +748,8 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 ---
 
 ### `BatchImportSubscribersParameter<S>`
+
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
 | Property    | Type                                 | Default | Required |
 | ----------- | ------------------------------------ | ------- | -------- |
@@ -739,10 +763,11 @@ This type is a discriminated union of a few different types. Each of these types
 
 #### `BaseEvent<E>`
 
-Note that the type below requires that it starts with the configured prefix if one was set. Please read the [TypeScript](#TypeScript) section for more details.
+The `E` from above represents the prefix that is used to define your custom events. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
 | Property | Type                     | Default | Required |
 | -------- | ------------------------ | ------- | -------- |
+| date     | `Date`                   | _none_  | ❌       |
 | details  | `{ [key: string]: any }` | _none_  | ✔️       |
 | email    | `string`                 | _none_  | ✔️       |
 | type     | `string`                 | _none_  | ✔️       |
@@ -751,21 +776,25 @@ Note that the type below requires that it starts with the configured prefix if o
 
 | Property | Type                                    | Default | Required |
 | -------- | --------------------------------------- | ------- | -------- |
+| date     | `Date`                                  | _none_  | ❌       |
 | details  | [`PurchaseDetails`](#PurchaseDetails)   | _none_  | ✔️       |
 | email    | `string`                                | _none_  | ✔️       |
 | type     | `BentoEvents.PURCHASE` \| `'$purchase'` | _none_  | ✔️       |
 
-#### `SubscribeEvent`
+#### `SubscribeEvent<S>`
 
 | Property | Type                                      | Default | Required |
 | -------- | ----------------------------------------- | ------- | -------- |
+| date     | `Date`                                    | _none_  | ❌       |
 | email    | `string`                                  | _none_  | ✔️       |
+| fields   | `Partial<S>`                              | _none_  | ❌       |
 | type     | `BentoEvents.SUBSCRIBE` \| `'$subscribe'` | _none_  | ✔️       |
 
 #### `TagEvent`
 
 | Property | Type                          | Default | Required |
 | -------- | ----------------------------- | ------- | -------- |
+| date     | `Date`                        | _none_  | ❌       |
 | details  | `{ tag: string }`             | _none_  | ✔️       |
 | email    | `string`                      | _none_  | ✔️       |
 | type     | `BentoEvents.TAG` \| `'$tag'` | _none_  | ✔️       |
@@ -774,13 +803,17 @@ Note that the type below requires that it starts with the configured prefix if o
 
 | Property | Type                                          | Default | Required |
 | -------- | --------------------------------------------- | ------- | -------- |
+| date     | `Date`                                        | _none_  | ❌       |
 | email    | `string`                                      | _none_  | ✔️       |
 | type     | `BentoEvents.UNSUBSCRIBE` \| `'$unsubscribe'` | _none_  | ✔️       |
 
 #### `UpdateFieldsEvent<S>`
 
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+
 | Property | Type                                              | Default | Required |
 | -------- | ------------------------------------------------- | ------- | -------- |
+| date     | `Date`                                            | _none_  | ❌       |
 | email    | `string`                                          | _none_  | ✔️       |
 | type     | `BentoEvents.UPDATE_FIELDS` \| `'$update_fields'` | _none_  | ✔️       |
 | fields   | `Partial<S>`                                      | _none_  | ✔️       |
@@ -1022,7 +1055,7 @@ In addition to the properties below, you can pass any other properties that you 
 
 ### `RemoveFieldParameters<S>`
 
-Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
 | Property  | Type      | Default | Required |
 | --------- | --------- | ------- | -------- |
@@ -1035,6 +1068,7 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 | Property | Type     | Default | Required |
 | -------- | -------- | ------- | -------- |
+| date     | `Date`   | _none_  | ❌       |
 | email    | `string` | _none_  | ✔️       |
 
 ---
@@ -1058,7 +1092,7 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 ### `Subscriber<S>`
 
-Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
 | Property   | Type                                                | Default | Required |
 | ---------- | --------------------------------------------------- | ------- | -------- |
@@ -1068,7 +1102,7 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 ### `SubscriberAttributes<S>`
 
-Note that this type employs the use of generics. Please read the [TypeScript](#TypeScript) section for more details.
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
 | Property        | Type          | Default | Required |
 | --------------- | ------------- | ------- | -------- |
@@ -1103,12 +1137,15 @@ Note that this type employs the use of generics. Please read the [TypeScript](#T
 
 | Property | Type     | Default | Required |
 | -------- | -------- | ------- | -------- |
+| date     | `Date`   | _none_  | ❌       |
 | email    | `string` | _none_  | ✔️       |
 | tagName  | `string` | _none_  | ✔️       |
 
 ---
 
 ### `TrackParameters<S, E>`
+
+The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
 The `E` from above represents the prefix that is used to define your custom events. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
@@ -1124,6 +1161,7 @@ The `E` from above represents the prefix that is used to define your custom even
 
 | Property        | Type                                  | Default | Required |
 | --------------- | ------------------------------------- | ------- | -------- |
+| date            | `Date`                                | _none_  | ❌       |
 | email           | `string`                              | _none_  | ✔️       |
 | purchaseDetails | [`PurchaseDetails`](#PurchaseDetails) | _none_  | ✔️       |
 
@@ -1141,10 +1179,11 @@ The `E` from above represents the prefix that is used to define your custom even
 
 The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
 
-| Property | Type                            | Default | Required |
-| -------- | ------------------------------- | ------- | -------- |
-| email    | `string`                        | _none_  | ✔️       |
-| fields   | `S` \| `{ [key: string]: any }` | _none_  | ✔️       |
+| Property | Type         | Default | Required |
+| -------- | ------------ | ------- | -------- |
+| date     | `Date`       | _none_  | ❌       |
+| email    | `string`     | _none_  | ✔️       |
+| fields   | `Partial<S>` | _none_  | ✔️       |
 
 ---
 

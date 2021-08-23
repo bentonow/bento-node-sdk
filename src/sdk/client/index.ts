@@ -55,10 +55,19 @@ export class BentoClient {
 
       fetch(`${this._baseUrl}${endpoint}`, {
         method: 'POST',
-        headers: this._headers,
+        headers: {
+          ...this._headers,
+          'Content-Type': 'application/json',
+        },
         body,
       })
-        .then(result => result.json())
+        .then(result => {
+          if (this._isSuccessfulStatus(result.status)) {
+            return result.json();
+          }
+
+          throw this._getErrorForResponse(result);
+        })
         .then(data => resolve(data))
         .catch(error => reject(error));
     });

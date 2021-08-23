@@ -63,6 +63,7 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
       const result = await this.Batch.importEvents({
         events: [
           {
+            date: parameters.date,
             details: {
               tag: parameters.tagName,
             },
@@ -86,6 +87,10 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * will be sent, triggering any automations that take place upon subscription. Please be aware
    * of the potential consequences.
    *
+   * You may optionally pass any fields that you wish to be set on the subscriber during creation
+   * as well as a `Date` which will backdate the event. If no date is supplied, then the event will
+   * default to the current time.
+   *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
    * to appear in the system.
    *
@@ -94,13 +99,17 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * @param parameters AddSubscriberParameters
    * @returns Promise\<boolean\>
    */
-  async addSubscriber(parameters: AddSubscriberParameters): Promise<boolean> {
+  async addSubscriber(
+    parameters: AddSubscriberParameters<S>
+  ): Promise<boolean> {
     try {
       const result = await this.Batch.importEvents({
         events: [
           {
+            date: parameters.date,
             email: parameters.email,
             type: BentoEvents.SUBSCRIBE,
+            fields: parameters.fields || {},
           },
         ],
       });
@@ -119,6 +128,9 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * will be sent, triggering any automations that take place upon an unsubscribe happening. Please be aware
    * of the potential consequences.
    *
+   * You may optionally pass a `Date` which will backdate the event. If no date is supplied, then the event
+   * will default to the current time.
+   *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
    * to appear in the system.
    *
@@ -134,6 +146,7 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
       const result = await this.Batch.importEvents({
         events: [
           {
+            date: parameters.date,
             email: parameters.email,
             type: BentoEvents.UNSUBSCRIBE,
           },
@@ -154,6 +167,9 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * If the fields are already set on the subscriber, the event will be sent, triggering any automations
    * that take place upon fields being updated. Please be aware of the potential consequences.
    *
+   * You may optionally pass a `Date` which will backdate the event. If no date is supplied, then the event
+   * will default to the current time.
+   *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
    * to appear in the system.
    *
@@ -167,6 +183,7 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
       const result = await this.Batch.importEvents({
         events: [
           {
+            date: parameters.date,
             email: parameters.email,
             type: BentoEvents.UPDATE_FIELDS,
             fields: parameters.fields,
@@ -187,6 +204,9 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * Tracks a purchase in Bento, used to calculate LTV for your subscribers. The values that are received
    * should be numbers, in cents. For example, `$1.00` should be `100`.
    *
+   * You may optionally pass a `Date` which will backdate the event. If no date is supplied, then the event
+   * will default to the current time.
+   *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
    * to appear in the system.
    *
@@ -200,6 +220,7 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
       const result = await this.Batch.importEvents({
         events: [
           {
+            date: parameters.date,
             email: parameters.email,
             type: BentoEvents.PURCHASE,
             details: parameters.purchaseDetails,
@@ -218,6 +239,9 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * automations.
    *
    * Tracks a custom event in Bento.
+   *
+   * You may optionally pass a `Date` which will backdate the event. If no date is supplied, then the event
+   * will default to the current time.
    *
    * Because this method uses the batch API, the tag may take between 1 and 3 minutes
    * to appear in the system.
