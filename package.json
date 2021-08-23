@@ -7,7 +7,6 @@
     "dist",
     "src"
   ],
-  "private": "false",
   "engines": {
     "node": ">=12"
   },
