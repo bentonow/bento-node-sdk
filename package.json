@@ -32,7 +32,7 @@
     "trailingComma": "es5"
   },
   "name": "bento-node-sdk",
-  "author": "Jacob Foster",
+  "author": "Backpack Internet",
   "module": "dist/bento-node-sdk.esm.js",
   "size-limit": [
     {
