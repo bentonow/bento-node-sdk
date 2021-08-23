@@ -10,7 +10,7 @@ export const handlers = [
         return basicAuthError(res, ctx);
       }
 
-      const body = JSON.parse(req.body as string);
+      const body = req.body as any;
       const command = body.command.command;
       const email = body.command.email;
       const query = body.command.query;

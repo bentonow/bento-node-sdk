@@ -40,7 +40,7 @@ export const handlers = [
         return basicAuthError(res, ctx);
       }
 
-      const body = JSON.parse(req.body as string);
+      const body = req.body as any;
 
       return res(
         ctx.status(201),

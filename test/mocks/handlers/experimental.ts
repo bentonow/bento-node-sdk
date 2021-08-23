@@ -10,7 +10,7 @@ export const handlers = [
         return basicAuthError(res, ctx);
       }
 
-      const { ip } = JSON.parse(req.body as string);
+      const { ip } = req.body as any;
 
       return res(
         ctx.status(201),
@@ -27,7 +27,7 @@ export const handlers = [
         return basicAuthError(res, ctx);
       }
 
-      const { name } = JSON.parse(req.body as string);
+      const { name } = req.body as any;
 
       return res(ctx.status(201), ctx.json(getGenderResult(name)));
     }
