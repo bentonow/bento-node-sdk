@@ -1,6 +1,6 @@
 # Bento SDK for Node.JS
 
-[![Build Status](https://travis-ci.org/bentonow/bento-node-sdk.svg?branch=master)](https://travis-ci.org/bentonow/bento-node-sdk)
+[![Publish NPM Package](https://github.com/bentonow/bento-node-sdk/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/bentonow/bento-node-sdk/actions/workflows/release.yml) [![CI](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml)
 
 🍱 Simple, powerful analytics for Node.JS projects!
 
