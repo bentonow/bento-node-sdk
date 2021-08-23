@@ -35,6 +35,14 @@
   "author": "Backpack Internet",
   "module": "dist/bento-node-sdk.esm.js",
   "description": "🍱 Bento Node.JS SDK and tracking library",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bentonow/bento-node-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bentonow/bento-node-sdk/issues"
+  },
+  "homepage": "https://bentonow.com",
   "size-limit": [
     {
       "path": "dist/bento-node-sdk.cjs.production.min.js",
