@@ -654,7 +654,7 @@ bento.V1.Tags.createTag({
   .catch(error => console.error(error));
 ```
 
-## Types References
+## Types Reference
 
 ### `AddFieldParameters<S>`
 
