@@ -23,4 +23,27 @@ export const handlers = [
       return res(ctx.status(200));
     }
   ),
+  rest.post(
+    'https://app.bentonow.com/api/v1/test/text',
+    (_req, res: ResponseComposition<any>, ctx: RestContext) => {
+      return res(
+        ctx.status(400),
+        ctx.text(
+          'This is a test message returned back with a failed status code.'
+        )
+      );
+    }
+  ),
+  rest.post(
+    'https://app.bentonow.com/api/v1/test/json',
+    (_req, res: ResponseComposition<any>, ctx: RestContext) => {
+      return res(
+        ctx.status(500),
+        ctx.json({
+          message:
+            'This is a JSON body returned back with a failed status code.',
+        })
+      );
+    }
+  ),
 ];

@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { InternalServerError, NotAuthorizedError } from './errors';
+import { NotAuthorizedError } from './errors';
 import { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 
 export class BentoClient {
@@ -29,12 +29,12 @@ export class BentoClient {
         method: 'GET',
         headers: this._headers,
       })
-        .then(result => {
+        .then(async result => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
-          throw this._getErrorForResponse(result);
+          throw await this._getErrorForResponse(result);
         })
         .then(data => resolve(data))
         .catch(error => reject(error));
@@ -61,12 +61,12 @@ export class BentoClient {
         },
         body,
       })
-        .then(result => {
+        .then(async result => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
-          throw this._getErrorForResponse(result);
+          throw await this._getErrorForResponse(result);
         })
         .then(data => resolve(data))
         .catch(error => reject(error));
@@ -143,8 +143,23 @@ export class BentoClient {
    * @param response Response
    * @returns Error
    */
-  private _getErrorForResponse(response: Response): Error {
+  private async _getErrorForResponse(response: Response): Promise<Error> {
     if (response.status === 401) return new NotAuthorizedError();
-    return new InternalServerError();
+    const contentType = response.headers.get('Content-Type');
+    let responseMessage = '';
+
+    switch (contentType?.toLocaleLowerCase()) {
+      case 'text/plain':
+        responseMessage = await response.text();
+        break;
+      case 'application/json':
+        responseMessage = JSON.stringify(await response.json());
+        break;
+      default:
+        responseMessage = 'Unknown response from the Bento API.';
+        break;
+    }
+
+    return new Error(`[${response.status}] - ${responseMessage}`);
   }
 }
