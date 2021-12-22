@@ -10,6 +10,8 @@ Track events, update data, record LTV and more in Node.JS. Data is stored in you
 
 🐶 Battle-tested by [NativShark](https://nativshark.com) Bento Production (a Bento customer)!
 
+❤️ Thank you @HelloKashif from [IPInfo](https://ipinfo.io) for your contribution.
+
 - [Installation](#Installation)
 - [Get Started](#Get-Started)
 - [Modules](#Modules)
