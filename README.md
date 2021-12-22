@@ -329,6 +329,20 @@ bento.V1.Batch.importEvents({
     },
     {
       email: 'test@bentonow.com',
+      type: BentoEvents.REMOVE_TAG,
+      details: {
+        tag: 'tag_to_remove',
+      },
+    },
+    {
+      email: 'test@bentonow.com',
+      type: BentoEvents.TAG,
+      details: {
+        tag: 'tag_to_add',
+      },
+    },
+    {
+      email: 'test@bentonow.com',
       details: {
         customData: 'Used internally.',
       },
