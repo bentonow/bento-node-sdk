@@ -47,6 +47,15 @@ export type TagEvent = {
   type: BentoEvents.TAG | '$tag';
 };
 
+export type TagRemoveEvent = {
+  date?: Date;
+  details: {
+    tag: string;
+  };
+  email: string;
+  type: BentoEvents.REMOVE_TAG | '$remove_tag';
+};
+
 export type UnsubscribeEvent = {
   date?: Date;
   email: string;
@@ -64,6 +73,7 @@ export type InternalEvents<S> =
   | PurchaseEvent
   | SubscribeEvent<S>
   | TagEvent
+  | TagRemoveEvent
   | UnsubscribeEvent
   | UpdateFieldsEvent<S>;
 
