@@ -28,6 +28,8 @@ export const handlers = [
           return subscribeResponse(email, res, ctx);
         case 'unsubscribe':
           return unsubscribeResponse(email, res, ctx);
+        case 'change_email':
+          return changeEmailResponse(email, query, res, ctx);
       }
 
       return res(ctx.status(500));
@@ -174,6 +176,30 @@ function unsubscribeResponse(
         attributes: {
           uuid: '090289b2a1cf40e8a85507eb9ae73684',
           email: email,
+          fields: null,
+          cached_tag_ids: [],
+          unsubscribed_at: '2021-08-21T09:11:55.587Z',
+        },
+      },
+    })
+  );
+}
+
+function changeEmailResponse(
+  _email: string,
+  query: string,
+  res: ResponseComposition,
+  ctx: RestContext
+) {
+  return res(
+    ctx.status(201),
+    ctx.json({
+      data: {
+        id: '444792518',
+        type: 'visitors',
+        attributes: {
+          uuid: '090289b2a1cf40e8a85507eb9ae73684',
+          email: query,
           fields: null,
           cached_tag_ids: [],
           unsubscribed_at: '2021-08-21T09:11:55.587Z',

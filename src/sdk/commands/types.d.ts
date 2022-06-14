@@ -31,3 +31,8 @@ export type SubscribeParameters = {
 export type UnsubscribeParameters = {
   email: string;
 };
+
+export type ChangeEmailParameters = {
+  oldEmail: string;
+  newEmail: string;
+};

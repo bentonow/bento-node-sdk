@@ -32,4 +32,4 @@ export type UpdateFieldsParameters<S> = {
   fields: Partial<S>;
 };
 
-export type TrackParameters<S, E> = BaseEvent<S, E>;
+export type TrackParameters<S, E> = BaseEvent<S, E> & { fields: Partial<S> };

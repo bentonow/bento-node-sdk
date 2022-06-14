@@ -133,6 +133,9 @@ describe('Analytics Integrated Events', () => {
         details: {
           fromCustomEvent: true,
         },
+        fields: {
+          firstName: 'Custom Name',
+        },
       })
     ).resolves.toBe(true);
   });

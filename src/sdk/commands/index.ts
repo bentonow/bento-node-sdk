@@ -1,15 +1,16 @@
+import { BentoClient } from '../client';
+import { DataResponse } from '../client/types';
+import { Subscriber } from '../subscribers/types';
+import { CommandTypes } from './enums';
 import {
   AddFieldParameters,
   AddTagParameters,
+  ChangeEmailParameters,
   RemoveFieldParameters,
   RemoveTagParameters,
   SubscribeParameters,
   UnsubscribeParameters,
 } from './types';
-import { BentoClient } from '../client';
-import { DataResponse } from '../client/types';
-import { Subscriber } from '../subscribers/types';
-import { CommandTypes } from './enums';
 
 export class BentoCommands<S> {
   private readonly _url = '/fetch/commands';
@@ -193,6 +194,34 @@ export class BentoCommands<S> {
           command: {
             command: CommandTypes.UNSUBSCRIBE,
             email: parameters.email,
+          },
+        }
+      );
+
+      if (Object.keys(result).length === 0 || !result.data) return null;
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Updates the email of a user in Bento.
+   *
+   * @param parameters \{ oldEmail: string, newEmail: string \}
+   * @returns Promise\<Subscriber | null\>
+   */
+  public async changeEmail(
+    parameters: ChangeEmailParameters
+  ): Promise<Subscriber<S> | null> {
+    try {
+      const result = await this._client.post<DataResponse<Subscriber<S>>>(
+        this._url,
+        {
+          command: {
+            command: CommandTypes.CHANGE_EMAIL,
+            email: parameters.oldEmail,
+            query: parameters.newEmail,
           },
         }
       );

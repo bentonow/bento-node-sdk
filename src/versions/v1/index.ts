@@ -1,4 +1,3 @@
-import { AnalyticsOptions } from '../../sdk/interfaces';
 import {
   BentoBatch,
   BentoClient,
@@ -9,6 +8,8 @@ import {
   BentoSubscribers,
   BentoTags,
 } from '../../sdk';
+import { BentoEvents } from '../../sdk/batch/enums';
+import { AnalyticsOptions } from '../../sdk/interfaces';
 import {
   AddSubscriberParameters,
   RemoveSubscriberParameters,
@@ -17,7 +18,6 @@ import {
   TrackPurchaseParameters,
   UpdateFieldsParameters,
 } from './types';
-import { BentoEvents } from '../../sdk/batch/enums';
 
 export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
   private readonly _client: BentoClient;
