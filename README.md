@@ -269,6 +269,10 @@ Reference Types: [TrackParameters<S, E>](#trackparametersse)
 bento.V1.track({
   email: 'test@bentonow.com',
   type: '$custom.event',
+  fields: {
+        firstName: 'Custom Name',
+        lastName: 'Custom Name',
+  },
   details: {
     fromCustomEvent: true,
   },
