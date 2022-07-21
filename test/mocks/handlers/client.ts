@@ -13,6 +13,12 @@ export const handlers = [
       return res(ctx.status(200));
     }
   ),
+  rest.get(
+    'https://app.bentonow.com/api/v1/rate-limit',
+    (_req, res: ResponseComposition<any>, ctx: RestContext) => {
+      return res(ctx.status(429));
+    }
+  ),
   rest.post(
     'https://app.bentonow.com/api/v1/test',
     (req, res: ResponseComposition<any>, ctx: RestContext) => {

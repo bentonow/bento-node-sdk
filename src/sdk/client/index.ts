@@ -1,16 +1,18 @@
 import fetch from 'isomorphic-fetch';
-import { NotAuthorizedError } from './errors';
 import { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
+import { NotAuthorizedError, RateLimitedError } from './errors';
 
 export class BentoClient {
   private readonly _headers: HeadersInit = {};
   private readonly _baseUrl: string = 'https://app.bentonow.com/api/v1';
   private readonly _siteUuid: string = '';
+  private readonly _logErrors: boolean = false;
 
   constructor(options: AnalyticsOptions) {
     this._baseUrl = options.clientOptions?.baseUrl || this._baseUrl;
     this._siteUuid = options.siteUuid;
     this._headers = this._extractHeaders(options.authentication);
+    this._logErrors = options.logErrors || false;
   }
 
   /**
@@ -145,6 +147,8 @@ export class BentoClient {
    */
   private async _getErrorForResponse(response: Response): Promise<Error> {
     if (response.status === 401) return new NotAuthorizedError();
+    if (response.status === 429) return new RateLimitedError();
+
     const contentType = response.headers.get('Content-Type');
     let responseMessage = '';
 
@@ -158,6 +162,10 @@ export class BentoClient {
       default:
         responseMessage = 'Unknown response from the Bento API.';
         break;
+    }
+
+    if (this._logErrors) {
+      console.error(response);
     }
 
     return new Error(`[${response.status}] - ${responseMessage}`);

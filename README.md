@@ -76,6 +76,7 @@ const bento = new Analytics({
     publishableKey: 'publishableKey',
     secretKey: 'secretKey',
   },
+  logErrors: false, // Set to true to see the HTTP errors logged
   siteUuid: 'siteUuid',
 });
 

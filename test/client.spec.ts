@@ -1,4 +1,4 @@
-import { NotAuthorizedError } from '../src';
+import { NotAuthorizedError, RateLimitedError } from '../src';
 import { BentoClient } from '../src/sdk';
 
 describe('Subscribers', () => {
@@ -16,6 +16,18 @@ describe('Subscribers', () => {
 });
 
 describe('Error handling', () => {
+  it('Throws a rate limited error.', async () => {
+    const client = new BentoClient({
+      authentication: {
+        secretKey: '',
+        publishableKey: '',
+      },
+      siteUuid: 'test',
+    });
+
+    await expect(client.get('/rate-limit')).rejects.toThrow(RateLimitedError);
+  });
+
   it('Returns a text error properly', async () => {
     const client = new BentoClient({
       authentication: {
