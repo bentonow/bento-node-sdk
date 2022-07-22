@@ -2,6 +2,8 @@
  * Core Types
  */
 
+import type { EntityType } from "./enums";
+
 export type BaseEntity<T> = {
   attributes: T;
   id: string;

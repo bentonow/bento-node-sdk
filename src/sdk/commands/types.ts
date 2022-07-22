@@ -15,7 +15,7 @@ export type AddFieldParameters<S> = {
   email: string;
   field: {
     key: keyof S;
-    value: any;
+    value: unknown;
   };
 };
 

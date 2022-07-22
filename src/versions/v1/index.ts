@@ -9,8 +9,8 @@ import {
   BentoTags,
 } from '../../sdk';
 import { BentoEvents } from '../../sdk/batch/enums';
-import { AnalyticsOptions } from '../../sdk/interfaces';
-import {
+import type { AnalyticsOptions } from '../../sdk/interfaces';
+import type {
   AddSubscriberParameters,
   RemoveSubscriberParameters,
   TagSubscriberParameters,
@@ -19,7 +19,10 @@ import {
   UpdateFieldsParameters,
 } from './types';
 
-export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
+export class BentoAPIV1<
+  S = { [key: string]: unknown },
+  E extends string = '$custom'
+> {
   private readonly _client: BentoClient;
 
   public readonly Batch: BentoBatch<S, E>;
@@ -59,24 +62,20 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * @returns Promise\<boolean\>
    */
   async tagSubscriber(parameters: TagSubscriberParameters): Promise<boolean> {
-    try {
-      const result = await this.Batch.importEvents({
-        events: [
-          {
-            date: parameters.date,
-            details: {
-              tag: parameters.tagName,
-            },
-            email: parameters.email,
-            type: BentoEvents.TAG,
+    const result = await this.Batch.importEvents({
+      events: [
+        {
+          date: parameters.date,
+          details: {
+            tag: parameters.tagName,
           },
-        ],
-      });
+          email: parameters.email,
+          type: BentoEvents.TAG,
+        },
+      ],
+    });
 
-      return result === 1;
-    } catch (e) {
-      throw e;
-    }
+    return result === 1;
   }
 
   /**
@@ -102,22 +101,18 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
   async addSubscriber(
     parameters: AddSubscriberParameters<S>
   ): Promise<boolean> {
-    try {
-      const result = await this.Batch.importEvents({
-        events: [
-          {
-            date: parameters.date,
-            email: parameters.email,
-            type: BentoEvents.SUBSCRIBE,
-            fields: parameters.fields || {},
-          },
-        ],
-      });
+    const result = await this.Batch.importEvents({
+      events: [
+        {
+          date: parameters.date,
+          email: parameters.email,
+          type: BentoEvents.SUBSCRIBE,
+          fields: parameters.fields || {},
+        },
+      ],
+    });
 
-      return result === 1;
-    } catch (e) {
-      throw e;
-    }
+    return result === 1;
   }
 
   /**
@@ -142,21 +137,17 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
   async removeSubscriber(
     parameters: RemoveSubscriberParameters
   ): Promise<boolean> {
-    try {
-      const result = await this.Batch.importEvents({
-        events: [
-          {
-            date: parameters.date,
-            email: parameters.email,
-            type: BentoEvents.UNSUBSCRIBE,
-          },
-        ],
-      });
+    const result = await this.Batch.importEvents({
+      events: [
+        {
+          date: parameters.date,
+          email: parameters.email,
+          type: BentoEvents.UNSUBSCRIBE,
+        },
+      ],
+    });
 
-      return result === 1;
-    } catch (e) {
-      throw e;
-    }
+    return result === 1;
   }
 
   /**
@@ -179,22 +170,18 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * @returns Promise\<boolean\>
    */
   async updateFields(parameters: UpdateFieldsParameters<S>): Promise<boolean> {
-    try {
-      const result = await this.Batch.importEvents({
-        events: [
-          {
-            date: parameters.date,
-            email: parameters.email,
-            type: BentoEvents.UPDATE_FIELDS,
-            fields: parameters.fields,
-          },
-        ],
-      });
+    const result = await this.Batch.importEvents({
+      events: [
+        {
+          date: parameters.date,
+          email: parameters.email,
+          type: BentoEvents.UPDATE_FIELDS,
+          fields: parameters.fields,
+        },
+      ],
+    });
 
-      return result === 1;
-    } catch (e) {
-      throw e;
-    }
+    return result === 1;
   }
 
   /**
@@ -216,22 +203,18 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * @returns Promise\<boolean\>
    */
   async trackPurchase(parameters: TrackPurchaseParameters): Promise<boolean> {
-    try {
-      const result = await this.Batch.importEvents({
-        events: [
-          {
-            date: parameters.date,
-            email: parameters.email,
-            type: BentoEvents.PURCHASE,
-            details: parameters.purchaseDetails,
-          },
-        ],
-      });
+    const result = await this.Batch.importEvents({
+      events: [
+        {
+          date: parameters.date,
+          email: parameters.email,
+          type: BentoEvents.PURCHASE,
+          details: parameters.purchaseDetails,
+        },
+      ],
+    });
 
-      return result === 1;
-    } catch (e) {
-      throw e;
-    }
+    return result === 1;
   }
 
   /**
@@ -252,14 +235,10 @@ export class BentoAPIV1<S = { [key: string]: any }, E = '$custom'> {
    * @returns Promise\<boolean\>
    */
   async track(parameters: TrackParameters<S, E>): Promise<boolean> {
-    try {
-      const result = await this.Batch.importEvents({
-        events: [parameters],
-      });
+    const result = await this.Batch.importEvents({
+      events: [parameters],
+    });
 
-      return result === 1;
-    } catch (e) {
-      throw e;
-    }
+    return result === 1;
   }
 }

@@ -1,7 +1,7 @@
-import { AnalyticsOptions } from './sdk/interfaces';
+import type { AnalyticsOptions } from './sdk/interfaces';
 import { BentoAPIV1 } from './versions/v1';
 
-export class Analytics<S = { [key: string]: any }, E = '$custom'> {
+export class Analytics<S = { [key: string]: unknown }, E extends string = ''> {
   public readonly V1: BentoAPIV1<S, E>;
 
   constructor(options: AnalyticsOptions) {

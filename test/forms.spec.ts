@@ -23,8 +23,7 @@ describe('[V1] Get Form Responses [/fetch/responses]', () => {
             ip: '119.47.252.96',
             date: '2021-08-21T09:18:12.000+00:00',
             page: {
-              url:
-                'https://app.bentonow.com/f/06ef3ada3b32a7f7dac762f5a788724d/test-formid-1234',
+              url: 'https://app.bentonow.com/f/06ef3ada3b32a7f7dac762f5a788724d/test-formid-1234',
               host: 'app.bentonow.com',
               path: '/f/06ef3ada3b32a7f7dac762f5a788724d/test-formid-1234',
               protocol: 'https:',

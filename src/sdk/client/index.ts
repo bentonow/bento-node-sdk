@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
+import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 import { NotAuthorizedError, RateLimitedError } from './errors';
 
 export class BentoClient {
@@ -23,7 +23,10 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public get<T>(endpoint: string, payload: object = {}): Promise<T> {
+  public get<T>(
+    endpoint: string,
+    payload: Record<string, unknown> = {}
+  ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const queryParameters = this._getQueryParameters(payload);
 
@@ -31,15 +34,15 @@ export class BentoClient {
         method: 'GET',
         headers: this._headers,
       })
-        .then(async result => {
+        .then(async (result) => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then(data => resolve(data))
-        .catch(error => reject(error));
+        .then((data) => resolve(data))
+        .catch((error) => reject(error));
     });
   }
 
@@ -51,7 +54,10 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public post<T>(endpoint: string, payload: object = {}): Promise<T> {
+  public post<T>(
+    endpoint: string,
+    payload: Record<string, unknown> = {}
+  ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const body = this._getBody(payload);
 
@@ -63,15 +69,15 @@ export class BentoClient {
         },
         body,
       })
-        .then(async result => {
+        .then(async (result) => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then(data => resolve(data))
-        .catch(error => reject(error));
+        .then((data) => resolve(data))
+        .catch((error) => reject(error));
     });
   }
 
@@ -99,7 +105,7 @@ export class BentoClient {
    * @param payload object
    * @returns string
    */
-  private _getBody(payload: object): string {
+  private _getBody(payload: Record<string, unknown>): string {
     return JSON.stringify({
       ...payload,
       site_uuid: this._siteUuid,
@@ -113,7 +119,7 @@ export class BentoClient {
    * @param payload object
    * @returns string
    */
-  private _getQueryParameters(payload: object): string {
+  private _getQueryParameters(payload: Record<string, unknown>): string {
     const body = {
       ...payload,
       site_uuid: this._siteUuid,
@@ -146,6 +152,10 @@ export class BentoClient {
    * @returns Error
    */
   private async _getErrorForResponse(response: Response): Promise<Error> {
+    if (this._logErrors) {
+      console.error(response);
+    }
+
     if (response.status === 401) return new NotAuthorizedError();
     if (response.status === 429) return new RateLimitedError();
 
@@ -162,10 +172,6 @@ export class BentoClient {
       default:
         responseMessage = 'Unknown response from the Bento API.';
         break;
-    }
-
-    if (this._logErrors) {
-      console.error(response);
     }
 
     return new Error(`[${response.status}] - ${responseMessage}`);

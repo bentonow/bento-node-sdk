@@ -1,8 +1,8 @@
-import { BentoClient } from '../client';
-import { DataResponse } from '../client/types';
-import { Subscriber } from '../subscribers/types';
+import type { BentoClient } from '../client';
+import type { DataResponse } from '../client/types';
+import type { Subscriber } from '../subscribers/types';
 import { CommandTypes } from './enums';
-import {
+import type {
   AddFieldParameters,
   AddTagParameters,
   ChangeEmailParameters,
@@ -33,23 +33,19 @@ export class BentoCommands<S> {
   public async addTag(
     parameters: AddTagParameters
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          command: {
-            command: CommandTypes.ADD_TAG,
-            email: parameters.email,
-            query: parameters.tagName,
-          },
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        command: {
+          command: CommandTypes.ADD_TAG,
+          email: parameters.email,
+          query: parameters.tagName,
+        },
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -61,23 +57,19 @@ export class BentoCommands<S> {
   public async removeTag(
     parameters: RemoveTagParameters
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          command: {
-            command: CommandTypes.REMOVE_TAG,
-            email: parameters.email,
-            query: parameters.tagName,
-          },
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        command: {
+          command: CommandTypes.REMOVE_TAG,
+          email: parameters.email,
+          query: parameters.tagName,
+        },
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -95,23 +87,19 @@ export class BentoCommands<S> {
   public async addField(
     parameters: AddFieldParameters<S>
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          command: {
-            command: CommandTypes.ADD_FIELD,
-            email: parameters.email,
-            query: parameters.field,
-          },
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        command: {
+          command: CommandTypes.ADD_FIELD,
+          email: parameters.email,
+          query: parameters.field,
+        },
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -123,23 +111,19 @@ export class BentoCommands<S> {
   public async removeField(
     parameters: RemoveFieldParameters<S>
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          command: {
-            command: CommandTypes.REMOVE_FIELD,
-            email: parameters.email,
-            query: parameters.fieldName,
-          },
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        command: {
+          command: CommandTypes.REMOVE_FIELD,
+          email: parameters.email,
+          query: parameters.fieldName,
+        },
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -155,22 +139,18 @@ export class BentoCommands<S> {
   public async subscribe(
     parameters: SubscribeParameters
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          command: {
-            command: CommandTypes.SUBSCRIBE,
-            email: parameters.email,
-          },
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        command: {
+          command: CommandTypes.SUBSCRIBE,
+          email: parameters.email,
+        },
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -187,22 +167,18 @@ export class BentoCommands<S> {
   public async unsubscribe(
     parameters: UnsubscribeParameters
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          command: {
-            command: CommandTypes.UNSUBSCRIBE,
-            email: parameters.email,
-          },
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        command: {
+          command: CommandTypes.UNSUBSCRIBE,
+          email: parameters.email,
+        },
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -214,22 +190,18 @@ export class BentoCommands<S> {
   public async changeEmail(
     parameters: ChangeEmailParameters
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          command: {
-            command: CommandTypes.CHANGE_EMAIL,
-            email: parameters.oldEmail,
-            query: parameters.newEmail,
-          },
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        command: {
+          command: CommandTypes.CHANGE_EMAIL,
+          email: parameters.oldEmail,
+          query: parameters.newEmail,
+        },
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 }

@@ -1,4 +1,4 @@
-import { LocationData } from '../types';
+import type { LocationData } from '../types';
 
 /**
  * Experimental Method Parameter Types

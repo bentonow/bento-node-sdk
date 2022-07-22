@@ -1,4 +1,4 @@
-import { BentoEvent } from './events';
+import type { BentoEvent } from './events';
 
 /**
  * Batch Method Parameter Types
@@ -9,7 +9,7 @@ export type BatchImportSubscribersParameter<S> = {
   } & Partial<S>)[];
 };
 
-export type BatchImportEventsParameter<S, E> = {
+export type BatchImportEventsParameter<S, E extends string> = {
   events: BentoEvent<S, E>[];
 };
 

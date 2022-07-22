@@ -1,4 +1,4 @@
-import { BaseEvent, PurchaseDetails } from '../../sdk/batch/events';
+import type { BaseEvent, PurchaseDetails } from '../../sdk/batch/events';
 
 /**
  * API Method Parameter Types
@@ -32,4 +32,6 @@ export type UpdateFieldsParameters<S> = {
   fields: Partial<S>;
 };
 
-export type TrackParameters<S, E> = BaseEvent<S, E> & { fields: Partial<S> };
+export type TrackParameters<S, E extends string> = BaseEvent<E> & {
+  fields: Partial<S>;
+};

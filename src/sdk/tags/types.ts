@@ -1,4 +1,4 @@
-import { BaseEntity } from '../types';
+import type { BaseEntity } from '../types';
 
 /**
  * Tag Method Parameter Types

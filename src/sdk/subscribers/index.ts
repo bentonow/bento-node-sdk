@@ -1,6 +1,6 @@
-import { BentoClient } from '../client';
-import { DataResponse } from '../client/types';
-import {
+import type { BentoClient } from '../client';
+import type { DataResponse } from '../client/types';
+import type {
   CreateSubscriberParameters,
   GetSubscribersParameters,
   Subscriber,
@@ -19,17 +19,13 @@ export class BentoSubscribers<S> {
   public async getSubscribers(
     parameters?: GetSubscribersParameters
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.get<DataResponse<Subscriber<S>>>(
-        this._url,
-        parameters
-      );
+    const result = await this._client.get<DataResponse<Subscriber<S>>>(
+      this._url,
+      parameters
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -41,18 +37,14 @@ export class BentoSubscribers<S> {
   public async createSubscriber(
     parameters: CreateSubscriberParameters
   ): Promise<Subscriber<S> | null> {
-    try {
-      const result = await this._client.post<DataResponse<Subscriber<S>>>(
-        this._url,
-        {
-          subscriber: parameters,
-        }
-      );
+    const result = await this._client.post<DataResponse<Subscriber<S>>>(
+      this._url,
+      {
+        subscriber: parameters,
+      }
+    );
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 }

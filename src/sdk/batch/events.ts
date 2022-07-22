@@ -1,4 +1,4 @@
-import { BentoEvents } from './enums';
+import type { BentoEvents } from './enums';
 
 export type PurchaseItem = {
   product_sku?: string;
@@ -77,12 +77,11 @@ export type InternalEvents<S> =
   | UnsubscribeEvent
   | UpdateFieldsEvent<S>;
 
-export type BaseEvent<E> = {
+export type BaseEvent<E extends string> = {
   date?: Date;
-  details?: { [key: string]: any };
+  details?: Record<string, unknown>;
   email: string;
-  /* eslint-disable */
   type: `${E}${string}`;
 };
 
-export type BentoEvent<S, E> = InternalEvents<S> | BaseEvent<E>;
+export type BentoEvent<S, E extends string> = InternalEvents<S> | BaseEvent<E>;

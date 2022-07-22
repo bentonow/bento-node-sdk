@@ -1,4 +1,6 @@
-import {
+import type { BentoClient } from '../client';
+import type { LocationData } from '../types';
+import type {
   BlacklistParameters,
   BlacklistResponse,
   GeolocateParameters,
@@ -8,8 +10,6 @@ import {
   ValidateEmailParameters,
   ValidateEmailResponse,
 } from './types';
-import { BentoClient } from '../client';
-import { LocationData } from '../types';
 
 export class BentoExperimental {
   private readonly _url = '/experimental';
@@ -32,21 +32,17 @@ export class BentoExperimental {
   public async validateEmail(
     parameters: ValidateEmailParameters
   ): Promise<boolean> {
-    try {
-      const result = await this._client.post<ValidateEmailResponse>(
-        `${this._url}/validation`,
-        {
-          email: parameters.email,
-          ip: parameters.ip,
-          name: parameters.name,
-          user_agent: parameters.userAgent,
-        }
-      );
+    const result = await this._client.post<ValidateEmailResponse>(
+      `${this._url}/validation`,
+      {
+        email: parameters.email,
+        ip: parameters.ip,
+        name: parameters.name,
+        user_agent: parameters.userAgent,
+      }
+    );
 
-      return result.valid;
-    } catch (error) {
-      throw error;
-    }
+    return result.valid;
   }
 
   /**
@@ -65,16 +61,12 @@ export class BentoExperimental {
   public async guessGender(
     parameters: GuessGenderParameters
   ): Promise<GuessGenderResponse> {
-    try {
-      const result = await this._client.post<GuessGenderResponse>(
-        `${this._url}/gender`,
-        parameters
-      );
+    const result = await this._client.post<GuessGenderResponse>(
+      `${this._url}/gender`,
+      parameters
+    );
 
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    return result;
   }
 
   /**
@@ -89,17 +81,13 @@ export class BentoExperimental {
   public async geolocate(
     parameters: GeolocateParameters
   ): Promise<LocationData | null> {
-    try {
-      const result = await this._client.get<GeolocateResponse>(
-        `${this._url}/geolocation`,
-        parameters
-      );
+    const result = await this._client.get<GeolocateResponse>(
+      `${this._url}/geolocation`,
+      parameters
+    );
 
-      if (Object.keys(result).length === 0) return null;
-      return result as LocationData;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0) return null;
+    return result as LocationData;
   }
 
   /**
@@ -115,15 +103,11 @@ export class BentoExperimental {
   public async checkBlacklist(
     parameters: BlacklistParameters
   ): Promise<BlacklistResponse> {
-    try {
-      const result = await this._client.get<BlacklistResponse>(
-        `${this._url}/blacklist.json`,
-        parameters
-      );
+    const result = await this._client.get<BlacklistResponse>(
+      `${this._url}/blacklist.json`,
+      parameters
+    );
 
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    return result;
   }
 }

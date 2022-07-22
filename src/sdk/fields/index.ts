@@ -1,6 +1,6 @@
-import { BentoClient } from '../client';
-import { DataResponse } from '../client/types';
-import { CreateFieldParameters, Field } from './types';
+import type { BentoClient } from '../client';
+import type { DataResponse } from '../client/types';
+import type { CreateFieldParameters, Field } from './types';
 
 export class BentoFields {
   private readonly _url = '/fetch/fields';
@@ -13,14 +13,10 @@ export class BentoFields {
    * @returns Promise<Field[]>
    */
   public async getFields(): Promise<Field[] | null> {
-    try {
-      const result = await this._client.get<DataResponse<Field[]>>(this._url);
+    const result = await this._client.get<DataResponse<Field[]>>(this._url);
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 
   /**
@@ -41,15 +37,11 @@ export class BentoFields {
   public async createField(
     parameters: CreateFieldParameters
   ): Promise<Field[] | null> {
-    try {
-      const result = await this._client.post<DataResponse<Field[]>>(this._url, {
-        field: parameters,
-      });
+    const result = await this._client.post<DataResponse<Field[]>>(this._url, {
+      field: parameters,
+    });
 
-      if (Object.keys(result).length === 0 || !result.data) return null;
-      return result.data;
-    } catch (error) {
-      throw error;
-    }
+    if (Object.keys(result).length === 0 || !result.data) return null;
+    return result.data;
   }
 }

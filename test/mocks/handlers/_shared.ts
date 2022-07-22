@@ -1,4 +1,4 @@
-import { ResponseComposition, RestContext } from 'msw';
+import type { ResponseComposition, RestContext } from 'msw';
 
 export function basicAuthError(
   res: ResponseComposition<any>,

@@ -1,4 +1,5 @@
-import { ResponseComposition, rest, RestContext } from 'msw';
+import type { ResponseComposition, RestContext } from 'msw';
+import { rest } from 'msw';
 
 import { basicAuthError } from './_shared';
 

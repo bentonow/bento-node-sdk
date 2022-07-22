@@ -1,18 +1,18 @@
-import {
-  BatchImportEventsParameter,
-  BatchImportEventsResponse,
-  BatchImportSubscribersParameter,
-  BatchImportSubscribersResponse,
-} from './types';
-import { BentoClient } from '../client';
+import type { BentoClient } from '../client';
 import {
   TooFewEventsError,
   TooFewSubscribersError,
   TooManyEventsError,
   TooManySubscribersError,
 } from './errors';
+import type {
+  BatchImportEventsParameter,
+  BatchImportEventsResponse,
+  BatchImportSubscribersParameter,
+  BatchImportSubscribersResponse,
+} from './types';
 
-export class BentoBatch<S, E> {
+export class BentoBatch<S, E extends string> {
   private readonly _maxBatchSize = 1000;
   private readonly _url = '/batch';
 
@@ -39,30 +39,26 @@ export class BentoBatch<S, E> {
   public async importSubscribers(
     parameters: BatchImportSubscribersParameter<S>
   ): Promise<number> {
-    try {
-      if (parameters.subscribers.length === 0) {
-        throw new TooFewSubscribersError(
-          `You must send between 1 and 1,000 subscribers.`
-        );
-      }
-
-      if (parameters.subscribers.length > this._maxBatchSize) {
-        throw new TooManySubscribersError(
-          `You must send between 1 and 1,000 subscribers.`
-        );
-      }
-
-      const result = await this._client.post<BatchImportSubscribersResponse>(
-        `${this._url}/subscribers`,
-        {
-          subscribers: parameters.subscribers,
-        }
+    if (parameters.subscribers.length === 0) {
+      throw new TooFewSubscribersError(
+        `You must send between 1 and 1,000 subscribers.`
       );
-
-      return result.results;
-    } catch (error) {
-      throw error;
     }
+
+    if (parameters.subscribers.length > this._maxBatchSize) {
+      throw new TooManySubscribersError(
+        `You must send between 1 and 1,000 subscribers.`
+      );
+    }
+
+    const result = await this._client.post<BatchImportSubscribersResponse>(
+      `${this._url}/subscribers`,
+      {
+        subscribers: parameters.subscribers,
+      }
+    );
+
+    return result.results;
   }
 
   /**
@@ -79,29 +75,21 @@ export class BentoBatch<S, E> {
   public async importEvents(
     parameters: BatchImportEventsParameter<S, E>
   ): Promise<number> {
-    try {
-      if (parameters.events.length === 0) {
-        throw new TooFewEventsError(
-          `You must send between 1 and 1,000 events.`
-        );
-      }
-
-      if (parameters.events.length > this._maxBatchSize) {
-        throw new TooManyEventsError(
-          `You must send between 1 and 1,000 events.`
-        );
-      }
-
-      const result = await this._client.post<BatchImportEventsResponse>(
-        `${this._url}/events`,
-        {
-          events: parameters.events,
-        }
-      );
-
-      return result.results;
-    } catch (error) {
-      throw error;
+    if (parameters.events.length === 0) {
+      throw new TooFewEventsError(`You must send between 1 and 1,000 events.`);
     }
+
+    if (parameters.events.length > this._maxBatchSize) {
+      throw new TooManyEventsError(`You must send between 1 and 1,000 events.`);
+    }
+
+    const result = await this._client.post<BatchImportEventsResponse>(
+      `${this._url}/events`,
+      {
+        events: parameters.events,
+      }
+    );
+
+    return result.results;
   }
 }

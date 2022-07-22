@@ -1,4 +1,4 @@
-import {
+import type {
   BaseEntity,
   BrowserData,
   IdentityData,
@@ -13,8 +13,8 @@ import {
 export type FormResponseData = {
   browser: BrowserData;
   date: string;
-  details: { [key: string]: any };
-  fields: { [key: string]: any };
+  details: { [key: string]: unknown };
+  fields: { [key: string]: unknown };
   id: string;
   identity: IdentityData;
   ip: string;
