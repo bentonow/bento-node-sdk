@@ -286,7 +286,7 @@ bento.V1.track({
 
 ### `Batch.importSubscribers(parameters: BatchImportSubscribersParameter<S>): Promise<number>`
 
-**This does not trigger automations!** - If you wish to trigger automations, please batch import events with the type set to `BentoEvents.SUBSCRIBE`, or `$subscribe`. Note that the batch event import cannot attach custom fields and will ignore everything except the email.
+**This does not trigger automations!** - If you wish to trigger automations, please batch import events.
 
 Creates a batch job to import subscribers into the system. You can pass in between 1 and 1,000 subscribers to import. Each subscriber must have an email, and may optionally have any additional fields. The additional fields are added as custom fields on the subscriber.
 
@@ -305,6 +305,8 @@ bento.V1.Batch.importSubscribers({
     },
     {
       email: 'test2@bentonow.com',
+      some_custom_variable: 'tester-123',
+      primary_user: true
     },
     {
       email: 'test3@bentonow.com',
@@ -320,7 +322,7 @@ bento.V1.Batch.importSubscribers({
 
 ### `Batch.importEvents(parameters: BatchImportEventsParameter<S, E>): Promise<number>`
 
-Creates a batch job to import events into the system. You can pass in between 1 and 1,000 events to import. Each event must have an email and a type. In addition to this, you my pass in additional data in the `details` property,
+Creates a batch job to import events into the system. You can pass in between 1 and 100 events to import. Each event must have an email and a type. In addition to this, you my pass in additional data in the `details` property,
 
 Returns the number of events that were imported.
 
