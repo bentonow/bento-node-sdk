@@ -6,6 +6,8 @@ import {
   TooManySubscribersError,
 } from './errors';
 import type {
+  BatchImportEmailsParameter,
+  BatchImportEmailsResponse,
   BatchImportEventsParameter,
   BatchImportEventsResponse,
   BatchImportSubscribersParameter,
@@ -13,6 +15,7 @@ import type {
 } from './types';
 
 export class BentoBatch<S, E extends string> {
+  private readonly _maxEmailBatchSize = 100;
   private readonly _maxBatchSize = 1000;
   private readonly _url = '/batch';
 
@@ -87,6 +90,42 @@ export class BentoBatch<S, E extends string> {
       `${this._url}/events`,
       {
         events: parameters.events,
+      }
+    );
+
+    return result.results;
+  }
+
+  /**
+   * Creates a batch job to import emails into the system. You can pass in
+   * between 1 and 100 emails to import.
+   * Creates a batch job to import transactional emails into the system.
+   * You can pass in between 1 and 100 emails to import.
+   * Each email must have a `to` address, a `from` address, a `subject`, an `html_body`
+   * and `transactional: true`.
+   * In addition you can add a `personalization` object to provide
+   * liquid tsags that will be injected into the email.
+   *
+   * Returns the number of events that were imported.
+   *
+   * @param parameters
+   * @returns Promise\<number\>
+   */
+  public async importEmails(
+    parameters: BatchImportEmailsParameter
+  ): Promise<number> {
+    if (parameters.emails.length === 0) {
+      throw new TooFewEventsError(`You must send between 1 and 100 emails.`);
+    }
+
+    if (parameters.emails.length > this._maxEmailBatchSize) {
+      throw new TooManyEventsError(`You must send between 1 and 100 emails.`);
+    }
+
+    const result = await this._client.post<BatchImportEmailsResponse>(
+      `${this._url}/emails`,
+      {
+        emails: parameters.emails,
       }
     );
 
