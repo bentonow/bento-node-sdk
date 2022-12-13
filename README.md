@@ -83,8 +83,8 @@ const bento = new Analytics({
 bento.V1.addSubscriber({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 
 bento.V1.updateFields({
   email: 'test@bentonow.com',
@@ -93,8 +93,8 @@ bento.V1.updateFields({
     lastName: 'User',
   },
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 
 bento.V1.trackPurchase({
   email: 'test@bentonow.com',
@@ -135,8 +135,8 @@ bento.V1.tagSubscriber({
   email: 'test@bentonow.com',
   tagName: 'Test Tag',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -159,8 +159,8 @@ Reference Types: [AddSubscriberParameters\<S\>](#addsubscriberparameterss)
 bento.V1.addSubscriber({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 
 bento.V1.addSubscriber({
   date: new Date('2021-08-20T01:32:57.530Z'),
@@ -170,8 +170,8 @@ bento.V1.addSubscriber({
     lastName: 'Subscriber',
   },
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -192,8 +192,8 @@ Reference Types: [RemoveSubscriberParameters](#RemoveSubscriberParameters)
 bento.V1.removeSubscriber({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -217,8 +217,8 @@ bento.V1.updateFields({
     firstName: 'Test',
   },
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -248,8 +248,8 @@ bento.V1.trackPurchase({
     },
   },
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -278,8 +278,8 @@ bento.V1.track({
     fromCustomEvent: true,
   },
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Batch
@@ -314,8 +314,8 @@ bento.V1.Batch.importSubscribers({
     },
   ],
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -395,8 +395,8 @@ bento.V1.Batch.importEmails({
     },
   ],
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Commands
@@ -416,8 +416,8 @@ bento.V1.Commands.addTag({
   email: 'test@bentonow.com',
   tagName: 'Test Tag',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -433,8 +433,8 @@ bento.V1.Commands.removeTag({
   email: 'test@bentonow.com',
   tagName: 'Test Tag',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -457,8 +457,8 @@ bento.V1.Commands.addField({
     value: 'testValue',
   },
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -474,8 +474,8 @@ bento.V1.Commands.removeField({
   email: 'test@bentonow.com',
   fieldName: 'testField',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -494,8 +494,8 @@ Reference Types: [SubscribeParameters](#SubscribeParameters), [Subscriber\<S\>](
 bento.V1.Commands.subscribe({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -512,8 +512,8 @@ Reference Types: [UnsubscribeParameters](#UnsubscribeParameters), [Subscriber\<S
 bento.V1.Commands.unsubscribe({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -529,8 +529,8 @@ bento.V1.Commands.changeEmail({
   oldEmail: 'test@bentonow.com',
   newEmail: 'new@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Experimental
@@ -549,8 +549,8 @@ Reference Types: [ValidateEmailParameters](#ValidateEmailParameters)
 bento.V1.Experimental.validateEmail({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -569,8 +569,8 @@ Reference Types: [GuessGenderParameters](#GuessGenderParameters), [GuessGenderRe
 bento.V1.Experimental.guessGender({
   name: 'Jesse',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -587,8 +587,8 @@ Reference Types: [GeolocateParameters](#GeolocateParameters), [LocationData](#Lo
 bento.V1.Experimental.geolocate({
   ip: '127.0.0.1',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -605,8 +605,8 @@ Reference Types: [BlacklistParameters](#BlacklistParameters), [BlacklistResponse
 bento.V1.Experimental.checkBlacklist({
   domain: 'bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Fields
@@ -621,8 +621,8 @@ Reference Types: [Field](#Field)
 bento.V1.Experimental.validateEmail({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -644,8 +644,8 @@ Reference Types: [CreateFieldParameters](#CreateFieldParameters), [Field](#Field
 bento.V1.Fields.createField({
   key: 'testKey',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Forms
@@ -658,8 +658,8 @@ Reference Types: [FormResponse](#FormResponse)
 
 ```ts
 bento.V1.Forms.getResponses('test-formid-1234')
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Subscribers
@@ -674,14 +674,14 @@ Reference Types: [GetSubscribersParameters](#GetSubscribersParameters), [Subscri
 bento.V1.Subscribers.getSubscribers({
   uuid: '1234',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 
 bento.V1.Subscribers.getSubscribers({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -696,8 +696,8 @@ Reference Types: [CreateSubscriberParameters](#CreateSubscriberParameters), [Sub
 bento.V1.Subscribers.createSubscriber({
   email: 'test@bentonow.com',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Tags
@@ -710,8 +710,8 @@ Reference Types: [Tag](#Tag)
 
 ```ts
 bento.V1.Tags.getTags()
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ---
@@ -726,8 +726,8 @@ Reference Types: [Tag](#Tag)
 bento.V1.Tags.createTag({
   name: 'test tag',
 })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
 ```
 
 ## Types Reference
