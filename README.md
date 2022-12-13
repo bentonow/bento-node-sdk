@@ -368,20 +368,18 @@ bento.V1.Batch.importEvents({
 
 ---
 
-### `Batch.importEmails(parameters: BatchImportEmailsParameter<S, E>): Promise<number>`
+### `Batch.sendTransactionalEmails(parameters: BatchsendTransactionalEmailsParameter<S, E>): Promise<number>`
 
-Creates a batch job to import transactional emails into the system. You can pass in between 1 and 100 emails to import. Each email must have a `to` address, a `from` address, a `subject`, an `html_body` and `transactional: true`.
+Creates a batch job to send transactional emails from Bento's infrastructure. You can pass in between 1 and 100 emails to send. Each email must have a `to` address, a `from` address, a `subject`, an `html_body` and `transactional: true`.
 
-In addition you can add a `personalization` object to proviede liquid tsags that will be injected into the email.
+In addition you can add a `personalizations` object to provide liquid tags that will be injected into the email.
 
 Requests are instant and queued into a priority queue. Most requests will be processed within 30 seconds. We currently limit this endpoint to 60 emails per minute.
 
 Returns the number of emails that were imported.
 
-Reference Types: [BatchImportEventsParameter<S, E>](#batchimporteventsparameterse)
-
 ```ts
-bento.V1.Batch.importEmails({
+bento.V1.Batch.sendTransactionalEmails({
   emails: [
     {
       to: 'test@bentonow.com', // required — if no user with this email exists in your account they will be created.

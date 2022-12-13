@@ -148,7 +148,7 @@ describe('[V1] Batch Import Emails [/batch/emails]', () => {
     });
 
     await expect(
-      bento.V1.Batch.importEmails({
+      bento.V1.Batch.sendTransactionalEmails({
         emails: [
           {
             to: 'test_one@bentonow.com',
@@ -177,7 +177,7 @@ describe('[V1] Batch Import Emails [/batch/emails]', () => {
     ).resolves.toBe(2);
   });
 
-  it('Errors out when importing 0 events.', async () => {
+  it('Errors out when importing 0 emails.', async () => {
     const bento = new Analytics({
       authentication: {
         secretKey: 'test',
@@ -187,13 +187,13 @@ describe('[V1] Batch Import Emails [/batch/emails]', () => {
     });
 
     await expect(
-      bento.V1.Batch.importEmails({
+      bento.V1.Batch.sendTransactionalEmails({
         emails: [],
       })
     ).rejects.toThrow(TooFewEmailsError);
   });
 
-  it('Errors out when importing 101 events.', async () => {
+  it('Errors out when importing 101 emails.', async () => {
     const bento = new Analytics({
       authentication: {
         secretKey: 'test',
@@ -203,7 +203,7 @@ describe('[V1] Batch Import Emails [/batch/emails]', () => {
     });
 
     await expect(
-      bento.V1.Batch.importEmails({
+      bento.V1.Batch.sendTransactionalEmails({
         emails: new Array(101),
       })
     ).rejects.toThrow(TooManyEmailsError);

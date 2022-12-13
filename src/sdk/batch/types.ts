@@ -13,7 +13,7 @@ export type BatchImportEventsParameter<S, E extends string> = {
   events: BentoEvent<S, E>[];
 };
 
-export type BatchImportEmail = {
+export type TransactionalEmail = {
   to: string;
   from: string;
   subject: string;
@@ -24,8 +24,8 @@ export type BatchImportEmail = {
   };
 };
 
-export type BatchImportEmailsParameter = {
-  emails: BatchImportEmail[];
+export type BatchSendTransactionalEmailsParameter = {
+  emails: TransactionalEmail[];
 };
 
 /**
@@ -39,6 +39,6 @@ export type BatchImportEventsResponse = {
   results: number;
 };
 
-export type BatchImportEmailsResponse = {
+export type BatchsendTransactionalEmailsResponse = {
   results: number;
 };
