@@ -1,7 +1,9 @@
 import type { BentoClient } from '../client';
 import {
+  TooFewEmailsError,
   TooFewEventsError,
   TooFewSubscribersError,
+  TooManyEmailsError,
   TooManyEventsError,
   TooManySubscribersError,
 } from './errors';
@@ -115,11 +117,11 @@ export class BentoBatch<S, E extends string> {
     parameters: BatchImportEmailsParameter
   ): Promise<number> {
     if (parameters.emails.length === 0) {
-      throw new TooFewEventsError(`You must send between 1 and 100 emails.`);
+      throw new TooFewEmailsError(`You must send between 1 and 100 emails.`);
     }
 
     if (parameters.emails.length > this._maxEmailBatchSize) {
-      throw new TooManyEventsError(`You must send between 1 and 100 emails.`);
+      throw new TooManyEmailsError(`You must send between 1 and 100 emails.`);
     }
 
     const result = await this._client.post<BatchImportEmailsResponse>(

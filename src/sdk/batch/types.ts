@@ -19,7 +19,7 @@ export type BatchImportEmail = {
   subject: string;
   html_body: string;
   transactional: boolean;
-  personalization?: { [key: string]: string };
+  personalizations?: { [key: string]: string };
 };
 
 export type BatchImportEmailsParameter = {
