@@ -25,3 +25,17 @@ export class TooManyEventsError extends Error {
     this.name = 'TooManyEventsError';
   }
 }
+
+export class TooFewEmailsError extends Error {
+  constructor(message = 'Too few emails') {
+    super(message);
+    this.name = 'TooFewEmailsError';
+  }
+}
+
+export class TooManyEmailsError extends Error {
+  constructor(message = 'Too many emails') {
+    super(message);
+    this.name = 'TooManyEmailsError';
+  }
+}
