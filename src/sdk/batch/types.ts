@@ -13,6 +13,21 @@ export type BatchImportEventsParameter<S, E extends string> = {
   events: BentoEvent<S, E>[];
 };
 
+export type TransactionalEmail = {
+  to: string;
+  from: string;
+  subject: string;
+  html_body: string;
+  transactional: boolean;
+  personalizations?: {
+    [key: string]: string | number | boolean;
+  };
+};
+
+export type BatchSendTransactionalEmailsParameter = {
+  emails: TransactionalEmail[];
+};
+
 /**
  * Batch Method Response Types
  */
@@ -21,5 +36,9 @@ export type BatchImportSubscribersResponse = {
 };
 
 export type BatchImportEventsResponse = {
+  results: number;
+};
+
+export type BatchsendTransactionalEmailsResponse = {
   results: number;
 };

@@ -271,8 +271,8 @@ bento.V1.track({
   email: 'test@bentonow.com',
   type: '$custom.event',
   fields: {
-        firstName: 'Custom Name',
-        lastName: 'Custom Name',
+    firstName: 'Custom Name',
+    lastName: 'Custom Name',
   },
   details: {
     fromCustomEvent: true,
@@ -306,7 +306,7 @@ bento.V1.Batch.importSubscribers({
     {
       email: 'test2@bentonow.com',
       some_custom_variable: 'tester-123',
-      primary_user: true
+      primary_user: true,
     },
     {
       email: 'test3@bentonow.com',
@@ -359,6 +359,37 @@ bento.V1.Batch.importEvents({
         customData: 'Used internally.',
       },
       type: '$custom.myEvent,
+    },
+  ],
+})
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+```
+
+---
+
+### `Batch.sendTransactionalEmails(parameters: BatchsendTransactionalEmailsParameter<S, E>): Promise<number>`
+
+Creates a batch job to send transactional emails from Bento's infrastructure. You can pass in between 1 and 100 emails to send. Each email must have a `to` address, a `from` address, a `subject`, an `html_body` and `transactional: true`.
+
+In addition you can add a `personalizations` object to provide liquid tags that will be injected into the email.
+
+Requests are instant and queued into a priority queue. Most requests will be processed within 30 seconds. We currently limit this endpoint to 60 emails per minute.
+
+Returns the number of emails that were imported.
+
+```ts
+bento.V1.Batch.sendTransactionalEmails({
+  emails: [
+    {
+      to: 'test@bentonow.com', // required — if no user with this email exists in your account they will be created.
+      from: 'jesse@bentonow.com', // required — must be an email author in your account.
+      subject: 'Reset Password', // required
+      html_body: '<p>Here is a link to reset your password ... {{ link }}</p>', // required - can also use text_body if you want to use our plain text theme.
+      transactional: true, // IMPORTANT — this bypasses the subscription status of a user. Abuse will lead to account shutdown.
+      personalizations: {
+        link: 'https://example.com/test',
+      }, // optional — provide your own Liquid tags to be injected into the email.
     },
   ],
 })

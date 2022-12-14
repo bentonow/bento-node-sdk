@@ -38,4 +38,21 @@ export const handlers = [
       );
     }
   ),
+  rest.post(
+    'https://app.bentonow.com/api/v1/batch/emails',
+    async (req, res: ResponseComposition<any>, ctx: RestContext) => {
+      if (req.headers.get('Authorization') !== 'Basic dGVzdDp0ZXN0') {
+        return basicAuthError(res, ctx);
+      }
+
+      const body = req.body as { emails: unknown[] };
+
+      return res(
+        ctx.status(201),
+        ctx.json({
+          results: body.emails.length,
+        })
+      );
+    }
+  ),
 ];
