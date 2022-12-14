@@ -11,6 +11,7 @@ Track events, update data, record LTV and more in Node.JS. Data is stored in you
 🐶 Battle-tested by [NativShark](https://nativshark.com) Bento Production (a Bento customer)!
 
 ❤️ Thank you @HelloKashif from [IPInfo](https://ipinfo.io) for your contribution.
+❤️ Thank you @jonsherrard from [Devular](https://www.devular.com/) for your contribution.
 
 - [Installation](#Installation)
 - [Get Started](#Get-Started)
@@ -20,10 +21,12 @@ Track events, update data, record LTV and more in Node.JS. Data is stored in you
     - [addSubscriber(parameters: AddSubscriberParameters): Promise\<boolean\>](#addsubscriberparameters-addsubscriberparameters-promiseboolean)
     - [removeSubscriber(parameters: RemoveSubscriberParameters): Promise\<boolean\>](#removesubscriberparameters-removesubscriberparameters-promiseboolean)
     - [updateFields(parameters: UpdateFieldsParameters\<S\>): Promise\<boolean\>](#updatefieldsparameters-updatefieldsparameterss-promiseboolean)
+    - [track(parameters: TrackParameters<S, E>): Promise<boolean>](#trackparameters-trackparameterss-e-promiseboolean)
     - [trackPurchase(parameters: TrackPurchaseParameters): Promise\<boolean\>](#trackpurchaseparameters-trackpurchaseparameters-promiseboolean)
   - [Batch](#Batch)
     - [.importSubscribers(parameters: BatchImportSubscribersParameter\<S\>): Promise\<number\>](#batchimportsubscribersparameters-batchimportsubscribersparameters-promisenumber)
     - [.importEvents(parameters: BatchImportEventsParameter\<S, E\>): Promise\<number\>](#batchimporteventsparameters-batchimporteventsparameters-e-promisenumber)
+    - [.sendTransactionalEmails(parameters: BatchsendTransactionalEmailsParameter<S, E>): Promise<number>](#batchsendtransactionalemailsparameters-batchsendtransactionalemailsparameters-e-promisenumber)
   - [Commands](#Commands)
     - [.addTag(parameters: AddTagParameters): Promise\<Subscriber\<S\> | null\>](#commandsaddtagparameters-addtagparameters-promisesubscribers--null)
     - [.removeTag(parameters: RemoveTagParameters): Promise\<Subscriber\<S\> | null\>](#commandsremovetagparameters-removetagparameters-promisesubscribers--null)
@@ -64,9 +67,11 @@ Run the following command in your project folder.
 npm install @bentonow/bento-node-sdk --save
 ```
 
-## Get Started
+## Getting Started
 
-To get started with tracking things in Bento, simply initialize the client and run wild!
+To get started with tracking your users in Bento, simply initialize the client and go wild. 
+
+The below example showcases using `track` and `trackPurchase` which are the two recommended functions you should lean on as they can trigger automations. If you need to upload a lot of data but do not wish to trigger automations, like when you sign up, then use [importSubscribers](#batchimportsubscribersparameters-batchimportsubscribersparameters-promisenumber) instead.
 
 ```ts
 import { Analytics } from '@bentonow/bento-node-sdk';
@@ -74,38 +79,35 @@ import { Analytics } from '@bentonow/bento-node-sdk';
 const bento = new Analytics({
   authentication: {
     publishableKey: 'publishableKey',
-    secretKey: 'secretKey',
+    secretKey: 'secretKey', 
   },
   logErrors: false, // Set to true to see the HTTP errors logged
   siteUuid: 'siteUuid',
 });
 
-bento.V1.addSubscriber({
+bento.V1.track({
   email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-
-bento.V1.updateFields({
-  email: 'test@bentonow.com',
+  type: '$formSubmitted',
   fields: {
-    firstName: 'Test',
-    lastName: 'User',
+    first_name: 'Test',
+    last_name: 'Test',
   },
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  details: {
+    fromCustomEvent: true,
+  },
+}).then(result => console.log(result)).catch(error => console.error(error));
 
 bento.V1.trackPurchase({
   email: 'test@bentonow.com',
   purchaseDetails: {
-    unique: { key: 1234 },
+    unique: { key: 1234 }, // this key stops duplicate order values being tracked
     value: { amount: 100, currency: 'USD' },
   },
   cart: {
-    abandoned_checkout_url: '',
+    abandoned_checkout_url: 'https://example.com',
   },
 });
+
 ```
 
 Read on to see what all you can do with the SDK.
