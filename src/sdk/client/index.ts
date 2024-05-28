@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch';
+import fetch from 'cross-fetch';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 import { NotAuthorizedError, RateLimitedError } from './errors';
 
@@ -34,15 +34,15 @@ export class BentoClient {
         method: 'GET',
         headers: this._headers,
       })
-        .then(async (result) => {
+        .then(async result => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then((data) => resolve(data))
-        .catch((error) => reject(error));
+        .then(data => resolve(data))
+        .catch(error => reject(error));
     });
   }
 
@@ -69,15 +69,15 @@ export class BentoClient {
         },
         body,
       })
-        .then(async (result) => {
+        .then(async result => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then((data) => resolve(data))
-        .catch((error) => reject(error));
+        .then(data => resolve(data))
+        .catch(error => reject(error));
     });
   }
 
