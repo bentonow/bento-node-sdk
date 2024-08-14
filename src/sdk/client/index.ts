@@ -2,6 +2,31 @@ import fetch from 'cross-fetch';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 import { NotAuthorizedError, RateLimitedError } from './errors';
 
+function encodeBase64(str: string): string {
+  if (typeof btoa === 'function') {
+    return btoa(str);
+  } else if (typeof Buffer !== 'undefined') {
+    return Buffer.from(str).toString('base64');
+  } else {
+    // Fallback implementation
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    let output = '';
+    for (let block = 0, charCode, i = 0, map = chars;
+         str.charAt(i | 0) || (map = '=', i % 1);
+         output += map.charAt(63 & block >> 8 - i % 1 * 8)) {
+
+      charCode = str.charCodeAt(i += 3/4);
+
+      if (charCode > 0xFF) {
+        throw new Error("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+      }
+      
+      block = block << 8 | charCode;
+    }
+    return output;
+  }
+}
+
 export class BentoClient {
   private readonly _headers: HeadersInit = {};
   private readonly _baseUrl: string = 'https://app.bentonow.com/api/v1';
@@ -89,9 +114,8 @@ export class BentoClient {
    * @returns HeadersInit
    */
   private _extractHeaders(authentication: AuthenticationOptions): HeadersInit {
-    const authenticationKey = Buffer.from(
-      `${authentication.publishableKey}:${authentication.secretKey}`
-    ).toString('base64');
+    const authenticationKey = encodeBase64(`${authentication.publishableKey}:${authentication.secretKey}`);
+
 
     return {
       Authorization: `Basic ${authenticationKey}`,
