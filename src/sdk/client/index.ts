@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import { Buffer } from 'node:buffer';
+import { Buffer } from 'buffer';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 import { NotAuthorizedError, RateLimitedError } from './errors';
 
