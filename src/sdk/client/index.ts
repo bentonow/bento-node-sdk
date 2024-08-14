@@ -1,7 +1,16 @@
 import fetch from 'cross-fetch';
-import { Buffer } from 'buffer';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 import { NotAuthorizedError, RateLimitedError } from './errors';
+
+function encodeBase64(str: string): string {
+  if (typeof btoa === 'function') {
+    return btoa(str);
+  } else if (typeof Buffer !== 'undefined') {
+    return Buffer.from(str).toString('base64');
+  } else {
+    throw new Error('Base64 encoding is not supported in this environment');
+  }
+}
 
 export class BentoClient {
   private readonly _headers: HeadersInit = {};
@@ -90,9 +99,8 @@ export class BentoClient {
    * @returns HeadersInit
    */
   private _extractHeaders(authentication: AuthenticationOptions): HeadersInit {
-    const authenticationKey = Buffer.from(
-      `${authentication.publishableKey}:${authentication.secretKey}`
-    ).toString('base64');
+    const authenticationKey = encodeBase64(`${authentication.publishableKey}:${authentication.secretKey}`);
+
 
     return {
       Authorization: `Basic ${authenticationKey}`,
