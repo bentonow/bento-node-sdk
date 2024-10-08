@@ -475,7 +475,7 @@ Note: The `S` and `E` generic types are used for TypeScript support. `S` represe
 
 ## Contributing
 
-We welcome contributions! Please see our [contributing guidelines](CODE_OF_CONDUCT.md.md) for details on how to submit pull requests, report issues, and suggest improvements.
+We welcome contributions! Please see our [contributing guidelines](CODE_OF_CONDUCT.md) for details on how to submit pull requests, report issues, and suggest improvements.
 
 ## License
 
