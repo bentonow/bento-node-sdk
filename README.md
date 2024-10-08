@@ -13,6 +13,7 @@ Get started with our [📚 integration guides](https://docs.bentonow.com), or [�
 🐶 Battle-tested by [NativShark](https://nativshark.com) Bento Production (a Bento customer)!
 
 ❤️ Thank you @HelloKashif from [IPInfo](https://ipinfo.io) for your contribution.
+
 ❤️ Thank you @jonsherrard from [Devular](https://www.devular.com/) for your contribution.
 
 
@@ -340,130 +341,129 @@ For detailed information on each module, refer to the [SDK Documentation](https:
 ## Types Reference
 
 This section provides a detailed reference for the types used in the Bento Node.js SDK.
-
-### AddFieldParameters<S>
+AddFieldParameters `<S>`
 
 Parameters for adding a field to a subscriber.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| email | string | ✔️ | Subscriber's email address |
-| field | { key: keyof S; value: any } | ✔️ | Field to add |
+| Property | Type                         | Required | Description                |
+|----------|------------------------------|----------|----------------------------|
+| email    | string                       | ✔️       | Subscriber's email address |
+| field    | { key: keyof S; value: any } | ✔️       | Field to add               |
 
-### AddSubscriberParameters<S>
+### AddSubscriberParameters `<S>`
 
 Parameters for adding a new subscriber.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| date | Date | ❌ | Date of subscription |
-| email | string | ✔️ | Subscriber's email address |
-| fields | Partial<S> | ❌ | Additional fields for the subscriber |
+| Property | Type          | Required | Description                          |
+|----------|---------------|----------|--------------------------------------|
+| date     | Date          | ❌        | Date of subscription                 |
+| email    | string        | ✔️       | Subscriber's email address           |
+| fields   | Partial `<S>` | ❌        | Additional fields for the subscriber |
 
 ### AddTagParameters
 
 Parameters for adding a tag to a subscriber.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| email | string | ✔️ | Subscriber's email address |
-| tagName | string | ✔️ | Name of the tag to add |
+| Property | Type   | Required | Description                |
+|----------|--------|----------|----------------------------|
+| email    | string | ✔️       | Subscriber's email address |
+| tagName  | string | ✔️       | Name of the tag to add     |
 
-### BatchImportEventsParameter<S, E>
+### BatchImportEventsParameter `<S>`, `<E>`
 
 Parameters for batch importing events.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| events | BentoEvent<S, E>[] | ✔️ | Array of events to import |
+| Property | Type                    | Required | Description               |
+|----------|-------------------------|----------|---------------------------|
+| events   | BentoEvent `<S>`, `<E>` | ✔️       | Array of events to import |
 
-### BatchImportSubscribersParameter<S>
+### BatchImportSubscribersParameter `<S>`
 
 Parameters for batch importing subscribers.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| subscribers | ({ email: string } & Partial<S>)[] | ✔️ | Array of subscribers to import |
+| Property    | Type                                  | Required | Description                    |
+|-------------|---------------------------------------|----------|--------------------------------|
+| subscribers | ({ email: string } & Partial `<S>`)[] | ✔️       | Array of subscribers to import |
 
-### BentoEvent<S, E>
-
+### BentoEvent `<S>`, `<E>`
 Represents different types of events in Bento. It's a union of the following event types:
 
-- BaseEvent<E>
+- BaseEvent `<E>`
 - PurchaseEvent
-- SubscribeEvent<S>
+- SubscribeEvent `<S>`
 - TagEvent
 - UnsubscribeEvent
-- UpdateFieldsEvent<S>
+- UpdateFieldsEvent `<S>`
 
 ### PurchaseDetails
 
 Details of a purchase event.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| unique | { key: string \| number } | ✔️ | Unique identifier for the purchase |
-| value | { currency: string; amount: number } | ✔️ | Value of the purchase |
-| cart | PurchaseCart | ❌ | Additional cart details |
+| Property | Type                                 | Required | Description                        |
+|----------|--------------------------------------|----------|------------------------------------|
+| unique   | { key: string \| number }            | ✔️       | Unique identifier for the purchase |
+| value    | { currency: string; amount: number } | ✔️       | Value of the purchase              |
+| cart     | PurchaseCart                         | ❌        | Additional cart details            |
 
 ### ChangeEmailParameters
 
 Parameters for changing a subscriber's email.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| oldEmail | string | ✔️ | Current email address |
-| newEmail | string | ✔️ | New email address |
+| Property | Type   | Required | Description           |
+|----------|--------|----------|-----------------------|
+| oldEmail | string | ✔️       | Current email address |
+| newEmail | string | ✔️       | New email address     |
 
 ### CreateFieldParameters
 
 Parameters for creating a new field.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| key | string | ✔️ | Key of the new field |
+| Property | Type   | Required | Description          |
+|----------|--------|----------|----------------------|
+| key      | string | ✔️       | Key of the new field |
 
 ### CreateTagParameters
 
 Parameters for creating a new tag.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| name | string | ✔️ | Name of the new tag |
+| Property | Type   | Required | Description         |
+|----------|--------|----------|---------------------|
+| name     | string | ✔️       | Name of the new tag |
 
-### Subscriber<S>
+### Subscriber `<S>`
 
 Represents a subscriber in Bento.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| attributes | SubscriberAttributes<S> | ✔️ | Attributes of the subscriber |
-| id | string | ✔️ | Unique identifier |
-| type | EntityType.VISITOR | ✔️ | Type of the entity |
+| Property   | Type                       | Required | Description                  |
+|------------|----------------------------|----------|------------------------------|
+| attributes | SubscriberAttributes `<S>` | ✔️       | Attributes of the subscriber |
+| id         | string                     | ✔️       | Unique identifier            |
+| type       | EntityType.VISITOR         | ✔️       | Type of the entity           |
 
-### TrackParameters<S, E>
+### TrackParameters `<S>`, `<E>`
 
 Parameters for tracking an event.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| email | string | ✔️ | Subscriber's email address |
-| type | string | ✔️ | Type of the event |
-| details | { [key: string]: any } | ❌ | Additional details of the event |
-| fields | Partial<S> | ❌ | Fields to update for the subscriber |
+| Property | Type                   | Required | Description                         |
+|----------|------------------------|----------|-------------------------------------|
+| email    | string                 | ✔️       | Subscriber's email address          |
+| type     | string                 | ✔️       | Type of the event                   |
+| details  | { [key: string]: any } | ❌        | Additional details of the event     |
+| fields   | Partial `<S>`          | ❌        | Fields to update for the subscriber |
 
 ### ValidateEmailParameters
 
 Parameters for validating an email address.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| email | string | ✔️ | Email address to validate |
-| ip | string | ❌ | IP address of the user |
-| name | string | ❌ | Name associated with the email |
-| userAgent | string | ❌ | User agent string |
+| Property  | Type   | Required | Description                    |
+|-----------|--------|----------|--------------------------------|
+| email     | string | ✔️       | Email address to validate      |
+| ip        | string | ❌        | IP address of the user         |
+| name      | string | ❌        | Name associated with the email |
+| userAgent | string | ❌        | User agent string              |
 
 Note: The `S` and `E` generic types are used for TypeScript support. `S` represents the type of your subscriber's custom fields, and `E` represents the prefix used for custom events. For more details, refer to the TypeScript section of the documentation.
+
 
 ## Things to know
 
