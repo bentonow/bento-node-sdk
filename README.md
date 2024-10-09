@@ -13,6 +13,7 @@ Get started with our [📚 integration guides](https://docs.bentonow.com), or [�
 ❤️ Thank you @HelloKashif from [IPInfo](https://ipinfo.io) for your contribution.
 
 ❤️ Thank you @jonsherrard from [Devular](https://www.devular.com/) for your contribution.
+
 [![Tests](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml)
 
 Table of contents
