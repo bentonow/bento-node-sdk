@@ -1,7 +1,5 @@
-
-<p align="center"><img src="/art/bento-node-sdk.png" alt="Bento Node SDK"></p>
-
-[![Tests](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml)
+# Bento Node SDK
+<img align="right" src="https://app.bentonow.com/brand/logoanim.gif">
 
 > [!TIP]
 > Need help? Join our [Discord](https://discord.gg/ssXXFRmt5F) or email jesse@bentonow.com for personalized support.
@@ -15,7 +13,7 @@ Get started with our [📚 integration guides](https://docs.bentonow.com), or [�
 ❤️ Thank you @HelloKashif from [IPInfo](https://ipinfo.io) for your contribution.
 
 ❤️ Thank you @jonsherrard from [Devular](https://www.devular.com/) for your contribution.
-
+[![Tests](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml)
 
 Table of contents
 =================
