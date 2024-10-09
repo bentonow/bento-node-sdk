@@ -1,1295 +1,482 @@
-# Bento SDK for Node.JS
+
+<p align="center"><img src="/art/bento-node-sdk.png" alt="Bento Node SDK"></p>
 
 [![Tests](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/bentonow/bento-node-sdk/actions/workflows/main.yml)
 
-🍱 Simple, powerful analytics for Node.JS projects!
+> [!TIP]
+> Need help? Join our [Discord](https://discord.gg/ssXXFRmt5F) or email jesse@bentonow.com for personalized support.
 
-Track events, update data, record LTV and more in Node.JS. Data is stored in your Bento account so you can easily research and investigate what's going on.
+The Bento Node.js SDK makes it quick and easy to build an excellent analytics experience in your Node.js application. We provide powerful and customizable APIs that can be used out-of-the-box to track your users' behavior and manage subscribers. We also expose low-level APIs so that you can build fully custom experiences.
 
-👋 To get personalized support, please tweet @bento or email jesse@bentonow.com!
+Get started with our [📚 integration guides](https://docs.bentonow.com), or [📘 browse the SDK reference](https://docs.bentonow.com/subscribers).
 
 🐶 Battle-tested by [NativShark](https://nativshark.com) Bento Production (a Bento customer)!
 
 ❤️ Thank you @HelloKashif from [IPInfo](https://ipinfo.io) for your contribution.
+
 ❤️ Thank you @jonsherrard from [Devular](https://www.devular.com/) for your contribution.
 
-- [Installation](#Installation)
-- [Get Started](#Get-Started)
-- [Modules](#Modules)
-  - [Analytics (Base Module)](#analytics-base-module)
-    - [tagSubscriber(parameters: TagSubscriberParameters): Promise\<boolean\>](#tagsubscriberparameters-tagsubscriberparameters-promiseboolean)
-    - [addSubscriber(parameters: AddSubscriberParameters): Promise\<boolean\>](#addsubscriberparameters-addsubscriberparameters-promiseboolean)
-    - [removeSubscriber(parameters: RemoveSubscriberParameters): Promise\<boolean\>](#removesubscriberparameters-removesubscriberparameters-promiseboolean)
-    - [updateFields(parameters: UpdateFieldsParameters\<S\>): Promise\<boolean\>](#updatefieldsparameters-updatefieldsparameterss-promiseboolean)
-    - [track(parameters: TrackParameters<S, E>): Promise<boolean>](#trackparameters-trackparameterss-e-promiseboolean)
-    - [trackPurchase(parameters: TrackPurchaseParameters): Promise\<boolean\>](#trackpurchaseparameters-trackpurchaseparameters-promiseboolean)
-  - [Batch](#Batch)
-    - [.importSubscribers(parameters: BatchImportSubscribersParameter\<S\>): Promise\<number\>](#batchimportsubscribersparameters-batchimportsubscribersparameters-promisenumber)
-    - [.importEvents(parameters: BatchImportEventsParameter\<S, E\>): Promise\<number\>](#batchimporteventsparameters-batchimporteventsparameters-e-promisenumber)
-    - [.sendTransactionalEmails(parameters: BatchsendTransactionalEmailsParameter<S, E>): Promise<number>](#batchsendtransactionalemailsparameters-batchsendtransactionalemailsparameters-e-promisenumber)
-  - [Commands](#Commands)
-    - [.addTag(parameters: AddTagParameters): Promise\<Subscriber\<S\> | null\>](#commandsaddtagparameters-addtagparameters-promisesubscribers--null)
-    - [.removeTag(parameters: RemoveTagParameters): Promise\<Subscriber\<S\> | null\>](#commandsremovetagparameters-removetagparameters-promisesubscribers--null)
-    - [.addField(parameters: AddFieldParameters\<S\>): Promise\<Subscriber\<S\> | null\>](#commandsaddfieldparameters-addfieldparameterss-promisesubscribers--null)
-    - [.removeField(parameters: RemoveFieldParameters\<S\>): Promise\<Subscriber\<S\> | null\>](#commandsremovefieldparameters-removefieldparameterss-promisesubscribers--null)
-    - [.subscribe(parameters: SubscribeParameters): Promise\<Subscriber\<S\> | null\>](#commandssubscribeparameters-subscribeparameters-promisesubscribers--null)
-    - [.unsubscribe(parameters: UnsubscribeParameters): Promise\<Subscriber\<S\> | null\>](#commandsunsubscribeparameters-unsubscribeparameters-promisesubscribers--null)
-  - [Experimental](#Experimental)
-    - [.validateEmail(parameters: ValidateEmailParameters): Promise\<boolean\>](#experimentalvalidateemailparameters-validateemailparameters-promiseboolean)
-    - [.guessGender(parameters: GuessGenderParameters): Promise\<GuessGenderResponse\>](#experimentalguessgenderparameters-guessgenderparameters-promiseguessgenderresponse)
-    - [.geolocate(parameters: GeolocateParameters): Promise\<LocationData | null\>](#experimentalgeolocateparameters-geolocateparameters-promiselocationdata--null)
-    - [.checkBlacklist(parameters: BlacklistParameters): Promise\<BlacklistResponse\>](#experimentalcheckblacklistparameters-blacklistparameters-promiseblacklistresponse)
-  - [Fields](#Fields)
-    - [.getFields(): Promise\<Field[] | null\>](#fieldsgetfields-promisefield--null)
-    - [.createField(parameters: CreateFieldParameters): Promise\<Field[] | null\>](#fieldscreatefieldparameters-createfieldparameters-promisefield--null)
-  - [Forms](#Forms)
-    - [.getResponses(formIdentifier: string): Promise\<FormResponse[] | null\>](#formsgetresponsesformidentifier-string-promiseformresponse--null)
-  - [Subscribers](#Subscribers)
-    - [.getSubscribers(parameters?: GetSubscribersParameters): Promise\<Subscriber\<S\> | null\>](#subscribersgetsubscribersparameters-getsubscribersparameters-promisesubscribers--null)
-    - [.createSubscriber(parameters: CreateSubscriberParameters): Promise\<Subscriber\<S\> | null\>](#subscriberscreatesubscriberparameters-createsubscriberparameters-promisesubscribers--null)
-  - [Tags](#Tags)
-    - [.getTags(): Promise\<Tag[] | null\>](#tagsgettags-promisetag--null)
-    - [.createTag(parameters: CreateTagParameters): Promise\<Tag[] | null\>](#tagscreatetagparameters-createtagparameters-promisetag--null)
-- [Types Reference](#Types-Reference)
-- [TypeScript](#TypeScript)
-  - [Generics](#Generics)
-    - [S](#s)
-    - [E](#e)
-- [Things to Know](#Things-to-Know)
-- [Contributing](#Contributing)
-- [License](#License)
 
-## Installation
+Table of contents
+=================
 
-Run the following command in your project folder.
+
+* [Features](#features)
+* [Requirements](#requirements)
+* [Getting started](#getting-started)
+  * [Installation](#installation)
+  * [Integration](#integration)
+* [Modules](#modules)
+* [Type Reference](#types-reference)
+* [Things to know](#things-to-know)
+* [Contributing](#contributing)
+* [License](#license)
+
+
+## Features
+
+* **Simple event tracking**: We make it easy for you to track user events and behavior in your application.
+* **Subscriber management**: Easily add, update, and remove subscribers from your Bento account.
+* **Custom fields**: Track and update custom fields for your subscribers to store additional data.
+* **Purchase tracking**: Monitor customer purchases and calculate lifetime value (LTV) for your subscribers.
+* **Batch operations**: Perform bulk imports of subscribers and events for efficient data management.
+* **TypeScript support**: The SDK is written in TypeScript and provides type definitions for a better development experience.
+
+## Requirements
+
+The Bento Node.js SDK requires Node.js version 12 or later.
+
+Bento Account for a valid **SITE_UUID**, **BENTO_PUBLISHABLE_KEY** & **BENTO_SECRET_KEY**.
+
+## Getting started
+
+### Installation
+
+Install the Bento SDK in your project folder:
 
 ```bash
 npm install @bentonow/bento-node-sdk --save
 ```
 
-## Getting Started
+### Integration
 
-To get started with tracking your users in Bento, simply initialize the client and go wild. 
+Initialize the Bento client and start tracking events:
 
-The below example showcases using `track` and `trackPurchase` which are the two recommended functions you should lean on as they can trigger automations. If you need to upload a lot of data but do not wish to trigger automations, like when you sign up, then use [importSubscribers](#batchimportsubscribersparameters-batchimportsubscribersparameters-promisenumber) instead.
-
-```ts
+```javascript
 import { Analytics } from '@bentonow/bento-node-sdk';
 
 const bento = new Analytics({
   authentication: {
-    publishableKey: 'publishableKey',
-    secretKey: 'secretKey', 
+    publishableKey: 'bento-publishable-key',
+    secretKey: 'bento-secret-key', 
   },
-  logErrors: false, // Set to true to see the HTTP errors logged
-  siteUuid: 'siteUuid',
+  siteUuid: 'bento-site-uuid',
 });
 
 bento.V1.track({
-  email: 'test@bentonow.com',
+  email: 'user@example.com',
   type: '$formSubmitted',
   fields: {
-    first_name: 'Test',
-    last_name: 'Test',
+    first_name: 'John',
+    last_name: 'Doe',
   },
   details: {
     fromCustomEvent: true,
   },
-}).then(result => console.log(result)).catch(error => console.error(error));
-
-bento.V1.trackPurchase({
-  email: 'test@bentonow.com',
-  purchaseDetails: {
-    unique: { key: 1234 }, // this key stops duplicate order values being tracked
-    value: { amount: 100, currency: 'USD' },
-  },
-  cart: {
-    abandoned_checkout_url: 'https://example.com',
-  },
-});
-
+}).then(result => console.log(result));
 ```
 
-Read on to see what all you can do with the SDK.
 
-# Modules
+## Modules
+The Bento SDK provides several modules for different operations:
 
-In addition to the top-level Analytics object, we also provide access to other parts of the API behind their corresponding modules. You can access these off of the main `Analytics` object.
+### Analytics (Base Module)
 
-The `Analytics` module also provides access to various versions of the API (currently just `V1`), and each of those provides access to the corresponding modules documented below.
+Core functionality for tracking events and managing subscribers.
 
-## Analytics (Base Module)
+### Convenience Helpers
+#### tagSubscriber
+Tags a subscriber with a specific tag.
 
-### `tagSubscriber(parameters: TagSubscriberParameters): Promise<boolean>`
-
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addTag`](#commandsaddtagparameters-addtagparameters-promisesubscribers--null) method.
-
-Tags a subscriber with the specified email and tag. If either the tag or the user do not exist, they will be created in the system. If the user already has the tag, another tag event will be sent, triggering any automations that take place upon a tag being added to a subscriber. Please be aware of the potential consequences.
-
-Because this method uses the batch API, the tag may take between 1 and 3 minutes to appear in the system.
-
-Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
-
-Reference Types: [TagSubscriberParameters](#TagSubscriberParameters)
-
-```ts
+```javascript
 bento.V1.tagSubscriber({
-  email: 'test@bentonow.com',
-  tagName: 'Test Tag',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'user@example.com',
+  tagName: 'New Customer',
+}).then(result => console.log(result));
 ```
 
----
+#### addSubscriber
+Adds a new subscriber to your Bento account.
 
-### `addSubscriber(parameters: AddSubscriberParameters<S>): Promise<boolean>`
-
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.subscribe`](#commandssubscribeparameters-subscribeparameters-promisesubscribers--null) method.
-
-Creates a subscriber in the system. If the subscriber already exists, another subscribe event will be sent, triggering any automations that take place upon subscription. Please be aware of the potential consequences.
-
-You may optionally pass any fields that you wish to be set on the subscriber during creation.
-
-Because this method uses the batch API, the tag may take between 1 and 3 minutes to appear in the system.
-
-Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
-
-Reference Types: [AddSubscriberParameters\<S\>](#addsubscriberparameterss)
-
-```ts
+```javascript
 bento.V1.addSubscriber({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-
-bento.V1.addSubscriber({
-  date: new Date('2021-08-20T01:32:57.530Z'),
-  email: 'test@bentonow.com',
+  email: 'newuser@example.com',
   fields: {
-    firstName: 'Test',
-    lastName: 'Subscriber',
+    firstName: 'John',
+    lastName: 'Doe',
   },
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+}).then(result => console.log(result));
 ```
 
----
+#### removeSubscriber
+Removes a subscriber from your Bento account.
 
-### `removeSubscriber(parameters: RemoveSubscriberParameters): Promise<boolean>`
-
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.unsubscribe`](#commandsunsubscribeparameters-unsubscribeparameters-promisesubscribers--null) method.
-
-Unsubscribes an email in the system. If the email is already unsubscribed, another unsubscribe event will be sent, triggering any automations that take place upon an unsubscribe happening. Please be aware of the potential consequences.
-
-Because this method uses the batch API, the tag may take between 1 and 3 minutes to appear in the system.
-
-Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
-
-Reference Types: [RemoveSubscriberParameters](#RemoveSubscriberParameters)
-
-```ts
+```javascript
 bento.V1.removeSubscriber({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'user@example.com',
+}).then(result => console.log(result));
 ```
 
----
+#### updateFields
+Updates custom fields for a subscriber.
 
-### `updateFields(parameters: UpdateFieldsParameters<S>): Promise<boolean>`
-
-**This TRIGGERS automations!** - If you do not wish to trigger automations, please use the [`Commands.addField`](#commandsaddfieldparameters-addfieldparameterss-promisesubscribers--null) method.
-
-Sets the passed-in custom fields on the subscriber, creating the subscriber if it does not exist. If the fields are already set on the subscriber, the event will be sent, triggering any automations that take place upon fields being updated. Please be aware of the potential consequences.
-
-Because this method uses the batch API, the tag may take between 1 and 3 minutes to appear in the system.
-
-Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
-
-Reference Types: [UpdateFieldsParameters\<S\>](#updatefieldsparameterss)
-
-```ts
+```javascript
 bento.V1.updateFields({
-  email: 'test@bentonow.com',
+  email: 'user@example.com',
   fields: {
-    firstName: 'Test',
+    lastPurchaseDate: new Date(),
   },
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+}).then(result => console.log(result));
 ```
 
----
+#### track
+Tracks a custom event for a subscriber.
 
-### `trackPurchase(parameters: TrackPurchaseParameters): Promise<boolean>`
-
-**This TRIGGERS automations!** - There is no way to achieve this same behavior without triggering automations.
-
-Tracks a purchase in Bento, used to calculate LTV for your subscribers. The values that are received should be numbers, in cents. For example, `$1.00` should be `100`.
-
-Because this method uses the batch API, the tag may take between 1 and 3 minutes to appear in the system.
-
-Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
-
-Reference Types: [TrackPurchaseParameters](#TrackPurchaseParameters)
-
-```ts
-bento.V1.trackPurchase({
-  email: 'test@bentonow.com',
-  purchaseDetails: {
-    unique: {
-      key: 1234,
-    },
-    value: {
-      amount: 100,
-      currency: 'USD',
-    },
-  },
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-```
-
----
-
-### `track(parameters: TrackParameters<S, E>): Promise<boolean>`
-
-**This TRIGGERS automations!** - There is no way to achieve this same behavior without triggering automations.
-
-Tracks a custom event in Bento.
-
-Because this method uses the batch API, the tag may take between 1 and 3 minutes to appear in the system.
-
-Returns `true` if the event was successfully dispatched. Returns `false` otherwise.
-
-Reference Types: [TrackParameters<S, E>](#trackparametersse)
-
-```ts
+```javascript
 bento.V1.track({
-  email: 'test@bentonow.com',
-  type: '$custom.event',
-  fields: {
-    firstName: 'Custom Name',
-    lastName: 'Custom Name',
-  },
+  email: 'user@example.com',
+  type: '$pageView',
   details: {
-    fromCustomEvent: true,
+    url: '/products',
   },
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+}).then(result => console.log(result));
 ```
 
-## Batch
+#### trackPurchase
+Tracks a purchase event for a subscriber.
 
-### `Batch.importSubscribers(parameters: BatchImportSubscribersParameter<S>): Promise<number>`
+```javascript
+bento.V1.trackPurchase({
+  email: 'user@example.com',
+  purchaseDetails: {
+    unique: { key: 'order-123' },
+    value: { amount: 9999, currency: 'USD' },
+  },
+}).then(result => console.log(result));
+```
 
-**This does not trigger automations!** - If you wish to trigger automations, please batch import events.
+### Low Level API calls
+### Batch
 
-Creates a batch job to import subscribers into the system. You can pass in between 1 and 1,000 subscribers to import. Each subscriber must have an email, and may optionally have any additional fields. The additional fields are added as custom fields on the subscriber.
+Perform bulk operations for importing subscribers and events.
 
-This method is processed by the Bento import queues and it may take between 1 and 5 minutes for the results to appear in your dashboard.
+#### importSubscribers
+Imports multiple subscribers in a single operation.
 
-Returns the number of subscribers that were imported.
-
-Reference Types: [BatchImportSubscribersParameter\<S\>](#batchimportsubscribersparameters)
-
-```ts
+```javascript
 bento.V1.Batch.importSubscribers({
   subscribers: [
-    {
-      email: 'test@bentonow.com',
-      age: 21,
-    },
-    {
-      email: 'test2@bentonow.com',
-      some_custom_variable: 'tester-123',
-      primary_user: true,
-    },
-    {
-      email: 'test3@bentonow.com',
-      name: 'Test User',
-    },
+    { email: 'user1@example.com', firstName: 'Alice' },
+    { email: 'user2@example.com', firstName: 'Bob' },
   ],
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+}).then(result => console.log(result));
 ```
 
----
+#### importEvents
+Imports multiple events in a single operation.
 
-### `Batch.importEvents(parameters: BatchImportEventsParameter<S, E>): Promise<number>`
-
-Creates a batch job to import events into the system. You can pass in between 1 and 100 events to import. Each event must have an email and a type. In addition to this, you my pass in additional data in the `details` property,
-
-Returns the number of events that were imported.
-
-Reference Types: [BatchImportEventsParameter<S, E>](#batchimporteventsparameterse)
-
-```ts
+```javascript
 bento.V1.Batch.importEvents({
   events: [
-    {
-      email: 'test@bentonow.com',
-      type: BentoEvents.SUBSCRIBE,
-    },
-    {
-      email: 'test@bentonow.com',
-      type: BentoEvents.UNSUBSCRIBE,
-    },
-    {
-      email: 'test@bentonow.com',
-      type: BentoEvents.REMOVE_TAG,
-      details: {
-        tag: 'tag_to_remove',
-      },
-    },
-    {
-      email: 'test@bentonow.com',
-      type: BentoEvents.TAG,
-      details: {
-        tag: 'tag_to_add',
-      },
-    },
-    {
-      email: 'test@bentonow.com',
-      details: {
-        customData: 'Used internally.',
-      },
-      type: '$custom.myEvent,
-    },
+    { email: 'user@example.com', type: '$login' },
+    { email: 'user@example.com', type: '$pageView', details: { url: '/home' } },
   ],
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+}).then(result => console.log(result));
 ```
 
----
+### Commands
 
-### `Batch.sendTransactionalEmails(parameters: BatchsendTransactionalEmailsParameter<S, E>): Promise<number>`
+Execute specific commands for subscriber management.
 
-Creates a batch job to send transactional emails from Bento's infrastructure. You can pass in between 1 and 100 emails to send. Each email must have a `to` address, a `from` address, a `subject`, an `html_body` and `transactional: true`.
+#### addTag
+Adds a tag to a subscriber.
 
-In addition you can add a `personalizations` object to provide liquid tags that will be injected into the email.
-
-Requests are instant and queued into a priority queue. Most requests will be processed within 30 seconds. We currently limit this endpoint to 60 emails per minute.
-
-Returns the number of emails that were imported.
-
-```ts
-bento.V1.Batch.sendTransactionalEmails({
-  emails: [
-    {
-      to: 'test@bentonow.com', // required — if no user with this email exists in your account they will be created.
-      from: 'jesse@bentonow.com', // required — must be an email author in your account.
-      subject: 'Reset Password', // required
-      html_body: '<p>Here is a link to reset your password ... {{ link }}</p>', // required - can also use text_body if you want to use our plain text theme.
-      transactional: true, // IMPORTANT — this bypasses the subscription status of a user. Abuse will lead to account shutdown.
-      personalizations: {
-        link: 'https://example.com/test',
-      }, // optional — provide your own Liquid tags to be injected into the email.
-    },
-  ],
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-```
-
-## Commands
-
-### `Commands.addTag(parameters: AddTagParameters): Promise<Subscriber<S> | null>`
-
-**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `tagSubscriber` method.
-
-Adds a tag to the subscriber with the matching email.
-
-Note that both the tag and the subscriber will be created if either is missing from system.
-
-Reference Types: [AddTagParameters](#AddTagParameters), [Subscriber\<S\>](#subscribers)
-
-```ts
+```javascript
 bento.V1.Commands.addTag({
-  email: 'test@bentonow.com',
-  tagName: 'Test Tag',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'user@example.com',
+  tagName: 'VIP',
+}).then(result => console.log(result));
 ```
 
----
+#### removeTag
+Removes a tag from a subscriber.
 
-### `Commands.removeTag(parameters: RemoveTagParameters): Promise<Subscriber<S> | null>`
-
-Removes the specified tag from the subscriber with the matching email.
-
-Reference Types: [RemoveTagParameters](#RemoveTagParameters), [Subscriber\<S\>](#subscribers)
-
-```ts
+```javascript
 bento.V1.Commands.removeTag({
-  email: 'test@bentonow.com',
-  tagName: 'Test Tag',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'user@example.com',
+  tagName: 'VIP',
+}).then(result => console.log(result));
 ```
 
----
+#### addField
+Adds a custom field to a subscriber.
 
-### `Commands.addField(parameters: AddFieldParameters<S>): Promise<Subscriber<S> | null>`
-
-**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `updateFields` method.
-
-Adds a field to the subscriber with the matching email.
-
-Note that both the field and the subscriber will be created if either is missing from system.
-
-Reference Types: [AddFieldParameters\<S\>](#addfieldparameterss), [Subscriber\<S\>](#subscribers)
-
-```ts
+```javascript
 bento.V1.Commands.addField({
-  email: 'test@bentonow.com',
+  email: 'user@example.com',
   field: {
-    key: 'testKey',
-    value: 'testValue',
+    key: 'favoriteColor',
+    value: 'blue',
   },
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+}).then(result => console.log(result));
 ```
 
----
+#### removeField
+Removes a custom field from a subscriber.
 
-### `Commands.removeField(parameters: RemoveFieldParameters<S>): Promise<Subscriber<S> | null>`
-
-Removes a field to the subscriber with the matching email.
-
-Reference Types: [RemoveFieldParameters\<S\>](#removefieldparameterss), [Subscriber\<S\>](#subscribers)
-
-```ts
+```javascript
 bento.V1.Commands.removeField({
-  email: 'test@bentonow.com',
-  fieldName: 'testField',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'user@example.com',
+  fieldName: 'favoriteColor',
+}).then(result => console.log(result));
 ```
 
----
+### Experimental
 
-### `Commands.subscribe(parameters: SubscribeParameters): Promise<Subscriber<S> | null>`
+Access experimental features (use with caution).
 
-**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `addSubscriber` method.
+#### validateEmail
+Attempts to validate an email address.
 
-Subscribes the supplied email to Bento. If the email does not exist, it is created.
-
-If the subscriber had previously unsubscribed, they will be re-subscribed.
-
-Reference Types: [SubscribeParameters](#SubscribeParameters), [Subscriber\<S\>](#subscribers)
-
-```ts
-bento.V1.Commands.subscribe({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-```
-
----
-
-### `Commands.unsubscribe(parameters: UnsubscribeParameters): Promise<Subscriber<S> | null>`
-
-**This does not trigger automations!** - If you wish to trigger automations, please use the core module's `removeSubscriber` method.
-
-Unsubscribes the supplied email to Bento. If the email does not exist, it is created and immediately unsubscribed. If they had already unsubscribed, the `unsubscribed_at` property is updated.
-
-Reference Types: [UnsubscribeParameters](#UnsubscribeParameters), [Subscriber\<S\>](#subscribers)
-
-```ts
-bento.V1.Commands.unsubscribe({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-```
-
----
-
-### `Commands.changeEmail(parameters: ChangeEmailParameters): Promise<Subscriber<S> | null>`
-
-Updates the email of a user in Bento.
-
-Reference Types: [ChangeEmailParameters](#changeemailparameters), [Subscriber\<S\>](#subscribers)
-
-```ts
-bento.V1.Commands.changeEmail({
-  oldEmail: 'test@bentonow.com',
-  newEmail: 'new@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-```
-
-## Experimental
-
-### `Experimental.validateEmail(parameters: ValidateEmailParameters): Promise<boolean>`
-
-**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
-
-Attempts to validate the email. You can provide additional information to further refine the validation.
-
-If a name is provided, it compares it against the US Census Data, and so the results may be biased.
-
-Reference Types: [ValidateEmailParameters](#ValidateEmailParameters)
-
-```ts
+```javascript
 bento.V1.Experimental.validateEmail({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'user@example.com',
+}).then(result => console.log(result));
 ```
 
----
+#### guessGender
+Attempts to guess the gender based on a given name.
 
-### `Experimental.guessGender(parameters: GuessGenderParameters): Promise<GuessGenderResponse>`
-
-**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
-
-Attempts to guess the gender of the person given a provided name. It compares the name against the US Census Data, and so the results may be biased.
-
-It is possible for the gender to be unknown if the system cannot confidently conclude what gender it may be.
-
-Reference Types: [GuessGenderParameters](#GuessGenderParameters), [GuessGenderResponse](#GuessGenderResponse)
-
-```ts
+```javascript
 bento.V1.Experimental.guessGender({
-  name: 'Jesse',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  name: 'Alex',
+}).then(result => console.log(result));
 ```
 
----
+### Fields
 
-### `Experimental.geolocate(parameters: GeolocateParameters): Promise<LocationData | null>`
+Manage custom fields for your subscribers.
 
-**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
+#### getFields
+Retrieves all custom fields defined in your Bento account.
 
-Attempts to provide location data given a provided IP address.
-
-Reference Types: [GeolocateParameters](#GeolocateParameters), [LocationData](#LocationData)
-
-```ts
-bento.V1.Experimental.geolocate({
-  ip: '127.0.0.1',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+```javascript
+bento.V1.Fields.getFields().then(fields => console.log(fields));
 ```
 
----
+#### createField
+Creates a new custom field in your Bento account.
 
-### `Experimental.checkBlacklist(parameters: BlacklistParameters): Promise<BlacklistResponse>`
-
-**EXPERIMENTAL** - This functionality is experimental and may change or stop working at any time.
-
-Looks up the provided URL or IP Address against various blacklists to see if the site has been blacklisted anywhere.
-
-Reference Types: [BlacklistParameters](#BlacklistParameters), [BlacklistResponse](#BlacklistResponse)
-
-```ts
-bento.V1.Experimental.checkBlacklist({
-  domain: 'bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-```
-
-## Fields
-
-### `Fields.getFields(): Promise<Field[] | null>`
-
-Returns all of the fields for the site.
-
-Reference Types: [Field](#Field)
-
-```ts
-bento.V1.Experimental.validateEmail({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-```
-
----
-
-### `Fields.createField(parameters: CreateFieldParameters): Promise<Field[] | null>`
-
-Creates a field inside of Bento. The name of the field is automatically generated from the key that is passed in upon creation. For example:
-
-| Key               | Name              |
-| ----------------- | ----------------- |
-| `'thisIsAKey'`    | `'This Is A Key'` |
-| `'this is a key'` | `'This Is A Key'` |
-| `'this-is-a-key'` | `'This Is A Key'` |
-| `'this_is_a_key'` | `'This Is A Key'` |
-
-Reference Types: [CreateFieldParameters](#CreateFieldParameters), [Field](#Field)
-
-```ts
+```javascript
 bento.V1.Fields.createField({
-  key: 'testKey',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  key: 'loyaltyPoints',
+}).then(result => console.log(result));
 ```
 
-## Forms
+### Forms
 
-### `Forms.getResponses(formIdentifier: string): Promise<FormResponse[] | null>`
+Retrieve form responses.
 
-Returns all of the responses for the form with the specified identifier.
+#### getResponses
+Retrieves responses for a specific form.
 
-Reference Types: [FormResponse](#FormResponse)
-
-```ts
-bento.V1.Forms.getResponses('test-formid-1234')
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+```javascript
+bento.V1.Forms.getResponses('form-id-123').then(responses => console.log(responses));
 ```
 
-## Subscribers
+### Subscribers
 
-### `Subscribers.getSubscribers(parameters?: GetSubscribersParameters): Promise<Subscriber<S> | null>`
+Manage individual subscribers.
 
-Returns the subscriber with the specified email or UUID.
+#### getSubscribers
+Retrieves subscriber information.
 
-Reference Types: [GetSubscribersParameters](#GetSubscribersParameters), [Subscriber\<S\>](#subscribers)
-
-```ts
+```javascript
 bento.V1.Subscribers.getSubscribers({
-  uuid: '1234',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-
-bento.V1.Subscribers.getSubscribers({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'user@example.com',
+}).then(subscriber => console.log(subscriber));
 ```
 
----
+#### createSubscriber
+Creates a new subscriber in your Bento account.
 
-### `Subscribers.createSubscriber(parameters: CreateSubscriberParameters): Promise<Subscriber<S> | null>`
-
-Creates a subscriber inside of Bento.
-
-Reference Types: [CreateSubscriberParameters](#CreateSubscriberParameters), [Subscriber\<S\>](#subscribers)
-
-```ts
+```javascript
 bento.V1.Subscribers.createSubscriber({
-  email: 'test@bentonow.com',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  email: 'newuser@example.com',
+}).then(result => console.log(result));
 ```
 
-## Tags
+### Tags
 
-### `Tags.getTags(): Promise<Tag[] | null>`
+Create and manage tags for subscriber segmentation.
 
-Returns all of the fields for the site.
+#### getTags
+Retrieves all tags defined in your Bento account.
 
-Reference Types: [Tag](#Tag)
-
-```ts
-bento.V1.Tags.getTags()
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+```javascript
+bento.V1.Tags.getTags().then(tags => console.log(tags));
 ```
 
----
+#### createTag
+Creates a new tag in your Bento account.
 
-### `Tags.createTag(parameters: CreateTagParameters): Promise<Tag[] | null>`
-
-Creates a tag inside of Bento.
-
-Reference Types: [Tag](#Tag)
-
-```ts
+```javascript
 bento.V1.Tags.createTag({
-  name: 'test tag',
-})
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+  name: 'Premium Customer',
+}).then(result => console.log(result));
 ```
+
+For detailed information on each module, refer to the [SDK Documentation](https://docs.bentonow.com/subscribers).
 
 ## Types Reference
 
-### `AddFieldParameters<S>`
+This section provides a detailed reference for the types used in the Bento Node.js SDK.
+AddFieldParameters `<S>`
 
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+Parameters for adding a field to a subscriber.
 
-| Property | Type                           | Default | Required |
-| -------- | ------------------------------ | ------- | -------- |
-| email    | `string`                       | _none_  | ✔️       |
-| field    | `{ key: keyof S; value: any }` | _none_  | ✔️       |
+| Property | Type                         | Required | Description                |
+|----------|------------------------------|----------|----------------------------|
+| email    | string                       | ✔️       | Subscriber's email address |
+| field    | { key: keyof S; value: any } | ✔️       | Field to add               |
 
----
+### AddSubscriberParameters `<S>`
 
-### `AddSubscriberParameters<S>`
+Parameters for adding a new subscriber.
 
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+| Property | Type          | Required | Description                          |
+|----------|---------------|----------|--------------------------------------|
+| date     | Date          | ❌        | Date of subscription                 |
+| email    | string        | ✔️       | Subscriber's email address           |
+| fields   | Partial `<S>` | ❌        | Additional fields for the subscriber |
 
-| Property | Type         | Default | Required |
-| -------- | ------------ | ------- | -------- |
-| date     | `Date`       | _none_  | ❌       |
-| email    | `string`     | _none_  | ✔️       |
-| fields   | `Partial<S>` | _none_  | ❌       |
+### AddTagParameters
 
----
+Parameters for adding a tag to a subscriber.
 
-### `AddTagParameters`
+| Property | Type   | Required | Description                |
+|----------|--------|----------|----------------------------|
+| email    | string | ✔️       | Subscriber's email address |
+| tagName  | string | ✔️       | Name of the tag to add     |
 
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
-| tagName  | `string` | _none_  | ✔️       |
+### BatchImportEventsParameter `<S>`, `<E>`
 
----
+Parameters for batch importing events.
 
-### `BatchImportEventsParameter<S, E>`
+| Property | Type                    | Required | Description               |
+|----------|-------------------------|----------|---------------------------|
+| events   | BentoEvent `<S>`, `<E>` | ✔️       | Array of events to import |
 
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+### BatchImportSubscribersParameter `<S>`
 
-The `E` from above represents the prefix that is used to define your custom events. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+Parameters for batch importing subscribers.
 
-| Property | Type                                      | Default | Required |
-| -------- | ----------------------------------------- | ------- | -------- |
-| events   | [`BentoEvent<S, E>[]`](#BentoEvent<S, E>) | _none_  | ✔️       |
+| Property    | Type                                  | Required | Description                    |
+|-------------|---------------------------------------|----------|--------------------------------|
+| subscribers | ({ email: string } & Partial `<S>`)[] | ✔️       | Array of subscribers to import |
 
----
+### BentoEvent `<S>`, `<E>`
+Represents different types of events in Bento. It's a union of the following event types:
 
-### `BatchImportSubscribersParameter<S>`
+- BaseEvent `<E>`
+- PurchaseEvent
+- SubscribeEvent `<S>`
+- TagEvent
+- UnsubscribeEvent
+- UpdateFieldsEvent `<S>`
 
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+### PurchaseDetails
 
-| Property    | Type                                 | Default | Required |
-| ----------- | ------------------------------------ | ------- | -------- |
-| subscribers | `({ email: string } & Partial<S>)[]` | _none_  | ✔️       |
+Details of a purchase event.
 
----
+| Property | Type                                 | Required | Description                        |
+|----------|--------------------------------------|----------|------------------------------------|
+| unique   | { key: string \| number }            | ✔️       | Unique identifier for the purchase |
+| value    | { currency: string; amount: number } | ✔️       | Value of the purchase              |
+| cart     | PurchaseCart                         | ❌        | Additional cart details            |
 
-### `BentoEvent<S, E>`
+### ChangeEmailParameters
 
-This type is a discriminated union of a few different types. Each of these types are documented below:
+Parameters for changing a subscriber's email.
 
-#### `BaseEvent<E>`
+| Property | Type   | Required | Description           |
+|----------|--------|----------|-----------------------|
+| oldEmail | string | ✔️       | Current email address |
+| newEmail | string | ✔️       | New email address     |
 
-The `E` from above represents the prefix that is used to define your custom events. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+### CreateFieldParameters
 
-| Property | Type                     | Default | Required |
-| -------- | ------------------------ | ------- | -------- |
-| date     | `Date`                   | _none_  | ❌       |
-| details  | `{ [key: string]: any }` | _none_  | ✔️       |
-| email    | `string`                 | _none_  | ✔️       |
-| type     | `string`                 | _none_  | ✔️       |
+Parameters for creating a new field.
 
-#### `PurchaseEvent`
+| Property | Type   | Required | Description          |
+|----------|--------|----------|----------------------|
+| key      | string | ✔️       | Key of the new field |
 
-| Property | Type                                    | Default | Required |
-| -------- | --------------------------------------- | ------- | -------- |
-| date     | `Date`                                  | _none_  | ❌       |
-| details  | [`PurchaseDetails`](#PurchaseDetails)   | _none_  | ✔️       |
-| email    | `string`                                | _none_  | ✔️       |
-| type     | `BentoEvents.PURCHASE` \| `'$purchase'` | _none_  | ✔️       |
+### CreateTagParameters
 
-#### `SubscribeEvent<S>`
+Parameters for creating a new tag.
 
-| Property | Type                                      | Default | Required |
-| -------- | ----------------------------------------- | ------- | -------- |
-| date     | `Date`                                    | _none_  | ❌       |
-| email    | `string`                                  | _none_  | ✔️       |
-| fields   | `Partial<S>`                              | _none_  | ❌       |
-| type     | `BentoEvents.SUBSCRIBE` \| `'$subscribe'` | _none_  | ✔️       |
+| Property | Type   | Required | Description         |
+|----------|--------|----------|---------------------|
+| name     | string | ✔️       | Name of the new tag |
 
-#### `TagEvent`
+### Subscriber `<S>`
 
-| Property | Type                          | Default | Required |
-| -------- | ----------------------------- | ------- | -------- |
-| date     | `Date`                        | _none_  | ❌       |
-| details  | `{ tag: string }`             | _none_  | ✔️       |
-| email    | `string`                      | _none_  | ✔️       |
-| type     | `BentoEvents.TAG` \| `'$tag'` | _none_  | ✔️       |
+Represents a subscriber in Bento.
 
-#### `UnsubscribeEvent`
+| Property   | Type                       | Required | Description                  |
+|------------|----------------------------|----------|------------------------------|
+| attributes | SubscriberAttributes `<S>` | ✔️       | Attributes of the subscriber |
+| id         | string                     | ✔️       | Unique identifier            |
+| type       | EntityType.VISITOR         | ✔️       | Type of the entity           |
 
-| Property | Type                                          | Default | Required |
-| -------- | --------------------------------------------- | ------- | -------- |
-| date     | `Date`                                        | _none_  | ❌       |
-| email    | `string`                                      | _none_  | ✔️       |
-| type     | `BentoEvents.UNSUBSCRIBE` \| `'$unsubscribe'` | _none_  | ✔️       |
+### TrackParameters `<S>`, `<E>`
 
-#### `UpdateFieldsEvent<S>`
+Parameters for tracking an event.
 
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
+| Property | Type                   | Required | Description                         |
+|----------|------------------------|----------|-------------------------------------|
+| email    | string                 | ✔️       | Subscriber's email address          |
+| type     | string                 | ✔️       | Type of the event                   |
+| details  | { [key: string]: any } | ❌        | Additional details of the event     |
+| fields   | Partial `<S>`          | ❌        | Fields to update for the subscriber |
 
-| Property | Type                                              | Default | Required |
-| -------- | ------------------------------------------------- | ------- | -------- |
-| date     | `Date`                                            | _none_  | ❌       |
-| email    | `string`                                          | _none_  | ✔️       |
-| type     | `BentoEvents.UPDATE_FIELDS` \| `'$update_fields'` | _none_  | ✔️       |
-| fields   | `Partial<S>`                                      | _none_  | ✔️       |
+### ValidateEmailParameters
 
----
+Parameters for validating an email address.
 
-### `BlacklistParameters`
+| Property  | Type   | Required | Description                    |
+|-----------|--------|----------|--------------------------------|
+| email     | string | ✔️       | Email address to validate      |
+| ip        | string | ❌        | IP address of the user         |
+| name      | string | ❌        | Name associated with the email |
+| userAgent | string | ❌        | User agent string              |
 
-Note that this takes either `domain` _or_ `ip`, but never both.
+Note: The `S` and `E` generic types are used for TypeScript support. `S` represents the type of your subscriber's custom fields, and `E` represents the prefix used for custom events. For more details, refer to the TypeScript section of the documentation.
 
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| domain   | `string` | _none_  | ✔️       |
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| ip       | `string` | _none_  | ✔️       |
-
----
-
-### `BlacklistResponse`
-
-The results is an object where the key is the name of the blacklist that was checked, and the value is whether or not the domain/IP appeared on that blacklist.
-
-| Property    | Type                         | Default | Required |
-| ----------- | ---------------------------- | ------- | -------- |
-| description | `string`                     | _none_  | ✔️       |
-| query       | `string`                     | _none_  | ✔️       |
-| results     | `{ [key: string]: boolean }` | _none_  | ✔️       |
-
----
-
-### `BrowserData`
-
-| Property   | Type     | Default | Required |
-| ---------- | -------- | ------- | -------- |
-| height     | `string` | _none_  | ✔️       |
-| user_agent | `string` | _none_  | ✔️       |
-| width      | `string` | _none_  | ✔️       |
-
----
-
-### `ChangeEmailParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| oldEmail | `string` | _none_  | ✔️       |
-| newEmail | `string` | _none_  | ✔️       |
-
----
-
-### `CreateFieldParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| key      | `string` | _none_  | ✔️       |
-
----
-
-### `CreateSubscriberParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
-
-### `CreateTagParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| name     | `string` | _none_  | ✔️       |
-
----
-
-### `EntityType`
-
-This is an enum with the following values:
-
-| Name            | Value               |
-| --------------- | ------------------- |
-| EVENTS          | `'events'`          |
-| TAGS            | `'tags'`            |
-| VISITORS        | `'visitors'`        |
-| VISITORS_FIELDS | `'visitors-fields'` |
-
----
-
-### `Field`
-
-| Property   | Type                                        | Default | Required |
-| ---------- | ------------------------------------------- | ------- | -------- |
-| attributes | [`FieldAttributes`](#FieldAttributes)       | _none_  | ✔️       |
-| id         | `string`                                    | _none_  | ✔️       |
-| type       | [`EntityType.VISITORS_FIELDS`](#EntityType) | _none_  | ✔️       |
-
----
-
-### `FieldAttributes`
-
-| Property    | Type                | Default | Required |
-| ----------- | ------------------- | ------- | -------- |
-| created_at  | `string`            | _none_  | ✔️       |
-| key         | `string`            | _none_  | ✔️       |
-| name        | `string`            | _none_  | ✔️       |
-| whitelisted | `boolean` \| `null` | _none_  | ✔️       |
-
----
-
-### `FormResponse`
-
-| Property   | Type                                                | Default | Required |
-| ---------- | --------------------------------------------------- | ------- | -------- |
-| attributes | [`FormResponseAttributes`](#FormResponseAttributes) | _none_  | ✔️       |
-| id         | `string`                                            | _none_  | ✔️       |
-| type       | [`EntityType.EVENTS`](#EntityType)                  | _none_  | ✔️       |
-
----
-
-### `FormResponseAttributes`
-
-| Property | Type                                    | Default | Required |
-| -------- | --------------------------------------- | ------- | -------- |
-| data     | [`FormResponseData`](#FormResponseData) | _none_  | ✔️       |
-| uuid     | `string`                                | _none_  | ✔️       |
-
----
-
-### `FormResponseData`
-
-| Property | Type                            | Default | Required |
-| -------- | ------------------------------- | ------- | -------- |
-| browser  | [`BrowserData`](#BrowserData)   | _none_  | ✔️       |
-| date     | `string`                        | _none_  | ✔️       |
-| details  | `{ [key: string]: any }`        | _none_  | ✔️       |
-| fields   | `{ [key: string]: any }`        | _none_  | ✔️       |
-| id       | `string`                        | _none_  | ✔️       |
-| identity | [`IdentityData`](#IdentityData) | _none_  | ✔️       |
-| ip       | `string`                        | _none_  | ✔️       |
-| location | [`LocationData`](#LocationData) | _none_  | ✔️       |
-| page     | [`PageData`](#PageData)         | _none_  | ✔️       |
-| site     | `string`                        | _none_  | ✔️       |
-| type     | `string`                        | _none_  | ✔️       |
-| visit    | `string`                        | _none_  | ✔️       |
-| visitor  | `string`                        | _none_  | ✔️       |
-
----
-
-### `GetSubscribersParameters`
-
-Note that this takes either `email` _or_ `uuid`, but never both.
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| uuid     | `string` | _none_  | ✔️       |
-
----
-
-### `GeolocateParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| ip       | `string` | _none_  | ✔️       |
-
----
-
-### `GuessGenderParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| name     | `string` | _none_  | ✔️       |
-
----
-
-### `GuessGenderResponse`
-
-| Property   | Type               | Default | Required |
-| ---------- | ------------------ | ------- | -------- |
-| confidence | `number` \| `null` | _none_  | ✔️       |
-| gender     | `string` \| `null` | _none_  | ✔️       |
-
----
-
-### `IdentityData`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
-
----
-
-### `LocationData`
-
-| Property         | Type     | Default | Required |
-| ---------------- | -------- | ------- | -------- |
-| city_name        | `string` | _none_  | ❌       |
-| continent_code   | `string` | _none_  | ❌       |
-| country_code2    | `string` | _none_  | ❌       |
-| country_code3    | `string` | _none_  | ❌       |
-| country_name     | `string` | _none_  | ❌       |
-| ip               | `string` | _none_  | ❌       |
-| latitude         | `number` | _none_  | ❌       |
-| longitude        | `number` | _none_  | ❌       |
-| postal_code      | `string` | _none_  | ❌       |
-| real_region_name | `string` | _none_  | ❌       |
-| region_name      | `string` | _none_  | ❌       |
-| request          | `string` | _none_  | ❌       |
-
----
-
-### `PageData`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| host     | `string` | _none_  | ✔️       |
-| path     | `string` | _none_  | ✔️       |
-| protocol | `string` | _none_  | ✔️       |
-| referrer | `string` | _none_  | ✔️       |
-| url      | `string` | _none_  | ✔️       |
-
----
-
-### `PurchaseCart`
-
-| Property               | Type                              | Default | Required |
-| ---------------------- | --------------------------------- | ------- | -------- |
-| abandoned_checkout_url | `string`                          | _none_  | ❌       |
-| items                  | [`PurchaseItem[]`](#PurchaseItem) | _none_  | ❌       |
-
----
-
-### `PurchaseDetails`
-
-| Property | Type                                    | Default | Required |
-| -------- | --------------------------------------- | ------- | -------- |
-| unique   | `{ key: string \| number; }`            | _none_  | ✔️       |
-| value    | `{ currency: string; amount: number; }` | _none_  | ✔️       |
-| cart     | [`PurchaseCart`](#PurchaseCart)         | _none_  | ❌       |
-
----
-
-### `PurchaseItem`
-
-In addition to the properties below, you can pass any other properties that you want as part of the `PurchaseItem`.
-
-| Property      | Type     | Default | Required |
-| ------------- | -------- | ------- | -------- |
-| product_sku   | `string` | _none_  | ❌       |
-| product_name  | `string` | _none_  | ❌       |
-| quantity      | `number` | _none_  | ❌       |
-| product_price | `number` | _none_  | ❌       |
-| product_id    | `string` | _none_  | ❌       |
-
----
-
-### `RemoveFieldParameters<S>`
-
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
-
-| Property  | Type      | Default | Required |
-| --------- | --------- | ------- | -------- |
-| email     | `string`  | _none_  | ✔️       |
-| fieldName | `keyof S` | _none_  | ✔️       |
-
----
-
-### `RemoveSubscriberParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| date     | `Date`   | _none_  | ❌       |
-| email    | `string` | _none_  | ✔️       |
-
----
-
-### `RemoveTagParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
-| tagName  | `string` | _none_  | ✔️       |
-
----
-
-### `SubscribeParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
-
----
-
-### `Subscriber<S>`
-
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
-
-| Property   | Type                                                | Default | Required |
-| ---------- | --------------------------------------------------- | ------- | -------- |
-| attributes | [`SubscriberAttributes<S>`](#subscriberattributess) | _none_  | ✔️       |
-| id         | `string`                                            | _none_  | ✔️       |
-| type       | [`EntityType.VISITOR`](#EntityType)                 | _none_  | ✔️       |
-
-### `SubscriberAttributes<S>`
-
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
-
-| Property        | Type          | Default | Required |
-| --------------- | ------------- | ------- | -------- |
-| cached_tag_ids  | `string[]`    | _none_  | ✔️       |
-| email           | `string`      | _none_  | ✔️       |
-| fields          | `S` \| `null` | _none_  | ✔️       |
-| unsubscribed_at | `string`      | _none_  | ✔️       |
-| uuid            | `string`      | _none_  | ✔️       |
-
-### `Tag`
-
-| Property     | Type               | Default | Required |
-| ------------ | ------------------ | ------- | -------- |
-| created_at   | `string`           | _none_  | ✔️       |
-| discarded_at | `string` \| `null` | _none_  | ✔️       |
-| name         | `string` \| `null` | _none_  | ✔️       |
-| site_id      | `string`           | _none_  | ✔️       |
-
----
-
-### `TagAttributes`
-
-| Property   | Type                              | Default | Required |
-| ---------- | --------------------------------- | ------- | -------- |
-| attributes | [`TagAttributes`](#TagAttributes) | _none_  | ✔️       |
-| id         | `string`                          | _none_  | ✔️       |
-| type       | [`EntityType.TAG`](#EntityType)   | _none_  | ✔️       |
-
----
-
-### `TagSubscriberParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| date     | `Date`   | _none_  | ❌       |
-| email    | `string` | _none_  | ✔️       |
-| tagName  | `string` | _none_  | ✔️       |
-
----
-
-### `TrackParameters<S, E>`
-
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
-
-The `E` from above represents the prefix that is used to define your custom events. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
-
-| Property | Type                     | Default | Required |
-| -------- | ------------------------ | ------- | -------- |
-| email    | `string`                 | _none_  | ✔️       |
-| type     | `string`                 | _none_  | ✔️       |
-| details  | `{ [key: string]: any }` | _none_  | ❌       |
-| fields   | `Partial<S>`             | _none_  | ❌       |
-
----
-
-### `TrackPurchaseParameters`
-
-| Property        | Type                                  | Default | Required |
-| --------------- | ------------------------------------- | ------- | -------- |
-| date            | `Date`                                | _none_  | ❌       |
-| email           | `string`                              | _none_  | ✔️       |
-| purchaseDetails | [`PurchaseDetails`](#PurchaseDetails) | _none_  | ✔️       |
-
----
-
-### `UnsubscribeParameters`
-
-| Property | Type     | Default | Required |
-| -------- | -------- | ------- | -------- |
-| email    | `string` | _none_  | ✔️       |
-
----
-
-### `UpdateFieldsParameters<S>`
-
-The `S` from above represents the type of your subscriber's custom fields in Bento. This only applies in `TypeScript`. Please read the [TypeScript](#TypeScript) section for more details.
-
-| Property | Type         | Default | Required |
-| -------- | ------------ | ------- | -------- |
-| date     | `Date`       | _none_  | ❌       |
-| email    | `string`     | _none_  | ✔️       |
-| fields   | `Partial<S>` | _none_  | ✔️       |
-
----
-
-### `ValidateEmailParameters`
-
-| Property  | Type     | Default | Required |
-| --------- | -------- | ------- | -------- |
-| email     | `string` | _none_  | ✔️       |
-| ip        | `string` | _none_  | ❌       |
-| name      | `string` | _none_  | ❌       |
-| userAgent | `string` | _none_  | ❌       |
-
-## TypeScript
-
-The Bento Node SDK is written entirely in TypeScript and, as such, has first-class support for projects written in TypeScript. It takes advantage of generics to make your code more bullet-proof and reduce bugs throughout your system.
-
-### Generics
-
-#### `S`
-
-The `S` generic is a type that represents the shape of the custom fields on your Bento subscribers. If this is provided, all of the methods that interact with these fields (including fetching the subscriber from the API) will be typed appropriately.
-
-To set this type, pass it as the first generic parameter when initializing your `Analytics` object.
-
-```ts
-type MySubscriberFields = {
-  firstName: string;
-  lastName: string;
-  age: number;
-};
-
-const bento = new Analytics<MySubscriberFields>({
-  // ... initialization options from above.
-});
-```
-
-#### `E`
-
-The `E` generic is a string that represents the custom prefix used for your custom commands. This is used to ensure that you are not accidentally changing things on your subscribers that you do not intend to change. It also prevents clashes with using internal Bento events.
-
-To set this type, pass it as the second generic parameter when initializing your `Analytics` object.
-
-```ts
-const bento = new Analytics<any, '$myPrefix.'>({
-  // ... initialization options from above.
-});
-```
 
 ## Things to know
 
-1. Tracking: All events must be identified. Anonymous support coming soon!
-2. Tracking: Most events and indexed inside Bento within a few seconds.
-3. If you need support, just let us know!
+- All events must be identified with an email address.
+- Most events are indexed within seconds in your Bento account.
+- The SDK supports TypeScript with generics for custom fields and events.
+- Batch operations are available for importing subscribers and events efficiently.
+- The SDK doesn't currently support anonymous events (coming soon).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/bentonow/bento-node-sdk. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+We welcome contributions! Please see our [contributing guidelines](CODE_OF_CONDUCT.md) for details on how to submit pull requests, report issues, and suggest improvements.
 
 ## License
 
-The package is available as open source under the terms of the MIT License.
+The Bento SDK for Node.js is available as open source under the terms of the [MIT License](LICENSE.md).
