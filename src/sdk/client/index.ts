@@ -11,7 +11,7 @@ export class BentoClient {
   constructor(options: AnalyticsOptions) {
     this._baseUrl = options.clientOptions?.baseUrl || this._baseUrl;
     this._siteUuid = options.siteUuid;
-    this._headers = this._extractHeaders(options.authentication);
+    this._headers = this._extractHeaders(options.authentication, options.siteUuid);
     this._logErrors = options.logErrors || false;
   }
 
@@ -82,19 +82,21 @@ export class BentoClient {
   }
 
   /**
-   * Extracts the `publishableKey` and `secretKey` from the `authentication` options and
-   * adds the `Authorization` header.
+   * Extracts the `publishableKey` and `secretKey` from the `authentication` options,
+   * adds the `Authorization` header, and includes a `User-Agent` header with the site UUID.
    *
    * @param authentication AuthenticationOptions
+   * @param siteUuid string The site UUID to be included in the User-Agent header
    * @returns HeadersInit
    */
-  private _extractHeaders(authentication: AuthenticationOptions): HeadersInit {
+  private _extractHeaders(authentication: AuthenticationOptions, siteUuid: string): HeadersInit {
     const authenticationKey = Buffer.from(
       `${authentication.publishableKey}:${authentication.secretKey}`
     ).toString('base64');
 
     return {
       Authorization: `Basic ${authenticationKey}`,
+      'User-Agent': `bento-node-${siteUuid}`,
     };
   }
 
