@@ -4,44 +4,35 @@ import { mockOptions } from '../helpers/mockClient';
 import { mockSubscriberResponse } from '../helpers/mockResponses';
 import { setupMockFetch } from '../helpers/mockFetch';
 
-describe('BentoCommands - addTag', () => {
+describe('BentoCommands - removeTag', () => {
   let analytics: Analytics;
 
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
   });
 
-  test('successfully adds a tag to a subscriber', async () => {
+  test('successfully removes a tag from a subscriber', async () => {
     const email = 'test@example.com';
-    const tagName = 'TestTag';
-    setupMockFetch(mockSubscriberResponse(email, ['tag-123']));
+    setupMockFetch(mockSubscriberResponse(email, []));
 
-    const result = await analytics.V1.Commands.addTag({ email, tagName });
+    const result = await analytics.V1.Commands.removeTag({
+      email,
+      tagName: 'TestTag'
+    });
 
     expect(result).toBeDefined();
     expect(result?.attributes.email).toBe(email);
-    expect(result?.attributes.cached_tag_ids).toContain('tag-123');
+    expect(result?.attributes.cached_tag_ids).toHaveLength(0);
   });
 
   test('returns null when response is empty', async () => {
     setupMockFetch({ data: null });
 
-    const result = await analytics.V1.Commands.addTag({
+    const result = await analytics.V1.Commands.removeTag({
       email: 'test@example.com',
       tagName: 'TestTag'
     });
 
     expect(result).toBeNull();
-  });
-
-  test('handles server error gracefully', async () => {
-    setupMockFetch({ error: 'Server Error' }, 500);
-
-    expect(
-      analytics.V1.Commands.addTag({
-        email: 'test@example.com',
-        tagName: 'TestTag',
-      })
-    ).rejects.toThrow();
   });
 });

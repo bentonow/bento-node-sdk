@@ -4,31 +4,31 @@ import { mockOptions } from '../helpers/mockClient';
 import { mockSubscriberResponse } from '../helpers/mockResponses';
 import { setupMockFetch } from '../helpers/mockFetch';
 
-describe('BentoCommands - addTag', () => {
+describe('BentoCommands - unsubscribe', () => {
   let analytics: Analytics;
 
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
   });
 
-  test('successfully adds a tag to a subscriber', async () => {
+  test('successfully unsubscribes a user', async () => {
     const email = 'test@example.com';
-    const tagName = 'TestTag';
-    setupMockFetch(mockSubscriberResponse(email, ['tag-123']));
+    const unsubscribedResponse = mockSubscriberResponse(email);
+    unsubscribedResponse.data.attributes.unsubscribed_at = new Date().toISOString();
+    setupMockFetch(unsubscribedResponse);
 
-    const result = await analytics.V1.Commands.addTag({ email, tagName });
+    const result = await analytics.V1.Commands.unsubscribe({ email });
 
     expect(result).toBeDefined();
     expect(result?.attributes.email).toBe(email);
-    expect(result?.attributes.cached_tag_ids).toContain('tag-123');
+    expect(result?.attributes.unsubscribed_at).not.toBeNull();
   });
 
   test('returns null when response is empty', async () => {
     setupMockFetch({ data: null });
 
-    const result = await analytics.V1.Commands.addTag({
-      email: 'test@example.com',
-      tagName: 'TestTag'
+    const result = await analytics.V1.Commands.unsubscribe({
+      email: 'test@example.com'
     });
 
     expect(result).toBeNull();
@@ -38,9 +38,8 @@ describe('BentoCommands - addTag', () => {
     setupMockFetch({ error: 'Server Error' }, 500);
 
     expect(
-      analytics.V1.Commands.addTag({
+      analytics.V1.Commands.unsubscribe({
         email: 'test@example.com',
-        tagName: 'TestTag',
       })
     ).rejects.toThrow();
   });
