@@ -54,6 +54,7 @@
     "@typescript-eslint/eslint-plugin": "^5.30.7",
     "@typescript-eslint/parser": "^5.30.7",
     "@weiran.zsd/tsdx": "^0.15.2",
+    "bun-types": "^1.1.42",
     "eslint": "^7.32.0",
     "husky": "^7.0.1",
     "msw": "^0.34.0",
@@ -63,6 +64,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "cross-fetch": "^4.0.0"
+    "cross-fetch": "^4.0.0",
+    "tsdx": "^0.14.1"
   }
 }

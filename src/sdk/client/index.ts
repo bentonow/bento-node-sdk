@@ -11,7 +11,10 @@ export class BentoClient {
   constructor(options: AnalyticsOptions) {
     this._baseUrl = options.clientOptions?.baseUrl || this._baseUrl;
     this._siteUuid = options.siteUuid;
-    this._headers = this._extractHeaders(options.authentication, options.siteUuid);
+    this._headers = this._extractHeaders(
+      options.authentication,
+      options.siteUuid
+    );
     this._logErrors = options.logErrors || false;
   }
 
@@ -89,7 +92,10 @@ export class BentoClient {
    * @param siteUuid string The site UUID to be included in the User-Agent header
    * @returns HeadersInit
    */
-  private _extractHeaders(authentication: AuthenticationOptions, siteUuid: string): HeadersInit {
+  private _extractHeaders(
+    authentication: AuthenticationOptions,
+    siteUuid: string
+  ): HeadersInit {
     const authenticationKey = Buffer.from(
       `${authentication.publishableKey}:${authentication.secretKey}`
     ).toString('base64');
