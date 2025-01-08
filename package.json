@@ -1,6 +1,6 @@
 {
   "name": "@bentonow/bento-node-sdk",
-  "version": "0.0.2",
+  "version": "v1.0.0",
   "description": "🍱 Bento Node.JS SDK and tracking library",
   "author": "Backpack Internet",
   "license": "MIT",
