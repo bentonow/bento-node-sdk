@@ -1,0 +1,12 @@
+[build]
+entrypoints = ["./src/index.ts"]
+outdir = "./dist"
+target = "node"
+minify = true
+sourcemap = "external"
+
+[test]
+coverage = true
+
+[install]
+registry = "https://registry.npmjs.org/"

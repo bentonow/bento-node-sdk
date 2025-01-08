@@ -19,10 +19,7 @@ import type {
   UpdateFieldsParameters,
 } from './types';
 
-export class BentoAPIV1<
-  S = { [key: string]: unknown },
-  E extends string = '$custom'
-> {
+export class BentoAPIV1<S = { [key: string]: unknown }, E extends string = '$custom'> {
   private readonly _client: BentoClient;
 
   public readonly Batch: BentoBatch<S, E>;
@@ -98,9 +95,7 @@ export class BentoAPIV1<
    * @param parameters AddSubscriberParameters
    * @returns Promise\<boolean\>
    */
-  async addSubscriber(
-    parameters: AddSubscriberParameters<S>
-  ): Promise<boolean> {
+  async addSubscriber(parameters: AddSubscriberParameters<S>): Promise<boolean> {
     const result = await this.Batch.importEvents({
       events: [
         {
@@ -134,9 +129,7 @@ export class BentoAPIV1<
    * @param parameters RemoveSubscriberParameters
    * @returns Promise\<boolean\>
    */
-  async removeSubscriber(
-    parameters: RemoveSubscriberParameters
-  ): Promise<boolean> {
+  async removeSubscriber(parameters: RemoveSubscriberParameters): Promise<boolean> {
     const result = await this.Batch.importEvents({
       events: [
         {

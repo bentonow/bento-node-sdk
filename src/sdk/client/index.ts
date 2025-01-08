@@ -2,6 +2,33 @@ import fetch from 'cross-fetch';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 import { NotAuthorizedError, RateLimitedError } from './errors';
 
+function encodeBase64(str: string): string {
+  if (typeof btoa === 'function') {
+    return btoa(str);
+  } else if (typeof Buffer !== 'undefined') {
+    return Buffer.from(str).toString('base64');
+  } else {
+    // Fallback implementation
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    let output = '';
+    for (
+      let block = 0, charCode, i = 0, map = chars;
+      str.charAt(i | 0) || ((map = '='), i % 1);
+      output += map.charAt(63 & (block >> (8 - (i % 1) * 8)))
+    ) {
+      charCode = str.charCodeAt((i += 3 / 4));
+
+      if (charCode > 0xff) {
+        throw new Error(
+          "'btoa' failed: The string to be encoded contains characters outside of the Latin1 range."
+        );
+      }
+
+      block = (block << 8) | charCode;
+    }
+    return output;
+  }
+}
 export class BentoClient {
   private readonly _headers: HeadersInit = {};
   private readonly _baseUrl: string = 'https://app.bentonow.com/api/v1';
@@ -23,10 +50,7 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public get<T>(
-    endpoint: string,
-    payload: Record<string, unknown> = {}
-  ): Promise<T> {
+  public get<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const queryParameters = this._getQueryParameters(payload);
 
@@ -34,15 +58,15 @@ export class BentoClient {
         method: 'GET',
         headers: this._headers,
       })
-        .then(async result => {
+        .then(async (result) => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then(data => resolve(data))
-        .catch(error => reject(error));
+        .then((data) => resolve(data))
+        .catch((error) => reject(error));
     });
   }
 
@@ -54,10 +78,7 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public post<T>(
-    endpoint: string,
-    payload: Record<string, unknown> = {}
-  ): Promise<T> {
+  public post<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const body = this._getBody(payload);
 
@@ -69,15 +90,15 @@ export class BentoClient {
         },
         body,
       })
-        .then(async result => {
+        .then(async (result) => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then(data => resolve(data))
-        .catch(error => reject(error));
+        .then((data) => resolve(data))
+        .catch((error) => reject(error));
     });
   }
 
@@ -90,9 +111,9 @@ export class BentoClient {
    * @returns HeadersInit
    */
   private _extractHeaders(authentication: AuthenticationOptions, siteUuid: string): HeadersInit {
-    const authenticationKey = Buffer.from(
+    const authenticationKey = encodeBase64(
       `${authentication.publishableKey}:${authentication.secretKey}`
-    ).toString('base64');
+    );
 
     return {
       Authorization: `Basic ${authenticationKey}`,

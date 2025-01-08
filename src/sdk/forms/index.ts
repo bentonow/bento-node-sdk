@@ -13,15 +13,10 @@ export class BentoForms {
    * @param formIdentifier string
    * @returns Promise\<FormResponse[] | null\>
    */
-  public async getResponses(
-    formIdentifier: string
-  ): Promise<FormResponse[] | null> {
-    const result = await this._client.get<DataResponse<FormResponse[]>>(
-      this._url,
-      {
-        id: formIdentifier,
-      }
-    );
+  public async getResponses(formIdentifier: string): Promise<FormResponse[] | null> {
+    const result = await this._client.get<DataResponse<FormResponse[]>>(this._url, {
+      id: formIdentifier,
+    });
 
     if (Object.keys(result).length === 0 || !result.data) return null;
     return result.data;

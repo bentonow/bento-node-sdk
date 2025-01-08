@@ -25,9 +25,7 @@ export class BentoTags {
    * @param parameters CreateTagParameters
    * @returns Promise\<Tag[] | null\>
    */
-  public async createTag(
-    parameters: CreateTagParameters
-  ): Promise<Tag[] | null> {
+  public async createTag(parameters: CreateTagParameters): Promise<Tag[] | null> {
     const result = await this._client.post<DataResponse<Tag[]>>(this._url, {
       tag: parameters,
     });

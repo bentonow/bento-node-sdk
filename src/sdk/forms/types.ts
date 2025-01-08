@@ -1,10 +1,4 @@
-import type {
-  BaseEntity,
-  BrowserData,
-  IdentityData,
-  LocationData,
-  PageData,
-} from '../types';
+import type { BaseEntity, BrowserData, IdentityData, LocationData, PageData } from '../types';
 
 /**
  * Core Form Types

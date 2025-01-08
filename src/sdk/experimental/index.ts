@@ -29,18 +29,13 @@ export class BentoExperimental {
    * @param parameters
    * @returns Promise\<boolean\>
    */
-  public async validateEmail(
-    parameters: ValidateEmailParameters
-  ): Promise<boolean> {
-    const result = await this._client.post<ValidateEmailResponse>(
-      `${this._url}/validation`,
-      {
-        email: parameters.email,
-        ip: parameters.ip,
-        name: parameters.name,
-        user_agent: parameters.userAgent,
-      }
-    );
+  public async validateEmail(parameters: ValidateEmailParameters): Promise<boolean> {
+    const result = await this._client.post<ValidateEmailResponse>(`${this._url}/validation`, {
+      email: parameters.email,
+      ip: parameters.ip,
+      name: parameters.name,
+      user_agent: parameters.userAgent,
+    });
 
     return result.valid;
   }
@@ -58,13 +53,8 @@ export class BentoExperimental {
    * @param parameters
    * @returns Promise\<GuessGenderResponse\>
    */
-  public async guessGender(
-    parameters: GuessGenderParameters
-  ): Promise<GuessGenderResponse> {
-    const result = await this._client.post<GuessGenderResponse>(
-      `${this._url}/gender`,
-      parameters
-    );
+  public async guessGender(parameters: GuessGenderParameters): Promise<GuessGenderResponse> {
+    const result = await this._client.post<GuessGenderResponse>(`${this._url}/gender`, parameters);
 
     return result;
   }
@@ -78,9 +68,7 @@ export class BentoExperimental {
    * @param parameters
    * @returns Promise\<GeolocateResponse\>
    */
-  public async geolocate(
-    parameters: GeolocateParameters
-  ): Promise<LocationData | null> {
+  public async geolocate(parameters: GeolocateParameters): Promise<LocationData | null> {
     const result = await this._client.get<GeolocateResponse>(
       `${this._url}/geolocation`,
       parameters
@@ -100,9 +88,7 @@ export class BentoExperimental {
    * @param parameters
    * @returns Promise\<BlacklistResponse\>
    */
-  public async checkBlacklist(
-    parameters: BlacklistParameters
-  ): Promise<BlacklistResponse> {
+  public async checkBlacklist(parameters: BlacklistParameters): Promise<BlacklistResponse> {
     const result = await this._client.get<BlacklistResponse>(
       `${this._url}/blacklist.json`,
       parameters

@@ -54,7 +54,54 @@ Bento Account for a valid **SITE_UUID**, **BENTO_PUBLISHABLE_KEY** & **BENTO_SEC
 Install the Bento SDK in your project folder:
 
 ```bash
+
+# Using npm
 npm install @bentonow/bento-node-sdk --save
+
+# Using Bun
+bun add @bentonow/bento-node-sdk
+```
+
+### Using Bun (Recommended)
+```bash
+# Install dependencies
+bun install
+
+# Run tests
+bun test
+
+# Run tests with coverage
+bun test:coverage
+
+# Build the package
+bun run build
+
+# Lint code
+bun run lint
+
+# Format code
+bun run format
+```
+
+### Using npm
+```bash
+# Install dependencies
+npm install
+
+# Run tests
+npm run test:npm
+
+# Run tests with coverage
+npm run test:coverage:npm
+
+# Build the package
+npm run build:npm
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
 ```
 
 ### Integration
