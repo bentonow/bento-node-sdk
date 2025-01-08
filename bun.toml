@@ -1,6 +1,0 @@
-[test]
-coverage = true
-
-[coverage]
-exclude = ["**/__tests__/**/*"]
-include = ["src/**/*"]

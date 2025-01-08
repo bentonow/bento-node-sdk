@@ -19,13 +19,17 @@ jobs:
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
-        with:
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: bun install
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Lint
+        run: bun run lint --fix
+
+      - name: Run tests
+        run: bun test --coverage
 
       - name: Set version
         run: |
@@ -34,7 +38,7 @@ jobs:
 
       - name: Update package version
         run: |
-          bun run pkg set version=$VERSION
+          npm version $VERSION --no-git-tag-version
 
       - name: Generate Release Notes
         id: release_notes

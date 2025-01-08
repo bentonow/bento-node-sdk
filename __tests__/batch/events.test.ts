@@ -221,4 +221,93 @@ describe('BentoBatch - importEvents', () => {
 
     expect(result).toBe(1);
   });
+
+  test('successfully imports update fields event with all field types', async () => {
+    setupMockFetch({ results: 1 });
+
+    const result = await analytics.V1.Batch.importEvents({
+      events: [{
+        type: BentoEvents.UPDATE_FIELDS,
+        email: 'test@example.com',
+        fields: {
+          stringField: 'string',
+          numberField: 123,
+          booleanField: true,
+          dateField: new Date(),
+          nullField: null,
+          arrayField: ['a', 'b', 'c'],
+          objectField: { key: 'value' }
+        }
+      }]
+    });
+
+    expect(result).toBe(1);
+  });
+
+  test('successfully imports purchase event with all optional fields', async () => {
+    setupMockFetch({ results: 1 });
+
+    const result = await analytics.V1.Batch.importEvents({
+      events: [{
+        type: BentoEvents.PURCHASE,
+        email: 'test@example.com',
+        date: new Date('2024-01-07'),
+        details: {
+          unique: {
+            key: '123'
+          },
+          value: {
+            currency: 'USD',
+            amount: 99.99
+          },
+          cart: {
+            abandoned_checkout_url: 'https://example.com/cart',
+            items: [{
+              product_id: 'prod_123',
+              product_name: 'Test Product',
+              product_price: 99.99,
+              quantity: 1,
+              product_sku: 'SKU123',
+              custom_field: 'custom value'
+            }]
+          }
+        }
+      }]
+    });
+
+    expect(result).toBe(1);
+  });
+
+  test('handles array of different event types', async () => {
+    setupMockFetch({ results: 3 });
+
+    const result = await analytics.V1.Batch.importEvents({
+      events: [
+        {
+          type: BentoEvents.TAG,
+          email: 'test1@example.com',
+          details: {
+            tag: 'VIP'
+          }
+        },
+        {
+          type: BentoEvents.PURCHASE,
+          email: 'test2@example.com',
+          details: {
+            unique: { key: '123' },
+            value: { currency: 'USD', amount: 99.99 }
+          }
+        },
+        {
+          type: BentoEvents.UPDATE_FIELDS,
+          email: 'test3@example.com',
+          fields: {
+            name: 'Test User'
+          }
+        }
+      ]
+    });
+
+    expect(result).toBe(3);
+  });
 });

@@ -11,10 +11,7 @@ export class BentoClient {
   constructor(options: AnalyticsOptions) {
     this._baseUrl = options.clientOptions?.baseUrl || this._baseUrl;
     this._siteUuid = options.siteUuid;
-    this._headers = this._extractHeaders(
-      options.authentication,
-      options.siteUuid
-    );
+    this._headers = this._extractHeaders(options.authentication, options.siteUuid);
     this._logErrors = options.logErrors || false;
   }
 
@@ -26,10 +23,7 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public get<T>(
-    endpoint: string,
-    payload: Record<string, unknown> = {}
-  ): Promise<T> {
+  public get<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const queryParameters = this._getQueryParameters(payload);
 
@@ -37,15 +31,15 @@ export class BentoClient {
         method: 'GET',
         headers: this._headers,
       })
-        .then(async result => {
+        .then(async (result) => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then(data => resolve(data))
-        .catch(error => reject(error));
+        .then((data) => resolve(data))
+        .catch((error) => reject(error));
     });
   }
 
@@ -57,10 +51,7 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public post<T>(
-    endpoint: string,
-    payload: Record<string, unknown> = {}
-  ): Promise<T> {
+  public post<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const body = this._getBody(payload);
 
@@ -72,15 +63,15 @@ export class BentoClient {
         },
         body,
       })
-        .then(async result => {
+        .then(async (result) => {
           if (this._isSuccessfulStatus(result.status)) {
             return result.json();
           }
 
           throw await this._getErrorForResponse(result);
         })
-        .then(data => resolve(data))
-        .catch(error => reject(error));
+        .then((data) => resolve(data))
+        .catch((error) => reject(error));
     });
   }
 
@@ -92,10 +83,7 @@ export class BentoClient {
    * @param siteUuid string The site UUID to be included in the User-Agent header
    * @returns HeadersInit
    */
-  private _extractHeaders(
-    authentication: AuthenticationOptions,
-    siteUuid: string
-  ): HeadersInit {
+  private _extractHeaders(authentication: AuthenticationOptions, siteUuid: string): HeadersInit {
     const authenticationKey = Buffer.from(
       `${authentication.publishableKey}:${authentication.secretKey}`
     ).toString('base64');

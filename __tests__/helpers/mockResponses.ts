@@ -15,13 +15,3 @@ export const mockSubscriberResponse = (email: string, tagIds: string[] = []): Da
     }
   }
 });
-
-export const mockErrorResponse = (status: number, message: string) => ({
-  status,
-  ok: false,
-  json: () => Promise.resolve({ error: message }),
-  text: () => Promise.resolve(message),
-  headers: new Headers({
-    'Content-Type': 'application/json'
-  })
-});

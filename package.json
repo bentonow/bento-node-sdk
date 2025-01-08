@@ -1,34 +1,29 @@
 {
-  "version": "0.2.1",
+  "name": "@bentonow/bento-node-sdk",
+  "version": "1.0.3",
+  "description": "🍱 Bento Node.JS SDK and tracking library",
+  "author": "Backpack Internet",
   "license": "MIT",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "engines": {
-    "node": ">=12"
+    "node": ">=18"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "build": "bun build ./src/index.ts --outdir dist && tsc --emitDeclarationOnly",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prepublishOnly": "bun run build",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
-  "peerDependencies": {},
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "name": "@bentonow/bento-node-sdk",
-  "author": "Backpack Internet",
-  "module": "dist/bento-node-sdk.esm.js",
-  "description": "🍱 Bento Node.JS SDK and tracking library",
   "repository": {
     "type": "git",
     "url": "git://github.com/bentonow/bento-node-sdk.git"
@@ -37,34 +32,24 @@
     "url": "https://github.com/bentonow/bento-node-sdk/issues"
   },
   "homepage": "https://bentonow.com",
-  "size-limit": [
-    {
-      "path": "dist/bento-node-sdk.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/bento-node-sdk.esm.js",
-      "limit": "10 KB"
-    }
-  ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^5.0.3",
-    "@types/isomorphic-fetch": "^0.0.35",
-    "@types/jest": "^27.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.30.7",
-    "@typescript-eslint/parser": "^5.30.7",
-    "@weiran.zsd/tsdx": "^0.15.2",
-    "bun-types": "^1.1.42",
-    "eslint": "^7.32.0",
-    "husky": "^7.0.1",
-    "msw": "^0.34.0",
-    "prettier": "^2.7.1",
-    "size-limit": "^5.0.3",
-    "tslib": "^2.3.1",
-    "typescript": "^4.3.5"
+    "@size-limit/preset-small-lib": "^11.1.5",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "bun-types": "latest",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "size-limit": "^11.1.6",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
-    "cross-fetch": "^4.0.0",
-    "tsdx": "^0.14.1"
-  }
+    "cross-fetch": "^4.1.0"
+  },
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "15 KB"
+    }
+  ]
 }

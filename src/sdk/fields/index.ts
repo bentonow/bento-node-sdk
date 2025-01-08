@@ -34,9 +34,7 @@ export class BentoFields {
    * @param parameters \{ key: string \}
    * @returns Promise<Field[]>
    */
-  public async createField(
-    parameters: CreateFieldParameters
-  ): Promise<Field[] | null> {
+  public async createField(parameters: CreateFieldParameters): Promise<Field[] | null> {
     const result = await this._client.post<DataResponse<Field[]>>(this._url, {
       field: parameters,
     });

@@ -41,19 +41,13 @@ export class BentoBatch<S, E extends string> {
    * @param parameters
    * @returns Promise\<number\>
    */
-  public async importSubscribers(
-    parameters: BatchImportSubscribersParameter<S>
-  ): Promise<number> {
+  public async importSubscribers(parameters: BatchImportSubscribersParameter<S>): Promise<number> {
     if (parameters.subscribers.length === 0) {
-      throw new TooFewSubscribersError(
-        `You must send between 1 and 1,000 subscribers.`
-      );
+      throw new TooFewSubscribersError(`You must send between 1 and 1,000 subscribers.`);
     }
 
     if (parameters.subscribers.length > this._maxBatchSize) {
-      throw new TooManySubscribersError(
-        `You must send between 1 and 1,000 subscribers.`
-      );
+      throw new TooManySubscribersError(`You must send between 1 and 1,000 subscribers.`);
     }
 
     const result = await this._client.post<BatchImportSubscribersResponse>(
@@ -77,9 +71,7 @@ export class BentoBatch<S, E extends string> {
    * @param parameters
    * @returns Promise\<number\>
    */
-  public async importEvents(
-    parameters: BatchImportEventsParameter<S, E>
-  ): Promise<number> {
+  public async importEvents(parameters: BatchImportEventsParameter<S, E>): Promise<number> {
     if (parameters.events.length === 0) {
       throw new TooFewEventsError(`You must send between 1 and 1,000 events.`);
     }
@@ -88,12 +80,9 @@ export class BentoBatch<S, E extends string> {
       throw new TooManyEventsError(`You must send between 1 and 1,000 events.`);
     }
 
-    const result = await this._client.post<BatchImportEventsResponse>(
-      `${this._url}/events`,
-      {
-        events: parameters.events,
-      }
-    );
+    const result = await this._client.post<BatchImportEventsResponse>(`${this._url}/events`, {
+      events: parameters.events,
+    });
 
     return result.results;
   }
@@ -123,13 +112,12 @@ export class BentoBatch<S, E extends string> {
       throw new TooManyEmailsError(`You must send between 1 and 100 emails.`);
     }
 
-    const result =
-      await this._client.post<BatchsendTransactionalEmailsResponse>(
-        `${this._url}/emails`,
-        {
-          emails: parameters.emails,
-        }
-      );
+    const result = await this._client.post<BatchsendTransactionalEmailsResponse>(
+      `${this._url}/emails`,
+      {
+        emails: parameters.emails,
+      }
+    );
 
     return result.results;
   }
