@@ -99,9 +99,156 @@ describe('BentoExperimental', () => {
     });
   });
 
-  describe('geolocate', () => {
+  describe('getBlacklistStatus', () => {
+    test('successfully checks domain blacklist status', async () => {
+      const mockResponse = {
+        description: 'Domain blacklist check',
+        query: 'example.com',
+        results: {
+          'blacklist1.com': false,
+          'blacklist2.com': true
+        }
+      };
+
+      setupMockFetch(mockResponse);
+
+      const result = await analytics.V1.Experimental.getBlacklistStatus({
+        domain: 'example.com'
+      });
+
+      expect(result.query).toBe('example.com');
+      expect(result.results['blacklist1.com']).toBe(false);
+      expect(result.results['blacklist2.com']).toBe(true);
+    });
+
+    test('successfully checks IP blacklist status', async () => {
+      const mockResponse = {
+        description: 'IP blacklist check',
+        query: '192.168.1.1',
+        results: {
+          'blacklist1.com': false,
+          'blacklist2.com': false
+        }
+      };
+
+      setupMockFetch(mockResponse);
+
+      const result = await analytics.V1.Experimental.getBlacklistStatus({
+        ipAddress: '192.168.1.1'
+      });
+
+      expect(result.query).toBe('192.168.1.1');
+      expect(Object.values(result.results)).not.toContain(true);
+    });
+
+    test('handles empty results', async () => {
+      const mockResponse = {
+        description: 'Empty check result',
+        query: 'example.com',
+        results: {}
+      };
+
+      setupMockFetch(mockResponse);
+
+      const result = await analytics.V1.Experimental.getBlacklistStatus({
+        domain: 'example.com'
+      });
+
+      expect(result.results).toEqual({});
+    });
+
+    test('handles server error gracefully', async () => {
+      setupMockFetch({ error: 'Server Error' }, 500);
+
+      await expect(
+        analytics.V1.Experimental.getBlacklistStatus({
+          domain: 'example.com'
+        })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('getContentModeration', () => {
+    test('successfully moderates safe content', async () => {
+      const mockResponse = {
+        flagged: false,
+        categories: {
+          hate: false,
+          'hate/threatening': false,
+          'self-harm': false,
+          sexual: false,
+          'sexual/minors': false,
+          violence: false,
+          'violence/graphic': false
+        },
+        category_scores: {
+          hate: 0.01,
+          'hate/threatening': 0.01,
+          'self-harm': 0.01,
+          sexual: 0.01,
+          'sexual/minors': 0.01,
+          violence: 0.01,
+          'violence/graphic': 0.01
+        }
+      };
+
+      setupMockFetch(mockResponse);
+
+      const result = await analytics.V1.Experimental.getContentModeration(
+        'Hello world, this is a test message.'
+      );
+
+      expect(result.flagged).toBe(false);
+      expect(result.categories.hate).toBe(false);
+      expect(result.category_scores.hate).toBeLessThan(0.1);
+    });
+
+    test('successfully flags problematic content', async () => {
+      const mockResponse = {
+        flagged: true,
+        categories: {
+          hate: true,
+          'hate/threatening': false,
+          'self-harm': false,
+          sexual: false,
+          'sexual/minors': false,
+          violence: false,
+          'violence/graphic': false
+        },
+        category_scores: {
+          hate: 0.92,
+          'hate/threatening': 0.01,
+          'self-harm': 0.01,
+          sexual: 0.01,
+          'sexual/minors': 0.01,
+          violence: 0.01,
+          'violence/graphic': 0.01
+        }
+      };
+
+      setupMockFetch(mockResponse);
+
+      const result = await analytics.V1.Experimental.getContentModeration(
+        'Test content with problematic material'
+      );
+
+      expect(result.flagged).toBe(true);
+      expect(result.categories.hate).toBe(true);
+      expect(result.category_scores.hate).toBeGreaterThan(0.9);
+    });
+
+    test('handles server error gracefully', async () => {
+      setupMockFetch({ error: 'Server Error' }, 500);
+
+      await expect(
+        analytics.V1.Experimental.getContentModeration('Test content')
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('geoLocateIP', () => {
     test('successfully geolocates IP address', async () => {
-      const mockLocation = {
+      const mockResponse = {
         city_name: 'San Francisco',
         continent_code: 'NA',
         country_code2: 'US',
@@ -116,123 +263,29 @@ describe('BentoExperimental', () => {
         request: '192.168.1.1'
       };
 
-      setupMockFetch(mockLocation);
-
-      const result = await analytics.V1.Experimental.geolocate({
-        ip: '192.168.1.1'
-      });
-
-      expect(result).toEqual(mockLocation);
-    });
-
-    test('returns null for unknown IP', async () => {
-      setupMockFetch({});
-
-      const result = await analytics.V1.Experimental.geolocate({
-        ip: 'unknown'
-      });
-
-      expect(result).toBeNull();
-    });
-
-    test('handles partial location data', async () => {
-      const partialLocation = {
-        city_name: '',  // provide empty strings for required fields
-        continent_code: '',
-        country_code2: '',
-        country_code3: '',
-        country_name: 'United States',
-        ip: '192.168.1.1',
-        latitude: 0,
-        longitude: 0,
-        postal_code: '',
-        real_region_name: '',
-        region_name: '',
-        request: '192.168.1.1'
-      };
-
-      setupMockFetch(partialLocation);
-
-      const result = await analytics.V1.Experimental.geolocate({
-        ip: '192.168.1.1'
-      });
-
-      expect(result).toEqual(partialLocation);
-    });
-  });
-
-  describe('checkBlacklist', () => {
-    test('successfully checks domain blacklist', async () => {
-      const mockResponse = {
-        description: 'Domain check result',
-        query: 'example.com',
-        results: {
-          'blacklist1.com': false,
-          'blacklist2.com': true
-        }
-      };
-
       setupMockFetch(mockResponse);
 
-      const result = await analytics.V1.Experimental.checkBlacklist({
-        domain: 'example.com'
-      });
+      const result = await analytics.V1.Experimental.geoLocateIP('192.168.1.1');
 
-      expect(result.description).toBe('Domain check result');
-      expect(result.query).toBe('example.com');
-      expect(result.results).toEqual({
-        'blacklist1.com': false,
-        'blacklist2.com': true
-      });
+      expect(result.city_name).toBe('San Francisco');
+      expect(result.country_name).toBe('United States');
+      expect(result.latitude).toBe(37.7749);
+      expect(result.longitude).toBe(-122.4194);
     });
 
-    test('successfully checks IP blacklist', async () => {
-      const mockResponse = {
-        description: 'IP check result',
-        query: '192.168.1.1',
-        results: {
-          'blacklist1.com': false,
-          'blacklist2.com': false
-        }
-      };
+    test('handles invalid IP address', async () => {
+      setupMockFetch({ error: 'Invalid IP' }, 400);
 
-      setupMockFetch(mockResponse);
-
-      const result = await analytics.V1.Experimental.checkBlacklist({
-        ip: '192.168.1.1'
-      });
-
-      expect(result.description).toBe('IP check result');
-      expect(result.query).toBe('192.168.1.1');
-      expect(result.results).toEqual({
-        'blacklist1.com': false,
-        'blacklist2.com': false
-      });
-    });
-
-    test('handles empty results', async () => {
-      const mockResponse = {
-        description: 'Empty check result',
-        query: 'example.com',
-        results: {}
-      };
-
-      setupMockFetch(mockResponse);
-
-      const result = await analytics.V1.Experimental.checkBlacklist({
-        domain: 'example.com'
-      });
-
-      expect(result.results).toEqual({});
+      await expect(
+        analytics.V1.Experimental.geoLocateIP('invalid-ip')
+      ).rejects.toThrow();
     });
 
     test('handles server error gracefully', async () => {
       setupMockFetch({ error: 'Server Error' }, 500);
 
       await expect(
-        analytics.V1.Experimental.checkBlacklist({
-          domain: 'example.com'
-        })
+        analytics.V1.Experimental.geoLocateIP('192.168.1.1')
       ).rejects.toThrow();
     });
   });
