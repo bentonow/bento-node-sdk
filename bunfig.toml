@@ -10,3 +10,4 @@ coverage = true
 
 [install]
 registry = "https://registry.npmjs.org/"
+scope = "@bentonow"

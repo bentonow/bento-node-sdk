@@ -1,8 +1,9 @@
 import type { BentoClient } from '../client';
 import type { LocationData } from '../types';
 import type {
+  BlacklistCheckInput,
   BlacklistParameters,
-  BlacklistResponse,
+  BlacklistResponse, BlacklistResult, ContentModerationResult,
   GeolocateParameters,
   GeolocateResponse,
   GuessGenderParameters,
@@ -95,5 +96,36 @@ export class BentoExperimental {
     );
 
     return result;
+  }
+
+  /**
+   * Checks if a domain or IP is blacklisted
+   * @param input Domain or IP to check
+   * @returns Promise<BlacklistResult>
+   */
+  public async getBlacklistStatus(input: BlacklistCheckInput): Promise<BlacklistResult> {
+    return this._client.get<BlacklistResult>(`${this._url}/blacklist`, input);
+  }
+
+  /**
+   * Performs content moderation on provided text
+   * @param content Text content to moderate
+   * @returns Promise<ContentModerationResult>
+   */
+  public async getContentModeration(content: string): Promise<ContentModerationResult> {
+    return this._client.post<ContentModerationResult>(`${this._url}/moderation`, {
+      content
+    });
+  }
+
+  /**
+   * Gets geolocation data for an IP address
+   * @param ipAddress IP address to geolocate
+   * @returns Promise<LocationData>
+   */
+  public async geoLocateIP(ipAddress: string): Promise<LocationData> {
+    return this._client.get<LocationData>(`${this._url}/geolocation`, {
+      ip: ipAddress
+    });
   }
 }

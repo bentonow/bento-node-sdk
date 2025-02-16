@@ -173,6 +173,24 @@ bento.V1.removeSubscriber({
 }).then(result => console.log(result));
 ```
 
+#### upsertSubscriber
+Updates existing subscriber or creates a new one if they don't exist:
+
+```javascript
+await analytics.V1.upsertSubscriber({
+  email: 'user@example.com',
+  fields: {
+    firstName: 'John',
+    lastName: 'Doe',
+    company: 'Acme Inc'
+  },
+  tags: 'lead,mql',
+  remove_tags: 'customer'
+});
+```
+
+
+
 #### updateFields
 Updates custom fields for a subscriber.
 
@@ -239,6 +257,105 @@ bento.V1.Batch.importEvents({
   ],
 }).then(result => console.log(result));
 ```
+
+
+### Broadcast Management
+
+#### createEmails
+Sends transactional emails in batch:
+
+```javascript
+const result = await analytics.V1.Broadcasts.createEmails([{
+  to: 'recipient@example.com',
+  from: 'sender@example.com',
+  subject: 'Welcome {{ name }}!',
+  html_body: '<p>Hello {{ name }}, welcome aboard!</p>',
+  transactional: true,
+  personalizations: {
+    name: 'John Doe',
+    accountType: 'premium'
+  }
+}]);
+```
+
+#### getBroadcasts
+Retrieves all broadcasts:
+
+```javascript
+const broadcasts = await analytics.V1.Broadcasts.getBroadcasts();
+```
+
+#### createBroadcast
+Creates new broadcast campaigns:
+
+```javascript
+const broadcasts = await analytics.V1.Broadcasts.createBroadcast([{
+  name: 'Weekly Newsletter',
+  subject: 'Your Weekly Update',
+  content: '<p>Hi {{ name }},</p>...',
+  type: 'html',
+  from: {
+    name: 'John Doe',
+    email: 'john@example.com'
+  },
+  inclusive_tags: 'lead,mql',
+  exclusive_tags: 'unsubscribed',
+  segment_id: 'segment_123',
+  batch_size_per_hour: 1000
+}]);
+```
+
+### Statistics
+
+#### getSiteStats
+Retrieves overall site statistics:
+
+```javascript
+const stats = await analytics.V1.Stats.getSiteStats();
+// Returns:
+// {
+//   total_subscribers: 1000,
+//   active_subscribers: 950,
+//   unsubscribed_count: 50,
+//   broadcast_count: 25,
+//   average_open_rate: 45.5,
+//   average_click_rate: 12.3
+// }
+```
+
+#### getSegmentStats
+Retrieves statistics for a specific segment:
+
+```javascript
+const segmentStats = await analytics.V1.Stats.getSegmentStats('segment_123');
+// Returns:
+// {
+//   segment_id: 'segment_123',
+//   subscriber_count: 500,
+//   growth_rate: 2.5,
+//   engagement_rate: 35.8,
+//   last_updated: '2024-01-01T00:00:00Z'
+// }
+```
+
+#### getReportStats
+Retrieves statistics for a specific report:
+
+```javascript
+const reportStats = await analytics.V1.Stats.getReportStats('report_123');
+// Returns:
+// {
+//   report_id: 'report_123',
+//   total_sent: 1000,
+//   total_opens: 750,
+//   unique_opens: 500,
+//   total_clicks: 250,
+//   unique_clicks: 200,
+//   unsubscribes: 5,
+//   spam_reports: 1
+// }
+```
+
 
 ### Commands
 
@@ -307,6 +424,54 @@ Attempts to guess the gender based on a given name.
 bento.V1.Experimental.guessGender({
   name: 'Alex',
 }).then(result => console.log(result));
+```
+
+is blacklisted:
+
+```javascript
+const blacklistStatus = await analytics.V1.Experimental.getBlacklistStatus({
+  domain: 'example.com'
+  // or ipAddress: '192.168.1.1'
+});
+```
+
+#### getContentModeration
+Performs content moderation on text:
+
+```javascript
+const moderationResult = await analytics.V1.Experimental.getContentModeration(
+  'Content to moderate'
+);
+// Returns:
+// {
+//   flagged: boolean,
+//   categories: {
+//     hate: boolean,
+//     'hate/threatening': boolean,
+//     'self-harm': boolean,
+//     ...
+//   },
+//   category_scores: {
+//     hate: number,
+//     'hate/threatening': number,
+//     ...
+//   }
+// }
+```
+
+#### geoLocateIP
+Gets detailed geolocation information for an IP address:
+
+```javascript
+const location = await analytics.V1.Experimental.geoLocateIP('192.168.1.1');
+// Returns:
+// {
+//   city_name: 'San Francisco',
+//   country_name: 'United States',
+//   latitude: 37.7749,
+//   longitude: -122.4194,
+//   ...
+// }
 ```
 
 ### Fields
