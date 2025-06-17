@@ -126,6 +126,17 @@ describe('BentoClient', () => {
         '[500] - Unknown response from the Bento API.'
       );
     });
+
+    test('throws AuthorNotAuthorizedError on 500 with author not authorized error', async () => {
+      setupMockFetch(
+        { error: 'Author not authorized to send on this account' },
+        500,
+        'application/json'
+      );
+      const promise = analytics.V1.Broadcasts.getBroadcasts();
+      await expect(promise).rejects.toThrow('Author not authorized to send on this account');
+      await expect(promise).rejects.toThrow(require('../../src').AuthorNotAuthorizedError);
+    });
   });
 
   describe('Client Configuration', () => {
