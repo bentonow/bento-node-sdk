@@ -9,7 +9,7 @@ module.exports = [
     files: ['src/**/*.ts'],
     languageOptions: {
       parser: tsParser,
-      ecmaVersion: 'latest',
+      ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         ...globals.browser,
