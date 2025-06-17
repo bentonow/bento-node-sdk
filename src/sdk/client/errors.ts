@@ -11,3 +11,10 @@ export class RateLimitedError extends Error {
     this.name = 'RateLimitedError';
   }
 }
+
+export class AuthorNotAuthorizedError extends Error {
+  constructor(message = 'Author not authorized to send on this account') {
+    super(message);
+    this.name = 'AuthorNotAuthorizedError';
+  }
+}

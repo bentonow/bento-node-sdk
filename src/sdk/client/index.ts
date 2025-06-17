@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
-import { NotAuthorizedError, RateLimitedError } from './errors';
+import { NotAuthorizedError, RateLimitedError, AuthorNotAuthorizedError } from './errors';
 
 function encodeBase64(str: string): string {
   if (typeof btoa === 'function') {
@@ -189,9 +189,15 @@ export class BentoClient {
       case 'text/plain':
         responseMessage = await response.text();
         break;
-      case 'application/json':
-        responseMessage = JSON.stringify(await response.json());
+      case 'application/json': {
+        const json = await response.json();
+        // Check for the specific author not authorized error
+        if (json && json.error === 'Author not authorized to send on this account') {
+          return new AuthorNotAuthorizedError(json.error);
+        }
+        responseMessage = JSON.stringify(json);
         break;
+      }
       default:
         responseMessage = 'Unknown response from the Bento API.';
         break;
