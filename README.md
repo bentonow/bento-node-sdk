@@ -261,23 +261,6 @@ bento.V1.Batch.importEvents({
 
 ### Broadcast Management
 
-#### createEmails
-Sends transactional emails in batch:
-
-```javascript
-const result = await analytics.V1.Broadcasts.createEmails([{
-  to: 'recipient@example.com',
-  from: 'sender@example.com',
-  subject: 'Welcome {{ name }}!',
-  html_body: '<p>Hello {{ name }}, welcome aboard!</p>',
-  transactional: true,
-  personalizations: {
-    name: 'John Doe',
-    accountType: 'premium'
-  }
-}]);
-```
-
 #### getBroadcasts
 Retrieves all broadcasts:
 
@@ -304,6 +287,27 @@ const broadcasts = await analytics.V1.Broadcasts.createBroadcast([{
   batch_size_per_hour: 1000
 }]);
 ```
+
+### Transactional Emails
+
+#### createEmails
+Creates a new transactional email:
+
+```javascript
+const result = await analytics.V1.Broadcasts.createEmails([{
+  to: 'recipient@example.com', // just the email, recipient name is ignored.
+  from: 'sender@example.com', // MUST be an existing Author in your account (Emails -> Authors)
+  subject: 'Welcome {{ name }}!',
+  html_body: '<p>Hello {{ name }}, welcome aboard!</p>',
+  transactional: true, // Set to true to send as a transactional email IF you want to ignore if the user has unsubscribed. USE WITH CAUTION!
+  personalizations: {
+    name: 'John Doe',
+    accountType: 'premium'
+  }
+}]);
+```
+
+
 
 ### Statistics
 
