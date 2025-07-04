@@ -294,19 +294,34 @@ const broadcasts = await analytics.V1.Broadcasts.createBroadcast([{
 Creates a new transactional email:
 
 ```javascript
-const result = await analytics.V1.Broadcasts.createEmails([{
-  to: 'recipient@example.com', // just the email, recipient name is ignored.
-  from: 'sender@example.com', // MUST be an existing Author in your account (Emails -> Authors)
-  subject: 'Welcome {{ name }}!',
-  html_body: '<p>Hello {{ name }}, welcome aboard!</p>',
-  transactional: true, // Set to true to send as a transactional email IF you want to ignore if the user has unsubscribed. USE WITH CAUTION!
-  personalizations: {
-    name: 'John Doe',
-    accountType: 'premium'
-  }
-}]);
+const result = await bento.V1.Batch.sendTransactionalEmails({
+  emails: [{
+    to: 'recipient@example.com', // just the email, recipient name is ignored.
+    from: 'sender@example.com', // MUST be an existing Author in your account (Emails -> Authors)
+    subject: 'Welcome {{ name }}',
+    html_body: '<p>Hello {{ name }}, welcome to our service!</p>',
+    transactional: false, // Set to true to send as a transactional email IF you want to ignore if the user has unsubscribed. USE WITH CAUTION!
+    personalizations: {
+      name: 'John Doe',
+    }
+  }]
+});
 ```
+### Email Structure
+Each email object requires:
 
+- **to:** Recipient email address
+- **from:** Sender email address
+- **subject:** Email subject (supports liquid templates)
+- **html_body:** HTML email content (supports liquid templates)
+- **transactional:** true/false: defaults to false, must be true to send to unsubscribed users
+- **personalizations:** Optional object for liquid template variables
+
+#### Constraints
+
+- **Batch size:** 1-100 emails per request
+- **Errors:** Throws TooFewEmailsError or TooManyEmailsError for invalid counts
+- **Returns:** Number of emails successfully queued
 
 
 ### Statistics
