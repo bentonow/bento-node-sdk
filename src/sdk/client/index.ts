@@ -184,23 +184,45 @@ export class BentoClient {
 
     const contentType = response.headers.get('Content-Type');
     let responseMessage = '';
+    let json: any = null;
 
-    switch (contentType?.toLocaleLowerCase()) {
-      case 'text/plain':
-        responseMessage = await response.text();
-        break;
-      case 'application/json': {
-        const json = await response.json();
-        // Check for the specific author not authorized error
-        if (json && json.error === 'Author not authorized to send on this account') {
-          return new AuthorNotAuthorizedError(json.error);
+    // Try to parse the response body based on content type
+    try {
+      if (contentType?.toLowerCase().includes('application/json')) {
+        // For JSON content type, try to parse as JSON
+        try {
+          json = await response.json();
+        } catch {
+          responseMessage = 'Unable to parse JSON response';
         }
-        responseMessage = JSON.stringify(json);
-        break;
-      }
-      default:
+      } else if (contentType?.toLowerCase().includes('text/plain')) {
+        // For text/plain content type, read as text
+        try {
+          responseMessage = await response.text();
+        } catch {
+          responseMessage = 'Unable to read text response';
+        }
+      } else {
+        // For unknown content types, use default message
         responseMessage = 'Unknown response from the Bento API.';
-        break;
+      }
+    } catch {
+      responseMessage = 'Unable to read response body';
+    }
+
+    // Check for author not authorized error in JSON response
+    if (json && json.error === 'Author not authorized to send on this account') {
+      return new AuthorNotAuthorizedError(json.error);
+    }
+
+    // If we have JSON but no specific error match, use the JSON string
+    if (json) {
+      responseMessage = JSON.stringify(json);
+    }
+
+    // If we still don't have a message, use a default
+    if (!responseMessage) {
+      responseMessage = 'Unknown response from the Bento API.';
     }
 
     return new Error(`[${response.status}] - ${responseMessage}`);
