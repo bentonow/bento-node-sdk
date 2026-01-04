@@ -2,11 +2,14 @@ import {
   BentoBatch,
   BentoClient,
   BentoCommands,
+  BentoEmailTemplates,
   BentoExperimental,
   BentoFields,
   BentoForms,
+  BentoSequences,
   BentoSubscribers,
   BentoTags,
+  BentoWorkflows,
 } from '../../sdk';
 import { BentoEvents } from '../../sdk/batch/enums';
 import type { AnalyticsOptions } from '../../sdk/interfaces';
@@ -26,26 +29,32 @@ export class BentoAPIV1<S = { [key: string]: unknown }, E extends string = '$cus
   private readonly _client: BentoClient;
 
   public readonly Broadcasts: BentoBroadcasts;
+  public readonly EmailTemplates: BentoEmailTemplates;
   public readonly Stats: BentoStats;
   public readonly Batch: BentoBatch<S, E>;
   public readonly Commands: BentoCommands<S>;
   public readonly Experimental: BentoExperimental;
   public readonly Fields: BentoFields;
   public readonly Forms: BentoForms;
+  public readonly Sequences: BentoSequences;
   public readonly Subscribers: BentoSubscribers<S>;
   public readonly Tags: BentoTags;
+  public readonly Workflows: BentoWorkflows;
 
   constructor(options: AnalyticsOptions) {
     this._client = new BentoClient(options);
     this.Broadcasts = new BentoBroadcasts(this._client);
+    this.EmailTemplates = new BentoEmailTemplates(this._client);
     this.Stats = new BentoStats(this._client);
     this.Batch = new BentoBatch(this._client);
     this.Commands = new BentoCommands(this._client);
     this.Experimental = new BentoExperimental(this._client);
     this.Fields = new BentoFields(this._client);
     this.Forms = new BentoForms(this._client);
+    this.Sequences = new BentoSequences(this._client);
     this.Subscribers = new BentoSubscribers(this._client);
     this.Tags = new BentoTags(this._client);
+    this.Workflows = new BentoWorkflows(this._client);
   }
 
   /**
