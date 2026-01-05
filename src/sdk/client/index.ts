@@ -103,6 +103,38 @@ export class BentoClient {
   }
 
   /**
+   * Wraps a PATCH request to the Bento API and automatically adds the required
+   * headers.
+   *
+   * @param endpoint string
+   * @param payload object
+   * @returns Promise\<T\>
+   * */
+  public patch<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const body = this._getBody(payload);
+
+      fetch(`${this._baseUrl}${endpoint}`, {
+        method: 'PATCH',
+        headers: {
+          ...this._headers,
+          'Content-Type': 'application/json',
+        },
+        body,
+      })
+        .then(async (result) => {
+          if (this._isSuccessfulStatus(result.status)) {
+            return result.json();
+          }
+
+          throw await this._getErrorForResponse(result);
+        })
+        .then((data) => resolve(data))
+        .catch((error) => reject(error));
+    });
+  }
+
+  /**
    * Extracts the `publishableKey` and `secretKey` from the `authentication` options,
    * adds the `Authorization` header, and includes a `User-Agent` header with the site UUID.
    *

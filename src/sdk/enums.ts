@@ -6,4 +6,7 @@ export enum EntityType {
   TAGS = 'tags',
   VISITORS = 'visitors',
   VISITORS_FIELDS = 'visitors-fields',
+  SEQUENCES = 'sequences',
+  WORKFLOWS = 'workflows',
+  EMAIL_TEMPLATES = 'email_templates',
 }
