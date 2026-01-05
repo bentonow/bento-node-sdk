@@ -6,7 +6,7 @@ export type PurchaseItem = {
   quantity?: number;
   product_price?: number;
   product_id?: string;
-} & { [key: string]: string };
+} & { [key: string]: string | number };
 
 export type PurchaseCart = {
   abandoned_checkout_url?: string;
