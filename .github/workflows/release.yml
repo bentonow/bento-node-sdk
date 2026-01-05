@@ -43,9 +43,7 @@ jobs:
           echo "PREVIOUS_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       - name: Update package version
-        run: |
-          # Direct modification of package.json
-          jq ".version = \"$VERSION\"" package.json > temp.json && mv temp.json package.json
+        run: npm version $VERSION --no-git-tag-version
 
       - name: Generate Release Notes
         id: release_notes
