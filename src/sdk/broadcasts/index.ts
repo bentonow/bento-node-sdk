@@ -3,8 +3,9 @@ import type { DataResponse } from '../client/types';
 import type { Broadcast, CreateBroadcastInput, EmailData } from './types';
 
 export class BentoBroadcasts {
-  private readonly _url = '/broadcasts';
-  private readonly _emailsUrl = '/emails';
+  private readonly _fetchUrl = '/fetch/broadcasts';
+  private readonly _batchUrl = '/batch/broadcasts';
+  private readonly _emailsUrl = '/batch/emails';
 
   constructor(private readonly _client: BentoClient) {}
 
@@ -15,7 +16,7 @@ export class BentoBroadcasts {
    */
   public async createEmails(emails: EmailData[]): Promise<number> {
     const result = await this._client.post<{ results: number }>(this._emailsUrl, {
-      emails
+      emails,
     });
     return result.results;
   }
@@ -25,7 +26,7 @@ export class BentoBroadcasts {
    * @returns Promise<Broadcast[]>
    */
   public async getBroadcasts(): Promise<Broadcast[]> {
-    const result = await this._client.get<DataResponse<Broadcast[]>>(this._url);
+    const result = await this._client.get<DataResponse<Broadcast[]>>(this._fetchUrl);
     return result.data ?? [];
   }
 
@@ -35,8 +36,8 @@ export class BentoBroadcasts {
    * @returns Promise<Broadcast[]>
    */
   public async createBroadcast(broadcasts: CreateBroadcastInput[]): Promise<Broadcast[]> {
-    const result = await this._client.post<DataResponse<Broadcast[]>>(this._url, {
-      broadcasts
+    const result = await this._client.post<DataResponse<Broadcast[]>>(this._batchUrl, {
+      broadcasts,
     });
     return result.data ?? [];
   }
