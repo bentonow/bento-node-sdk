@@ -11,7 +11,8 @@ import {
   BentoExperimental,
   BentoFields,
   BentoForms,
-  BentoSubscribers, BentoTags,
+  BentoSubscribers,
+  BentoTags,
 } from '../../../src/sdk';
 
 // Define interface for custom fields
@@ -77,8 +78,8 @@ describe('BentoAPIV1', () => {
       const customOptions = {
         ...mockOptions,
         clientOptions: {
-          baseUrl: 'https://custom.api.com'
-        }
+          baseUrl: 'https://custom.api.com',
+        },
       };
       const customApi = new BentoAPIV1<CustomFields, CustomEvents>(customOptions);
       const client = (customApi as any)._client;
@@ -95,11 +96,11 @@ describe('BentoAPIV1', () => {
         type: '$custom',
         email: 'test@example.com',
         fields: {
-          customField: 'value'
+          customField: 'value',
         },
         details: {
-          someDetail: 'value'
-        }
+          someDetail: 'value',
+        },
       });
     });
   });
@@ -116,9 +117,9 @@ describe('BentoAPIV1', () => {
             email: 'test@example.com',
             fields: null,
             cached_tag_ids: [],
-            unsubscribed_at: null
-          }
-        }
+            unsubscribed_at: null,
+          },
+        },
       };
       setupMockFetch(mockResponse);
 
@@ -136,9 +137,9 @@ describe('BentoAPIV1', () => {
             email: 'test@example.com',
             fields: null,
             cached_tag_ids: [],
-            unsubscribed_at: new Date().toISOString()
-          }
-        }
+            unsubscribed_at: new Date().toISOString(),
+          },
+        },
       };
       setupMockFetch(mockResponse);
 
@@ -156,15 +157,15 @@ describe('BentoAPIV1', () => {
             email: 'test@example.com',
             fields: null,
             cached_tag_ids: ['tag-1'],
-            unsubscribed_at: null
-          }
-        }
+            unsubscribed_at: null,
+          },
+        },
       };
       setupMockFetch(mockResponse);
 
       const result = await api.Commands.addTag({
         email: 'test@example.com',
-        tagName: 'TestTag'
+        tagName: 'TestTag',
       });
       expect(result?.attributes.cached_tag_ids).toContain('tag-1');
     });
@@ -179,15 +180,15 @@ describe('BentoAPIV1', () => {
             email: 'test@example.com',
             fields: null,
             cached_tag_ids: [],
-            unsubscribed_at: null
-          }
-        }
+            unsubscribed_at: null,
+          },
+        },
       };
       setupMockFetch(mockResponse);
 
       const result = await api.Commands.removeTag({
         email: 'test@example.com',
-        tagName: 'TestTag'
+        tagName: 'TestTag',
       });
       expect(result?.attributes.cached_tag_ids).toHaveLength(0);
     });
@@ -205,10 +206,10 @@ describe('BentoAPIV1', () => {
               key: 'testField',
               name: 'Test Field',
               created_at: new Date().toISOString(),
-              whitelisted: true
-            }
-          }
-        ]
+              whitelisted: true,
+            },
+          },
+        ],
       };
       setupMockFetch(mockResponse);
 
@@ -230,8 +231,8 @@ describe('BentoAPIV1', () => {
       const customOptions = {
         ...mockOptions,
         clientOptions: {
-          baseUrl: 'https://custom.api.com'
-        }
+          baseUrl: 'https://custom.api.com',
+        },
       };
       const customApi = new BentoAPIV1<CustomFields, CustomEvents>(customOptions);
       const client = (customApi as any)._client;
@@ -249,11 +250,11 @@ describe('BentoAPIV1', () => {
         email: 'test@example.com',
         fields: {
           firstName: 'John',
-          lastName: 'Doe'
+          lastName: 'Doe',
         },
         details: {
-          someDetail: 'value'
-        }
+          someDetail: 'value',
+        },
       });
     });
 
@@ -261,13 +262,15 @@ describe('BentoAPIV1', () => {
       setupMockFetch({ results: 1 });
 
       const result = await api.Batch.importEvents({
-        events: [{
-          type: '$custom',
-          email: 'test@example.com',
-          details: {
-            firstName: 'John'
-          }
-        }]
+        events: [
+          {
+            type: '$custom',
+            email: 'test@example.com',
+            details: {
+              firstName: 'John',
+            },
+          },
+        ],
       });
 
       expect(result).toBe(1);
@@ -280,13 +283,13 @@ describe('BentoAPIV1', () => {
         type: '$pageview',
         email: 'test@example.com',
         fields: {
-          firstName: 'John'
+          firstName: 'John',
         },
         details: {
           url: 'https://example.com',
           title: 'Test Page',
-          referrer: 'https://google.com'
-        }
+          referrer: 'https://google.com',
+        },
       });
     });
 
@@ -297,13 +300,13 @@ describe('BentoAPIV1', () => {
         type: '$browser',
         email: 'test@example.com',
         fields: {
-          firstName: 'John'
+          firstName: 'John',
         },
         details: {
           userAgent: 'Mozilla/5.0',
           language: 'en-US',
-          platform: 'MacOS'
-        }
+          platform: 'MacOS',
+        },
       });
     });
 
@@ -315,12 +318,12 @@ describe('BentoAPIV1', () => {
         type: '$custom',
         email: 'test@example.com',
         fields: {
-          firstName: 'John'
+          firstName: 'John',
         },
         details: {
-          someDetail: 'value'
+          someDetail: 'value',
         },
-        date: eventDate
+        date: eventDate,
       });
     });
   });
@@ -337,9 +340,9 @@ describe('BentoAPIV1', () => {
             email: 'test@example.com',
             fields: null,
             cached_tag_ids: [],
-            unsubscribed_at: null
-          }
-        }
+            unsubscribed_at: null,
+          },
+        },
       };
       setupMockFetch(mockResponse);
 
@@ -357,9 +360,9 @@ describe('BentoAPIV1', () => {
             email: 'test@example.com',
             fields: null,
             cached_tag_ids: [],
-            unsubscribed_at: new Date().toISOString()
-          }
-        }
+            unsubscribed_at: new Date().toISOString(),
+          },
+        },
       };
       setupMockFetch(mockResponse);
 
@@ -377,15 +380,15 @@ describe('BentoAPIV1', () => {
             email: 'test@example.com',
             fields: null,
             cached_tag_ids: ['tag-1'],
-            unsubscribed_at: null
-          }
-        }
+            unsubscribed_at: null,
+          },
+        },
       };
       setupMockFetch(mockResponse);
 
       const result = await api.Commands.addTag({
         email: 'test@example.com',
-        tagName: 'TestTag'
+        tagName: 'TestTag',
       });
       expect(result?.attributes.cached_tag_ids).toContain('tag-1');
     });
@@ -403,10 +406,10 @@ describe('BentoAPIV1', () => {
               key: 'testField',
               name: 'Test Field',
               created_at: new Date().toISOString(),
-              whitelisted: true
-            }
-          }
-        ]
+              whitelisted: true,
+            },
+          },
+        ],
       };
       setupMockFetch(mockResponse);
 
@@ -415,7 +418,6 @@ describe('BentoAPIV1', () => {
       expect(result?.[0]?.attributes.key).toBe('testField');
     });
   });
-
 
   describe('track method variations', () => {
     test('tracks event with all possible fields', async () => {
@@ -428,14 +430,14 @@ describe('BentoAPIV1', () => {
         fields: {
           firstName: 'John',
           lastName: 'Doe',
-          customField: 'value'
+          customField: 'value',
         },
         details: {
           detailField: 'value',
           nestedDetail: {
-            key: 'value'
-          }
-        }
+            key: 'value',
+          },
+        },
       });
     });
 
@@ -445,7 +447,7 @@ describe('BentoAPIV1', () => {
       await api.track({
         type: '$custom',
         email: 'test@example.com',
-        fields: {}
+        fields: {},
       });
     });
 
@@ -456,7 +458,7 @@ describe('BentoAPIV1', () => {
         type: '$custom',
         email: 'test@example.com',
         date: new Date('invalid date'), // Should trigger date validation
-        fields: {}
+        fields: {},
       });
     });
 
@@ -467,7 +469,7 @@ describe('BentoAPIV1', () => {
         type: '$custom',
         email: 'test@example.com',
         date: new Date('2025-12-31'),
-        fields: {}
+        fields: {},
       });
     });
 
@@ -478,7 +480,7 @@ describe('BentoAPIV1', () => {
         type: '$custom',
         email: 'test@example.com',
         date: new Date('1970-01-01'),
-        fields: {}
+        fields: {},
       });
     });
   });
@@ -489,29 +491,33 @@ describe('BentoAPIV1', () => {
       setupMockFetch({ results: 1 });
 
       await api.Batch.importEvents({
-        events: [{
-          type: BentoEvents.PURCHASE,
-          email: 'test@example.com',
-          date: new Date(),
-          details: {
-            unique: {
-              key: 'order_123'
+        events: [
+          {
+            type: BentoEvents.PURCHASE,
+            email: 'test@example.com',
+            date: new Date(),
+            details: {
+              unique: {
+                key: 'order_123',
+              },
+              value: {
+                currency: 'USD',
+                amount: 99.99,
+              },
+              cart: {
+                abandoned_checkout_url: 'https://example.com/cart',
+                items: [
+                  {
+                    product_id: 'prod_123',
+                    product_name: 'Test Product',
+                    product_sku: 'SKU123',
+                    custom_field: 'custom value', // Added to show string indexer
+                  },
+                ],
+              },
             },
-            value: {
-              currency: 'USD',
-              amount: 99.99
-            },
-            cart: {
-              abandoned_checkout_url: 'https://example.com/cart',
-              items: [{
-                product_id: 'prod_123',
-                product_name: 'Test Product',
-                product_sku: 'SKU123',
-                custom_field: 'custom value'  // Added to show string indexer
-              }]
-            }
-          }
-        }]
+          },
+        ],
       });
     });
 
@@ -519,19 +525,21 @@ describe('BentoAPIV1', () => {
       setupMockFetch({ results: 1 });
 
       await api.Batch.importEvents({
-        events: [{
-          type: BentoEvents.PURCHASE,
-          email: 'test@example.com',
-          details: {
-            unique: {
-              key: 'order_123'
+        events: [
+          {
+            type: BentoEvents.PURCHASE,
+            email: 'test@example.com',
+            details: {
+              unique: {
+                key: 'order_123',
+              },
+              value: {
+                currency: 'USD',
+                amount: 99.99,
+              },
             },
-            value: {
-              currency: 'USD',
-              amount: 99.99
-            }
-          }
-        }]
+          },
+        ],
       });
     });
   });
@@ -545,7 +553,7 @@ describe('BentoAPIV1', () => {
         type: '$custom',
         email: 'test@example.com',
         fields: {},
-        details: {}
+        details: {},
       });
     });
 
@@ -560,11 +568,11 @@ describe('BentoAPIV1', () => {
           level1: {
             level2: {
               level3: {
-                value: 'deeply nested'
-              }
-            }
-          }
-        }
+                value: 'deeply nested',
+              },
+            },
+          },
+        },
       });
     });
 
@@ -577,8 +585,8 @@ describe('BentoAPIV1', () => {
         fields: {},
         details: {
           arrayField: ['value1', 'value2', 'value3'],
-          mixedArray: [1, 'string', { key: 'value' }]
-        }
+          mixedArray: [1, 'string', { key: 'value' }],
+        },
       });
     });
   });
@@ -594,24 +602,24 @@ describe('BentoAPIV1', () => {
             type: '$custom',
             email: 'test1@example.com',
             details: {
-              customField: 'value1'
-            }
+              customField: 'value1',
+            },
           },
           {
             type: '$pageview',
             email: 'test2@example.com',
             details: {
-              url: 'https://example.com'
-            }
+              url: 'https://example.com',
+            },
           },
           {
             type: '$browser',
             email: 'test3@example.com',
             details: {
-              userAgent: 'Mozilla/5.0'
-            }
-          }
-        ]
+              userAgent: 'Mozilla/5.0',
+            },
+          },
+        ],
       });
     });
 
@@ -624,22 +632,95 @@ describe('BentoAPIV1', () => {
             type: '$custom',
             email: 'test1@example.com',
             date: new Date(),
-            details: {}
+            details: {},
           },
           {
             type: '$custom',
             email: 'test2@example.com',
             date: new Date('2024-01-08T12:00:00Z'),
-            details: {}
+            details: {},
           },
           {
             type: '$custom',
             email: 'test3@example.com',
             date: new Date('2024-01-08'),
-            details: {}
-          }
-        ]
+            details: {},
+          },
+        ],
       });
+    });
+  });
+
+  // API V1 Helper Methods Testing
+  describe('helper methods', () => {
+    test('successfully tags subscriber through tagSubscriber method', async () => {
+      setupMockFetch({ results: 1 });
+
+      const result = await api.tagSubscriber({
+        email: 'test@example.com',
+        tagName: 'premium',
+      });
+
+      expect(result).toBe(true);
+    });
+
+    test('successfully removes subscriber through removeSubscriber method', async () => {
+      setupMockFetch({ results: 1 });
+
+      const result = await api.removeSubscriber({
+        email: 'test@example.com',
+      });
+
+      expect(result).toBe(true);
+    });
+
+    test('successfully adds subscriber through addSubscriber method', async () => {
+      setupMockFetch({ results: 1 });
+
+      const result = await api.addSubscriber({
+        email: 'new@example.com',
+      });
+
+      expect(result).toBe(true);
+    });
+
+    test('successfully updates fields through updateFields method', async () => {
+      setupMockFetch({ results: 1 });
+
+      const result = await api.updateFields({
+        email: 'test@example.com',
+        fields: {
+          firstName: 'Updated',
+          lastName: 'Name',
+        },
+      });
+
+      expect(result).toBe(true);
+    });
+
+    test('successfully tracks purchase through trackPurchase method', async () => {
+      setupMockFetch({ results: 1 });
+
+      const result = await api.trackPurchase({
+        email: 'test@example.com',
+        purchaseDetails: {
+          unique: { key: 'order-123' },
+          value: { currency: 'USD', amount: 9999 },
+        },
+      });
+
+      expect(result).toBe(true);
+    });
+
+    test('returns false when helper method fails', async () => {
+      setupMockFetch({ results: 0 });
+
+      const result = await api.tagSubscriber({
+        email: 'test@example.com',
+        tagName: 'premium',
+      });
+
+      expect(result).toBe(false);
     });
   });
 });

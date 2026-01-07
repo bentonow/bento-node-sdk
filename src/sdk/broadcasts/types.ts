@@ -24,6 +24,10 @@ export type Broadcast = BaseEntity<BroadcastAttributes>;
 
 export type CreateBroadcastInput = Omit<BroadcastAttributes, 'created_at'>;
 
+/**
+ * Email data for transactional emails.
+ * Note: This is the same structure as TransactionalEmail in batch/types.ts
+ */
 export type EmailData = {
   to: string;
   from: string;
