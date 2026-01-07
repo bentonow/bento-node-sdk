@@ -15,7 +15,7 @@ describe('BentoExperimental', () => {
       setupMockFetch({ valid: true });
 
       const result = await analytics.V1.Experimental.validateEmail({
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
 
       expect(result).toBe(true);
@@ -28,7 +28,7 @@ describe('BentoExperimental', () => {
         email: 'test@example.com',
         ip: '192.168.1.1',
         name: 'John Doe',
-        userAgent: 'Mozilla/5.0'
+        userAgent: 'Mozilla/5.0',
       });
 
       expect(result).toBe(true);
@@ -38,7 +38,7 @@ describe('BentoExperimental', () => {
       setupMockFetch({ valid: false });
 
       const result = await analytics.V1.Experimental.validateEmail({
-        email: 'invalid@email'
+        email: 'invalid@email',
       });
 
       expect(result).toBe(false);
@@ -49,7 +49,7 @@ describe('BentoExperimental', () => {
 
       await expect(
         analytics.V1.Experimental.validateEmail({
-          email: 'test@example.com'
+          email: 'test@example.com',
         })
       ).rejects.toThrow();
     });
@@ -59,11 +59,11 @@ describe('BentoExperimental', () => {
     test('successfully guesses gender with high confidence', async () => {
       setupMockFetch({
         gender: 'female',
-        confidence: 0.95
+        confidence: 0.95,
       });
 
       const result = await analytics.V1.Experimental.guessGender({
-        name: 'Elizabeth'
+        name: 'Elizabeth',
       });
 
       expect(result.gender).toBe('female');
@@ -73,11 +73,11 @@ describe('BentoExperimental', () => {
     test('handles unknown gender', async () => {
       setupMockFetch({
         gender: null,
-        confidence: null
+        confidence: null,
       });
 
       const result = await analytics.V1.Experimental.guessGender({
-        name: 'Unknown'
+        name: 'Unknown',
       });
 
       expect(result.gender).toBeNull();
@@ -87,11 +87,11 @@ describe('BentoExperimental', () => {
     test('handles low confidence result', async () => {
       setupMockFetch({
         gender: 'male',
-        confidence: 0.3
+        confidence: 0.3,
       });
 
       const result = await analytics.V1.Experimental.guessGender({
-        name: 'Pat'
+        name: 'Pat',
       });
 
       expect(result.gender).toBe('male');
@@ -106,14 +106,14 @@ describe('BentoExperimental', () => {
         query: 'example.com',
         results: {
           'blacklist1.com': false,
-          'blacklist2.com': true
-        }
+          'blacklist2.com': true,
+        },
       };
 
       setupMockFetch(mockResponse);
 
       const result = await analytics.V1.Experimental.getBlacklistStatus({
-        domain: 'example.com'
+        domain: 'example.com',
       });
 
       expect(result.query).toBe('example.com');
@@ -127,14 +127,14 @@ describe('BentoExperimental', () => {
         query: '192.168.1.1',
         results: {
           'blacklist1.com': false,
-          'blacklist2.com': false
-        }
+          'blacklist2.com': false,
+        },
       };
 
       setupMockFetch(mockResponse);
 
       const result = await analytics.V1.Experimental.getBlacklistStatus({
-        ipAddress: '192.168.1.1'
+        ipAddress: '192.168.1.1',
       });
 
       expect(result.query).toBe('192.168.1.1');
@@ -145,13 +145,13 @@ describe('BentoExperimental', () => {
       const mockResponse = {
         description: 'Empty check result',
         query: 'example.com',
-        results: {}
+        results: {},
       };
 
       setupMockFetch(mockResponse);
 
       const result = await analytics.V1.Experimental.getBlacklistStatus({
-        domain: 'example.com'
+        domain: 'example.com',
       });
 
       expect(result.results).toEqual({});
@@ -162,7 +162,7 @@ describe('BentoExperimental', () => {
 
       await expect(
         analytics.V1.Experimental.getBlacklistStatus({
-          domain: 'example.com'
+          domain: 'example.com',
         })
       ).rejects.toThrow();
     });
@@ -179,7 +179,7 @@ describe('BentoExperimental', () => {
           sexual: false,
           'sexual/minors': false,
           violence: false,
-          'violence/graphic': false
+          'violence/graphic': false,
         },
         category_scores: {
           hate: 0.01,
@@ -188,8 +188,8 @@ describe('BentoExperimental', () => {
           sexual: 0.01,
           'sexual/minors': 0.01,
           violence: 0.01,
-          'violence/graphic': 0.01
-        }
+          'violence/graphic': 0.01,
+        },
       };
 
       setupMockFetch(mockResponse);
@@ -213,7 +213,7 @@ describe('BentoExperimental', () => {
           sexual: false,
           'sexual/minors': false,
           violence: false,
-          'violence/graphic': false
+          'violence/graphic': false,
         },
         category_scores: {
           hate: 0.92,
@@ -222,8 +222,8 @@ describe('BentoExperimental', () => {
           sexual: 0.01,
           'sexual/minors': 0.01,
           violence: 0.01,
-          'violence/graphic': 0.01
-        }
+          'violence/graphic': 0.01,
+        },
       };
 
       setupMockFetch(mockResponse);
@@ -246,6 +246,87 @@ describe('BentoExperimental', () => {
     });
   });
 
+  describe('geolocate', () => {
+    test('successfully geolocates IP address', async () => {
+      const mockResponse = {
+        city_name: 'San Francisco',
+        continent_code: 'NA',
+        country_code2: 'US',
+        country_code3: 'USA',
+        country_name: 'United States',
+        ip: '192.168.1.1',
+        latitude: 37.7749,
+        longitude: -122.4194,
+        postal_code: '94105',
+        real_region_name: 'California',
+        region_name: 'CA',
+        request: '192.168.1.1',
+      };
+
+      setupMockFetch(mockResponse);
+
+      const result = await analytics.V1.Experimental.geolocate({
+        ip: '192.168.1.1',
+      });
+
+      expect(result).toBeDefined();
+      expect(result?.city_name).toBe('San Francisco');
+      expect(result?.country_name).toBe('United States');
+    });
+
+    test('returns null for empty response', async () => {
+      setupMockFetch({});
+
+      const result = await analytics.V1.Experimental.geolocate({
+        ip: '192.168.1.1',
+      });
+
+      expect(result).toBeNull();
+    });
+
+    test('handles server error gracefully', async () => {
+      setupMockFetch({ error: 'Server Error' }, 500);
+
+      await expect(
+        analytics.V1.Experimental.geolocate({
+          ip: '192.168.1.1',
+        })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('checkBlacklist', () => {
+    test('successfully checks blacklist status', async () => {
+      const mockResponse = {
+        description: 'Blacklist check',
+        query: 'example.com',
+        results: {
+          'blacklist1.com': false,
+          'blacklist2.com': true,
+        },
+      };
+
+      setupMockFetch(mockResponse);
+
+      const result = await analytics.V1.Experimental.checkBlacklist({
+        ip: 'example.com',
+      });
+
+      expect(result.query).toBe('example.com');
+      expect(result.results['blacklist2.com']).toBe(true);
+    });
+
+    test('handles server error gracefully', async () => {
+      setupMockFetch({ error: 'Server Error' }, 500);
+
+      await expect(
+        analytics.V1.Experimental.checkBlacklist({
+          ip: '192.168.1.1',
+        })
+      ).rejects.toThrow();
+    });
+  });
+
   describe('geoLocateIP', () => {
     test('successfully geolocates IP address', async () => {
       const mockResponse = {
@@ -260,7 +341,7 @@ describe('BentoExperimental', () => {
         postal_code: '94105',
         real_region_name: 'California',
         region_name: 'CA',
-        request: '192.168.1.1'
+        request: '192.168.1.1',
       };
 
       setupMockFetch(mockResponse);
@@ -276,17 +357,13 @@ describe('BentoExperimental', () => {
     test('handles invalid IP address', async () => {
       setupMockFetch({ error: 'Invalid IP' }, 400);
 
-      await expect(
-        analytics.V1.Experimental.geoLocateIP('invalid-ip')
-      ).rejects.toThrow();
+      await expect(analytics.V1.Experimental.geoLocateIP('invalid-ip')).rejects.toThrow();
     });
 
     test('handles server error gracefully', async () => {
       setupMockFetch({ error: 'Server Error' }, 500);
 
-      await expect(
-        analytics.V1.Experimental.geoLocateIP('192.168.1.1')
-      ).rejects.toThrow();
+      await expect(analytics.V1.Experimental.geoLocateIP('192.168.1.1')).rejects.toThrow();
     });
   });
 });

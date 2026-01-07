@@ -25,12 +25,12 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
           email: 'new@example.com',
           fields: {
             firstName: 'John',
-            lastName: 'Doe'
+            lastName: 'Doe',
           },
           cached_tag_ids: [],
-          unsubscribed_at: null
-        }
-      }
+          unsubscribed_at: null,
+        },
+      },
     };
 
     // Setup the second fetch call to return the subscriber
@@ -40,8 +40,8 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
       email: 'new@example.com',
       fields: {
         firstName: 'John',
-        lastName: 'Doe'
-      }
+        lastName: 'Doe',
+      },
     });
 
     expect(result).toBeDefined();
@@ -64,12 +64,12 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
           fields: {
             firstName: 'Jane',
             lastName: 'Smith',
-            company: 'Updated Corp'
+            company: 'Updated Corp',
           },
           cached_tag_ids: ['existing-tag'],
-          unsubscribed_at: null
-        }
-      }
+          unsubscribed_at: null,
+        },
+      },
     };
 
     // Setup the second fetch call to return the updated subscriber
@@ -80,8 +80,8 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
       fields: {
         firstName: 'Jane',
         lastName: 'Smith',
-        company: 'Updated Corp'
-      }
+        company: 'Updated Corp',
+      },
     });
 
     expect(result).toBeDefined();
@@ -96,8 +96,8 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
       analytics.V1.upsertSubscriber({
         email: 'test@example.com',
         fields: {
-          firstName: 'Test'
-        }
+          firstName: 'Test',
+        },
       })
     ).rejects.toThrow();
   });
@@ -113,8 +113,8 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
       analytics.V1.upsertSubscriber({
         email: 'test@example.com',
         fields: {
-          firstName: 'Test'
-        }
+          firstName: 'Test',
+        },
       })
     ).rejects.toThrow();
   });
@@ -129,10 +129,108 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
     const result = await analytics.V1.upsertSubscriber({
       email: 'test@example.com',
       fields: {
-        firstName: 'Test'
-      }
+        firstName: 'Test',
+      },
     });
 
     expect(result).toBeNull();
+  });
+
+  test('successfully upserts with tags', async () => {
+    setupMockFetch({ results: 1 });
+
+    const mockSubscriber = {
+      data: {
+        id: 'sub-tagged',
+        type: EntityType.VISITORS,
+        attributes: {
+          uuid: 'uuid-tagged',
+          email: 'tagged@example.com',
+          fields: {
+            firstName: 'Tagged',
+          },
+          cached_tag_ids: ['tag-1', 'tag-2'],
+          unsubscribed_at: null,
+        },
+      },
+    };
+
+    setupMockFetch(mockSubscriber);
+
+    const result = await analytics.V1.upsertSubscriber({
+      email: 'tagged@example.com',
+      fields: {
+        firstName: 'Tagged',
+      },
+      tags: 'tag-1,tag-2',
+    });
+
+    expect(result?.attributes.cached_tag_ids).toContain('tag-1');
+    expect(result?.attributes.cached_tag_ids).toContain('tag-2');
+  });
+
+  test('successfully upserts with remove_tags', async () => {
+    setupMockFetch({ results: 1 });
+
+    const mockSubscriber = {
+      data: {
+        id: 'sub-removed-tags',
+        type: EntityType.VISITORS,
+        attributes: {
+          uuid: 'uuid-removed',
+          email: 'removed-tags@example.com',
+          fields: {
+            firstName: 'Removed',
+          },
+          cached_tag_ids: [],
+          unsubscribed_at: null,
+        },
+      },
+    };
+
+    setupMockFetch(mockSubscriber);
+
+    const result = await analytics.V1.upsertSubscriber({
+      email: 'removed-tags@example.com',
+      fields: {
+        firstName: 'Removed',
+      },
+      remove_tags: 'old-tag',
+    });
+
+    expect(result?.attributes.cached_tag_ids).toHaveLength(0);
+  });
+
+  test('successfully upserts with both tags and remove_tags', async () => {
+    setupMockFetch({ results: 1 });
+
+    const mockSubscriber = {
+      data: {
+        id: 'sub-both-tags',
+        type: EntityType.VISITORS,
+        attributes: {
+          uuid: 'uuid-both',
+          email: 'both-tags@example.com',
+          fields: {
+            firstName: 'Both',
+          },
+          cached_tag_ids: ['new-tag'],
+          unsubscribed_at: null,
+        },
+      },
+    };
+
+    setupMockFetch(mockSubscriber);
+
+    const result = await analytics.V1.upsertSubscriber({
+      email: 'both-tags@example.com',
+      fields: {
+        firstName: 'Both',
+      },
+      tags: 'new-tag',
+      remove_tags: 'old-tag',
+    });
+
+    expect(result?.attributes.cached_tag_ids).toContain('new-tag');
   });
 });
