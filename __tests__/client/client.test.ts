@@ -2,7 +2,7 @@ import { expect, test, describe, beforeEach, mock } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
 import { setupMockFetch } from '../helpers/mockFetch';
-import { NotAuthorizedError, RateLimitedError } from '../../src';
+import { NotAuthorizedError, RateLimitedError, RequestTimeoutError } from '../../src';
 
 describe('BentoClient', () => {
   let analytics: Analytics;
@@ -210,6 +210,76 @@ describe('BentoClient', () => {
 
       // Verify site_uuid is properly set
       expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+    });
+
+    test('initializes with custom timeout', () => {
+      const customOptions = {
+        ...mockOptions,
+        clientOptions: {
+          timeout: 5000,
+        },
+      };
+      const customAnalytics = new Analytics(customOptions);
+      const client = (customAnalytics.V1 as any)._client;
+      expect(client._timeout).toBe(5000);
+    });
+
+    test('uses default timeout of 30000ms', () => {
+      const client = (analytics.V1 as any)._client;
+      expect(client._timeout).toBe(30000);
+    });
+  });
+
+  describe('Timeout Handling', () => {
+    test('throws RequestTimeoutError on timeout', async () => {
+      // Mock fetch to simulate a timeout by using AbortController
+      mock.module('cross-fetch', () => ({
+        default: (_url: string, options: RequestInit) => {
+          return new Promise((_resolve, reject) => {
+            // Simulate the abort being triggered
+            if (options.signal) {
+              const abortHandler = () => {
+                const error = new Error('The operation was aborted');
+                error.name = 'AbortError';
+                reject(error);
+              };
+              options.signal.addEventListener('abort', abortHandler);
+              // Don't resolve - let the timeout happen
+            }
+          });
+        },
+      }));
+
+      // Create analytics with very short timeout
+      const timeoutAnalytics = new Analytics({
+        ...mockOptions,
+        clientOptions: {
+          timeout: 1, // 1ms timeout to trigger quickly
+        },
+      });
+
+      await expect(timeoutAnalytics.V1.Tags.getTags()).rejects.toThrow(RequestTimeoutError);
+    });
+  });
+
+  describe('JSON Response Handling', () => {
+    test('throws error on invalid JSON response with success status', async () => {
+      mock.module('cross-fetch', () => ({
+        default: () => {
+          return Promise.resolve({
+            status: 200,
+            ok: true,
+            json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input')),
+            headers: new Headers({
+              'Content-Type': 'application/json',
+            }),
+          });
+        },
+      }));
+
+      await expect(analytics.V1.Tags.getTags()).rejects.toThrow(
+        'Invalid JSON response from server'
+      );
     });
   });
 });

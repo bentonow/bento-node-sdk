@@ -1,6 +1,11 @@
 import fetch from 'cross-fetch';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
-import { NotAuthorizedError, RateLimitedError, AuthorNotAuthorizedError } from './errors';
+import {
+  NotAuthorizedError,
+  RateLimitedError,
+  AuthorNotAuthorizedError,
+  RequestTimeoutError,
+} from './errors';
 
 function encodeBase64(str: string): string {
   if (typeof btoa === 'function') {
@@ -29,17 +34,20 @@ function encodeBase64(str: string): string {
     return output;
   }
 }
+
 export class BentoClient {
   private readonly _headers: HeadersInit = {};
   private readonly _baseUrl: string = 'https://app.bentonow.com/api/v1';
   private readonly _siteUuid: string = '';
   private readonly _logErrors: boolean = false;
+  private readonly _timeout: number = 30000; // 30 seconds default
 
   constructor(options: AnalyticsOptions) {
     this._baseUrl = options.clientOptions?.baseUrl || this._baseUrl;
     this._siteUuid = options.siteUuid;
     this._headers = this._extractHeaders(options.authentication, options.siteUuid);
     this._logErrors = options.logErrors || false;
+    this._timeout = options.clientOptions?.timeout ?? this._timeout;
   }
 
   /**
@@ -50,24 +58,16 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public get<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const queryParameters = this._getQueryParameters(payload);
+  public async get<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
+    const queryParameters = this._getQueryParameters(payload);
+    const url = `${this._baseUrl}${endpoint}?${queryParameters}`;
 
-      fetch(`${this._baseUrl}${endpoint}?${queryParameters}`, {
-        method: 'GET',
-        headers: this._headers,
-      })
-        .then(async (result) => {
-          if (this._isSuccessfulStatus(result.status)) {
-            return result.json();
-          }
-
-          throw await this._getErrorForResponse(result);
-        })
-        .then((data) => resolve(data))
-        .catch((error) => reject(error));
+    const response = await this._fetchWithTimeout(url, {
+      method: 'GET',
+      headers: this._headers,
     });
+
+    return this._handleResponse<T>(response);
   }
 
   /**
@@ -78,28 +78,20 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public post<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const body = this._getBody(payload);
+  public async post<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
+    const body = this._getBody(payload);
+    const url = `${this._baseUrl}${endpoint}`;
 
-      fetch(`${this._baseUrl}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          ...this._headers,
-          'Content-Type': 'application/json',
-        },
-        body,
-      })
-        .then(async (result) => {
-          if (this._isSuccessfulStatus(result.status)) {
-            return result.json();
-          }
-
-          throw await this._getErrorForResponse(result);
-        })
-        .then((data) => resolve(data))
-        .catch((error) => reject(error));
+    const response = await this._fetchWithTimeout(url, {
+      method: 'POST',
+      headers: {
+        ...this._headers,
+        'Content-Type': 'application/json',
+      },
+      body,
     });
+
+    return this._handleResponse<T>(response);
   }
 
   /**
@@ -110,28 +102,67 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public patch<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const body = this._getBody(payload);
+  public async patch<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
+    const body = this._getBody(payload);
+    const url = `${this._baseUrl}${endpoint}`;
 
-      fetch(`${this._baseUrl}${endpoint}`, {
-        method: 'PATCH',
-        headers: {
-          ...this._headers,
-          'Content-Type': 'application/json',
-        },
-        body,
-      })
-        .then(async (result) => {
-          if (this._isSuccessfulStatus(result.status)) {
-            return result.json();
-          }
-
-          throw await this._getErrorForResponse(result);
-        })
-        .then((data) => resolve(data))
-        .catch((error) => reject(error));
+    const response = await this._fetchWithTimeout(url, {
+      method: 'PATCH',
+      headers: {
+        ...this._headers,
+        'Content-Type': 'application/json',
+      },
+      body,
     });
+
+    return this._handleResponse<T>(response);
+  }
+
+  /**
+   * Performs a fetch request with a configurable timeout.
+   *
+   * @param url The URL to fetch
+   * @param options Fetch options
+   * @returns Promise<Response>
+   */
+  private async _fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this._timeout);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      return response;
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new RequestTimeoutError(`Request timed out after ${this._timeout}ms`);
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  /**
+   * Handles the response from a fetch request, parsing JSON or throwing appropriate errors.
+   *
+   * @param response The fetch Response object
+   * @returns Promise<T> The parsed response data
+   */
+  private async _handleResponse<T>(response: Response): Promise<T> {
+    if (this._isSuccessfulStatus(response.status)) {
+      try {
+        const data = await response.json();
+        return data as T;
+      } catch {
+        // If JSON parsing fails on a successful response, throw a descriptive error
+        throw new Error(`[${response.status}] - Invalid JSON response from server`);
+      }
+    }
+
+    throw await this._getErrorForResponse(response);
   }
 
   /**
@@ -216,7 +247,7 @@ export class BentoClient {
 
     const contentType = response.headers.get('Content-Type');
     let responseMessage = '';
-    let json: any = null;
+    let json: Record<string, unknown> | null = null;
 
     // Try to parse the response body based on content type
     try {
@@ -244,7 +275,7 @@ export class BentoClient {
 
     // Check for author not authorized error in JSON response
     if (json && json.error === 'Author not authorized to send on this account') {
-      return new AuthorNotAuthorizedError(json.error);
+      return new AuthorNotAuthorizedError(json.error as string);
     }
 
     // If we have JSON but no specific error match, use the JSON string
