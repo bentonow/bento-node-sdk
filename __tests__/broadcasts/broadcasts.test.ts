@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch } from '../helpers/mockFetch';
+import { setupMockFetch, lastFetchUrl, lastFetchMethod } from '../helpers/mockFetch';
 import { EntityType } from '../../src/sdk/enums';
 
 describe('BentoBroadcasts', () => {
@@ -15,16 +15,18 @@ describe('BentoBroadcasts', () => {
     test('successfully creates single email', async () => {
       setupMockFetch({ results: 1 });
 
-      const result = await analytics.V1.Broadcasts.createEmails([{
-        to: 'recipient@example.com',
-        from: 'sender@example.com',
-        subject: 'Test Email',
-        html_body: '<p>Hello {{ name }}</p>',
-        transactional: true,
-        personalizations: {
-          name: 'John Doe'
-        }
-      }]);
+      const result = await analytics.V1.Broadcasts.createEmails([
+        {
+          to: 'recipient@example.com',
+          from: 'sender@example.com',
+          subject: 'Test Email',
+          html_body: '<p>Hello {{ name }}</p>',
+          transactional: true,
+          personalizations: {
+            name: 'John Doe',
+          },
+        },
+      ]);
 
       expect(result).toBe(1);
     });
@@ -38,31 +40,50 @@ describe('BentoBroadcasts', () => {
           from: 'sender@example.com',
           subject: 'Test Email 1',
           html_body: '<p>Hello</p>',
-          transactional: true
+          transactional: true,
         },
         {
           to: 'recipient2@example.com',
           from: 'sender@example.com',
           subject: 'Test Email 2',
           html_body: '<p>World</p>',
-          transactional: true
-        }
+          transactional: true,
+        },
       ]);
 
       expect(result).toBe(2);
+    });
+
+    test('uses correct /batch/emails endpoint', async () => {
+      setupMockFetch({ results: 1 });
+
+      await analytics.V1.Broadcasts.createEmails([
+        {
+          to: 'test@example.com',
+          from: 'sender@example.com',
+          subject: 'Test',
+          html_body: '<p>Test</p>',
+          transactional: true,
+        },
+      ]);
+
+      expect(lastFetchUrl).toContain('/batch/emails');
+      expect(lastFetchMethod).toBe('POST');
     });
 
     test('handles server error gracefully', async () => {
       setupMockFetch({ error: 'Server Error' }, 500);
 
       await expect(
-        analytics.V1.Broadcasts.createEmails([{
-          to: 'recipient@example.com',
-          from: 'sender@example.com',
-          subject: 'Test',
-          html_body: '<p>Test</p>',
-          transactional: true
-        }])
+        analytics.V1.Broadcasts.createEmails([
+          {
+            to: 'recipient@example.com',
+            from: 'sender@example.com',
+            subject: 'Test',
+            html_body: '<p>Test</p>',
+            transactional: true,
+          },
+        ])
       ).rejects.toThrow();
     });
   });
@@ -81,13 +102,13 @@ describe('BentoBroadcasts', () => {
               type: 'html',
               from: {
                 name: 'Sender Name',
-                email: 'sender@example.com'
+                email: 'sender@example.com',
               },
               batch_size_per_hour: 100,
-              created_at: '2024-01-01T00:00:00Z'
-            }
-          }
-        ]
+              created_at: '2024-01-01T00:00:00Z',
+            },
+          },
+        ],
       };
 
       setupMockFetch(mockBroadcasts);
@@ -99,6 +120,15 @@ describe('BentoBroadcasts', () => {
       expect(result[0].attributes.name).toBe('Test Broadcast');
       // @ts-ignore
       expect(result[0].attributes.type).toBe('html');
+    });
+
+    test('uses correct /fetch/broadcasts endpoint for GET', async () => {
+      setupMockFetch({ data: [] });
+
+      await analytics.V1.Broadcasts.getBroadcasts();
+
+      expect(lastFetchUrl).toContain('/fetch/broadcasts');
+      expect(lastFetchMethod).toBe('GET');
     });
 
     test('returns empty array when no broadcasts exist', async () => {
@@ -124,32 +154,55 @@ describe('BentoBroadcasts', () => {
               type: 'html',
               from: {
                 name: 'Sender',
-                email: 'sender@example.com'
+                email: 'sender@example.com',
               },
               batch_size_per_hour: 100,
-              created_at: '2024-01-01T00:00:00Z'
-            }
-          }
-        ]
+              created_at: '2024-01-01T00:00:00Z',
+            },
+          },
+        ],
       };
 
       setupMockFetch(mockResponse);
 
-      const result = await analytics.V1.Broadcasts.createBroadcast([{
-        name: 'New Broadcast',
-        subject: 'New Subject',
-        content: '<p>Content</p>',
-        type: 'html',
-        from: {
-          name: 'Sender',
-          email: 'sender@example.com'
+      const result = await analytics.V1.Broadcasts.createBroadcast([
+        {
+          name: 'New Broadcast',
+          subject: 'New Subject',
+          content: '<p>Content</p>',
+          type: 'html',
+          from: {
+            name: 'Sender',
+            email: 'sender@example.com',
+          },
+          batch_size_per_hour: 100,
         },
-        batch_size_per_hour: 100
-      }]);
+      ]);
 
       expect(result).toHaveLength(1);
       // @ts-ignore
       expect(result[0].attributes.name).toBe('New Broadcast');
+    });
+
+    test('uses correct /batch/broadcasts endpoint for POST', async () => {
+      setupMockFetch({ data: [] });
+
+      await analytics.V1.Broadcasts.createBroadcast([
+        {
+          name: 'Test Broadcast',
+          subject: 'Test Subject',
+          content: '<p>Test</p>',
+          type: 'html',
+          from: {
+            name: 'Sender',
+            email: 'sender@example.com',
+          },
+          batch_size_per_hour: 100,
+        },
+      ]);
+
+      expect(lastFetchUrl).toContain('/batch/broadcasts');
+      expect(lastFetchMethod).toBe('POST');
     });
 
     test('handles broadcast with segments and tags', async () => {
@@ -165,34 +218,36 @@ describe('BentoBroadcasts', () => {
               type: 'plain',
               from: {
                 name: 'Sender',
-                email: 'sender@example.com'
+                email: 'sender@example.com',
               },
               inclusive_tags: 'tag1,tag2',
               exclusive_tags: 'tag3',
               segment_id: 'segment-123',
               batch_size_per_hour: 50,
-              created_at: '2024-01-01T00:00:00Z'
-            }
-          }
-        ]
+              created_at: '2024-01-01T00:00:00Z',
+            },
+          },
+        ],
       };
 
       setupMockFetch(mockResponse);
 
-      const result = await analytics.V1.Broadcasts.createBroadcast([{
-        name: 'Segmented Broadcast',
-        subject: 'For Segment',
-        content: 'Content',
-        type: 'plain',
-        from: {
-          name: 'Sender',
-          email: 'sender@example.com'
+      const result = await analytics.V1.Broadcasts.createBroadcast([
+        {
+          name: 'Segmented Broadcast',
+          subject: 'For Segment',
+          content: 'Content',
+          type: 'plain',
+          from: {
+            name: 'Sender',
+            email: 'sender@example.com',
+          },
+          inclusive_tags: 'tag1,tag2',
+          exclusive_tags: 'tag3',
+          segment_id: 'segment-123',
+          batch_size_per_hour: 50,
         },
-        inclusive_tags: 'tag1,tag2',
-        exclusive_tags: 'tag3',
-        segment_id: 'segment-123',
-        batch_size_per_hour: 50
-      }]);
+      ]);
 
       expect(result).toHaveLength(1);
       // @ts-ignore
