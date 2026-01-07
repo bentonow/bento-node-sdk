@@ -117,6 +117,10 @@ const bento = new Analytics({
     secretKey: 'bento-secret-key',
   },
   siteUuid: 'bento-site-uuid',
+  // Optional: Configure request timeout (default: 30000ms)
+  clientOptions: {
+    timeout: 30000,
+  },
 });
 
 bento.V1.track({
@@ -179,10 +183,12 @@ bento.V1.removeSubscriber({
 
 #### upsertSubscriber
 
-Updates existing subscriber or creates a new one if they don't exist:
+Queues a subscriber for import - creates a new subscriber or updates an existing one. Returns the number of subscribers queued (1 if successful).
+
+> **Note:** This uses the batch import API which processes asynchronously. The import may take 1-5 minutes to complete. If you need to fetch the subscriber after creation, wait an appropriate amount of time and call `Subscribers.getSubscribers()` separately.
 
 ```javascript
-await analytics.V1.upsertSubscriber({
+const queued = await analytics.V1.upsertSubscriber({
   email: 'user@example.com',
   fields: {
     firstName: 'John',
@@ -192,6 +198,7 @@ await analytics.V1.upsertSubscriber({
   tags: 'lead,mql',
   remove_tags: 'customer',
 });
+// queued === 1 means the subscriber was queued for import
 ```
 
 #### updateFields
@@ -824,6 +831,32 @@ Note: The `S` and `E` generic types are used for TypeScript support. `S` represe
 - The SDK supports TypeScript with generics for custom fields and events.
 - Batch operations are available for importing subscribers and events efficiently.
 - The SDK doesn't currently support anonymous events (coming soon).
+- Requests have a default timeout of 30 seconds, configurable via `clientOptions.timeout`.
+
+## Error Handling
+
+The SDK exports several error types for specific error conditions:
+
+```javascript
+import {
+  NotAuthorizedError, // 401 - Invalid credentials
+  RateLimitedError, // 429 - Too many requests
+  AuthorNotAuthorizedError, // Author not permitted to send emails
+  RequestTimeoutError, // Request exceeded timeout
+} from '@bentonow/bento-node-sdk';
+
+try {
+  await bento.V1.Tags.getTags();
+} catch (error) {
+  if (error instanceof RequestTimeoutError) {
+    // Handle timeout - maybe retry
+  } else if (error instanceof RateLimitedError) {
+    // Handle rate limiting - back off and retry
+  } else if (error instanceof NotAuthorizedError) {
+    // Handle auth error - check credentials
+  }
+}
+```
 
 ## Contributing
 
