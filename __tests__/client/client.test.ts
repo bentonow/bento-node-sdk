@@ -1,7 +1,7 @@
-import { expect, test, describe, beforeEach, mock } from 'bun:test';
+import { expect, test, describe, beforeEach, afterEach, mock } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch, lastFetchSignal } from '../helpers/mockFetch';
+import { setupMockFetch, lastFetchSignal, resetMockFetchTracking } from '../helpers/mockFetch';
 import { NotAuthorizedError, RateLimitedError, RequestTimeoutError } from '../../src';
 
 describe('BentoClient', () => {
@@ -11,6 +11,9 @@ describe('BentoClient', () => {
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
     globalScope = global;
+  });
+  afterEach(() => {
+    resetMockFetchTracking();
   });
 
   describe('Base64 Encoding', () => {

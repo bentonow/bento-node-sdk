@@ -179,7 +179,7 @@ export class BentoClient {
       return response;
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'AbortError') {
-        throw new RequestTimeoutError(`Request timed out after ${this._timeout}ms`);
+        throw new RequestTimeoutError(`Request timed out after ${timeout}ms`);
       }
       throw error;
     } finally {

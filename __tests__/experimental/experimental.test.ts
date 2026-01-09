@@ -309,7 +309,7 @@ describe('BentoExperimental', () => {
       setupMockFetch(mockResponse);
 
       const result = await analytics.V1.Experimental.checkBlacklist({
-        ip: 'example.com',
+        ip: '192.0.2.1',
       });
 
       expect(result.query).toBe('example.com');

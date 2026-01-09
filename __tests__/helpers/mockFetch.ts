@@ -31,14 +31,18 @@ export let lastFetchUrl: string | null = null;
 export let lastFetchMethod: string | null = null;
 export let lastFetchSignal: AbortSignal | null = null;
 
+export const resetMockFetchTracking = (): void => {
+  lastFetchUrl = null;
+  lastFetchMethod = null;
+  lastFetchSignal = null;
+};
+
 export const setupMockFetch = (
   response: any | MockResponseEntry[],
   status = 200,
   contentType = 'application/json'
 ) => {
-  lastFetchUrl = null;
-  lastFetchMethod = null;
-  lastFetchSignal = null;
+  resetMockFetchTracking();
 
   const isQueue = Array.isArray(response);
   const queue = isQueue

@@ -1,7 +1,7 @@
-import { expect, test, describe, beforeEach } from 'bun:test';
+import { expect, test, describe, beforeEach, afterEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch, lastFetchUrl, lastFetchMethod } from '../helpers/mockFetch';
+import { setupMockFetch, lastFetchUrl, lastFetchMethod, resetMockFetchTracking } from '../helpers/mockFetch';
 import { EntityType } from '../../src/sdk/enums';
 
 describe('BentoSequences', () => {
@@ -9,6 +9,9 @@ describe('BentoSequences', () => {
 
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
+  });
+  afterEach(() => {
+    resetMockFetchTracking();
   });
 
   describe('getSequences', () => {

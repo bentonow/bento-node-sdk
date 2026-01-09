@@ -1,13 +1,16 @@
-import { expect, test, describe, beforeEach } from 'bun:test';
+import { expect, test, describe, beforeEach, afterEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch, lastFetchSignal } from '../helpers/mockFetch';
+import { setupMockFetch, lastFetchSignal, resetMockFetchTracking } from '../helpers/mockFetch';
 import { BentoEvents } from '../../src/sdk/batch/enums';
 describe('BentoBatch - importEvents', () => {
   let analytics: Analytics;
 
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
+  });
+  afterEach(() => {
+    resetMockFetchTracking();
   });
 
   test('successfully imports purchase event', async () => {

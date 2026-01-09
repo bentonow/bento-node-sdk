@@ -1,13 +1,16 @@
-import { expect, test, describe, beforeEach } from 'bun:test';
+import { expect, test, describe, beforeEach, afterEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch, lastFetchSignal } from '../helpers/mockFetch';
+import { setupMockFetch, lastFetchSignal, resetMockFetchTracking } from '../helpers/mockFetch';
 
 describe('BentoBatch - importSubscribers', () => {
   let analytics: Analytics;
 
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
+  });
+  afterEach(() => {
+    resetMockFetchTracking();
   });
 
   test('successfully imports subscribers without timeout signal', async () => {
