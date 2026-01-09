@@ -183,12 +183,11 @@ bento.V1.removeSubscriber({
 
 #### upsertSubscriber
 
-Queues a subscriber for import - creates a new subscriber or updates an existing one. Returns the number of subscribers queued (1 if successful).
-
-> **Note:** This uses the batch import API which processes asynchronously. The import may take 1-5 minutes to complete. If you need to fetch the subscriber after creation, wait an appropriate amount of time and call `Subscribers.getSubscribers()` separately.
+Creates or updates a subscriber. The SDK queues the import job and then attempts to fetch
+the subscriber record once the job has been accepted.
 
 ```javascript
-const queued = await analytics.V1.upsertSubscriber({
+const subscriber = await analytics.V1.upsertSubscriber({
   email: 'user@example.com',
   fields: {
     firstName: 'John',
@@ -198,8 +197,10 @@ const queued = await analytics.V1.upsertSubscriber({
   tags: 'lead,mql',
   remove_tags: 'customer',
 });
-// queued === 1 means the subscriber was queued for import
 ```
+
+> **Note:** Imports are processed asynchronously by Bento and may take 1-5 minutes to
+> complete. If the subscriber is not yet available, the method will return `null`.
 
 #### updateFields
 

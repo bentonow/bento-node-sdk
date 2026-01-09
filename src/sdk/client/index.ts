@@ -7,6 +7,10 @@ import {
   RequestTimeoutError,
 } from './errors';
 
+interface RequestOptions {
+  timeout?: number | null;
+}
+
 function encodeBase64(str: string): string {
   if (typeof btoa === 'function') {
     return btoa(str);
@@ -58,14 +62,24 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public async get<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
+  public async get<T>(
+    endpoint: string,
+    payload: Record<string, unknown> = {},
+    requestOptions: RequestOptions = {}
+  ): Promise<T> {
     const queryParameters = this._getQueryParameters(payload);
     const url = `${this._baseUrl}${endpoint}?${queryParameters}`;
 
-    const response = await this._fetchWithTimeout(url, {
-      method: 'GET',
-      headers: this._headers,
-    });
+    const timeoutMs =
+      requestOptions.timeout === undefined ? this._timeout : requestOptions.timeout;
+    const response = await this._fetchWithTimeout(
+      url,
+      {
+        method: 'GET',
+        headers: this._headers,
+      },
+      timeoutMs
+    );
 
     return this._handleResponse<T>(response);
   }
@@ -78,18 +92,28 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public async post<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
+  public async post<T>(
+    endpoint: string,
+    payload: Record<string, unknown> = {},
+    requestOptions: RequestOptions = {}
+  ): Promise<T> {
     const body = this._getBody(payload);
     const url = `${this._baseUrl}${endpoint}`;
 
-    const response = await this._fetchWithTimeout(url, {
-      method: 'POST',
-      headers: {
-        ...this._headers,
-        'Content-Type': 'application/json',
+    const timeoutMs =
+      requestOptions.timeout === undefined ? this._timeout : requestOptions.timeout;
+    const response = await this._fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          ...this._headers,
+          'Content-Type': 'application/json',
+        },
+        body,
       },
-      body,
-    });
+      timeoutMs
+    );
 
     return this._handleResponse<T>(response);
   }
@@ -102,18 +126,28 @@ export class BentoClient {
    * @param payload object
    * @returns Promise\<T\>
    * */
-  public async patch<T>(endpoint: string, payload: Record<string, unknown> = {}): Promise<T> {
+  public async patch<T>(
+    endpoint: string,
+    payload: Record<string, unknown> = {},
+    requestOptions: RequestOptions = {}
+  ): Promise<T> {
     const body = this._getBody(payload);
     const url = `${this._baseUrl}${endpoint}`;
 
-    const response = await this._fetchWithTimeout(url, {
-      method: 'PATCH',
-      headers: {
-        ...this._headers,
-        'Content-Type': 'application/json',
+    const timeoutMs =
+      requestOptions.timeout === undefined ? this._timeout : requestOptions.timeout;
+    const response = await this._fetchWithTimeout(
+      url,
+      {
+        method: 'PATCH',
+        headers: {
+          ...this._headers,
+          'Content-Type': 'application/json',
+        },
+        body,
       },
-      body,
-    });
+      timeoutMs
+    );
 
     return this._handleResponse<T>(response);
   }
@@ -125,9 +159,17 @@ export class BentoClient {
    * @param options Fetch options
    * @returns Promise<Response>
    */
-  private async _fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
+  private async _fetchWithTimeout(
+    url: string,
+    options: RequestInit,
+    timeout: number | null
+  ): Promise<Response> {
+    if (timeout === null) {
+      return fetch(url, options);
+    }
+
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this._timeout);
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
       const response = await fetch(url, {

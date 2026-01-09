@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeEach, mock } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch } from '../helpers/mockFetch';
+import { setupMockFetch, lastFetchSignal } from '../helpers/mockFetch';
 import { NotAuthorizedError, RateLimitedError, RequestTimeoutError } from '../../src';
 
 describe('BentoClient', () => {
@@ -227,6 +227,14 @@ describe('BentoClient', () => {
     test('uses default timeout of 30000ms', () => {
       const client = (analytics.V1 as any)._client;
       expect(client._timeout).toBe(30000);
+    });
+
+    test('attaches AbortSignal to standard requests', async () => {
+      setupMockFetch({ data: [] });
+
+      await analytics.V1.Fields.getFields();
+
+      expect(lastFetchSignal).not.toBeNull();
     });
   });
 
