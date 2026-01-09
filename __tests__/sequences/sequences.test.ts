@@ -43,11 +43,10 @@ describe('BentoSequences', () => {
 
       const result = await analytics.V1.Sequences.getSequences();
 
-      expect(result).not.toBeNull();
       expect(result).toHaveLength(2);
-      expect(result![0].attributes.name).toBe('Onboarding Sequence');
-      expect(result![0].attributes.email_templates).toHaveLength(2);
-      expect(result![1].attributes.name).toBe('Re-engagement Sequence');
+      expect(result[0].attributes.name).toBe('Onboarding Sequence');
+      expect(result[0].attributes.email_templates).toHaveLength(2);
+      expect(result[1].attributes.name).toBe('Re-engagement Sequence');
     });
 
     test('uses correct endpoint for GET request', async () => {
@@ -59,20 +58,20 @@ describe('BentoSequences', () => {
       expect(lastFetchMethod).toBe('GET');
     });
 
-    test('returns null when response is empty object', async () => {
+    test('returns empty array when response is empty object', async () => {
       setupMockFetch({});
 
       const result = await analytics.V1.Sequences.getSequences();
 
-      expect(result).toBeNull();
+      expect(result).toEqual([]);
     });
 
-    test('returns null when response has no data', async () => {
+    test('returns empty array when response has no data', async () => {
       setupMockFetch({ data: null });
 
       const result = await analytics.V1.Sequences.getSequences();
 
-      expect(result).toBeNull();
+      expect(result).toEqual([]);
     });
 
     test('returns empty array when no sequences exist', async () => {
@@ -80,7 +79,6 @@ describe('BentoSequences', () => {
 
       const result = await analytics.V1.Sequences.getSequences();
 
-      expect(result).not.toBeNull();
       expect(result).toHaveLength(0);
     });
 
@@ -103,8 +101,7 @@ describe('BentoSequences', () => {
 
       const result = await analytics.V1.Sequences.getSequences();
 
-      expect(result).not.toBeNull();
-      expect(result![0].attributes.email_templates).toHaveLength(0);
+      expect(result[0].attributes.email_templates).toHaveLength(0);
     });
 
     test('handles server error gracefully', async () => {
