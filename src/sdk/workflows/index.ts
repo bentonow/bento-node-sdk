@@ -10,12 +10,12 @@ export class BentoWorkflows {
   /**
    * Returns all of the workflows for the site, including their email templates.
    *
-   * @returns Promise\<Workflow[] | null\>
+   * @returns Promise\<Workflow[]\>
    */
-  public async getWorkflows(): Promise<Workflow[] | null> {
+  public async getWorkflows(): Promise<Workflow[]> {
     const result = await this._client.get<DataResponse<Workflow[]>>(this._url);
 
-    if (Object.keys(result).length === 0 || !result.data) return null;
-    return result.data;
+    if (!result || Object.keys(result).length === 0) return [];
+    return result.data ?? [];
   }
 }
