@@ -99,7 +99,7 @@ export class BentoBatch<S, E extends string> {
    * Each email must have a `to` address, a `from` address, a `subject`, an `html_body`
    * and `transactional: true`.
    * In addition you can add a `personalizations` object to provide
-   * liquid tsags that will be injected into the email.
+   * liquid tags that will be injected into the email.
    *
    * Returns the number of events that were imported.
    *
