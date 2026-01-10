@@ -54,7 +54,8 @@ export class BentoBatch<S, E extends string> {
       `${this._url}/subscribers`,
       {
         subscribers: parameters.subscribers,
-      }
+      },
+      { timeout: null }
     );
 
     return result.results;
@@ -80,9 +81,13 @@ export class BentoBatch<S, E extends string> {
       throw new TooManyEventsError(`You must send between 1 and 1,000 events.`);
     }
 
-    const result = await this._client.post<BatchImportEventsResponse>(`${this._url}/events`, {
-      events: parameters.events,
-    });
+    const result = await this._client.post<BatchImportEventsResponse>(
+      `${this._url}/events`,
+      {
+        events: parameters.events,
+      },
+      { timeout: null }
+    );
 
     return result.results;
   }
@@ -94,7 +99,7 @@ export class BentoBatch<S, E extends string> {
    * Each email must have a `to` address, a `from` address, a `subject`, an `html_body`
    * and `transactional: true`.
    * In addition you can add a `personalizations` object to provide
-   * liquid tsags that will be injected into the email.
+   * liquid tags that will be injected into the email.
    *
    * Returns the number of events that were imported.
    *

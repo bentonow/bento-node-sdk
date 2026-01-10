@@ -1,13 +1,16 @@
-import { expect, test, describe, beforeEach } from 'bun:test';
+import { expect, test, describe, beforeEach, afterEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch } from '../helpers/mockFetch';
+import { setupMockFetch, lastFetchSignal, resetMockFetchTracking } from '../helpers/mockFetch';
 import { BentoEvents } from '../../src/sdk/batch/enums';
 describe('BentoBatch - importEvents', () => {
   let analytics: Analytics;
 
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
+  });
+  afterEach(() => {
+    resetMockFetchTracking();
   });
 
   test('successfully imports purchase event', async () => {
@@ -309,5 +312,21 @@ describe('BentoBatch - importEvents', () => {
     });
 
     expect(result).toBe(3);
+  });
+
+  test('uses unlimited timeout for imports', async () => {
+    setupMockFetch({ results: 1 });
+
+    await analytics.V1.Batch.importEvents({
+      events: [{
+        type: BentoEvents.TAG,
+        email: 'signal@example.com',
+        details: {
+          tag: 'VIP'
+        }
+      }]
+    });
+
+    expect(lastFetchSignal).toBeNull();
   });
 });

@@ -23,7 +23,7 @@ import type {
 } from './types';
 import { BentoBroadcasts } from '../../sdk/broadcasts';
 import { BentoStats } from '../../sdk/stats';
-import { Subscriber } from '../../sdk/subscribers/types';
+import type { Subscriber } from '../../sdk/subscribers/types';
 
 export class BentoAPIV1<S = { [key: string]: unknown }, E extends string = '$custom'> {
   private readonly _client: BentoClient;
@@ -255,9 +255,13 @@ export class BentoAPIV1<S = { [key: string]: unknown }, E extends string = '$cus
    * Upserts a subscriber in Bento. If the subscriber exists, their data will be updated.
    * If they don't exist, they will be created with the provided data.
    *
+   * This method still relies on the batch import queue (which can take 1-5 minutes to
+   * finish processing), but it automatically attempts to fetch and return the subscriber
+   * record after the import has been queued.
+   *
    * @example
    * ```typescript
-   * await analytics.V1.upsertSubscriber({
+   * const subscriber = await analytics.V1.upsertSubscriber({
    *   email: 'user@example.com',
    *   fields: {
    *     firstName: 'John',
@@ -269,7 +273,7 @@ export class BentoAPIV1<S = { [key: string]: unknown }, E extends string = '$cus
    * ```
    *
    * @param parameters Object containing subscriber data including email, fields, and tags
-   * @returns Promise<Subscriber<S>> The created or updated subscriber
+   * @returns Promise<Subscriber<S> | null> The created or updated subscriber
    */
   public async upsertSubscriber(
     parameters: Omit<AddSubscriberParameters<S>, 'date'> & {
@@ -278,16 +282,18 @@ export class BentoAPIV1<S = { [key: string]: unknown }, E extends string = '$cus
     }
   ): Promise<Subscriber<S> | null> {
     await this.Batch.importSubscribers({
-      subscribers: [{
-        email: parameters.email,
-        ...parameters.fields,
-        ...(parameters.tags && { tags: parameters.tags }),
-        ...(parameters.remove_tags && { remove_tags: parameters.remove_tags })
-      } as { email: string } & Partial<S>]
+      subscribers: [
+        {
+          email: parameters.email,
+          ...parameters.fields,
+          ...(parameters.tags && { tags: parameters.tags }),
+          ...(parameters.remove_tags && { remove_tags: parameters.remove_tags }),
+        } as { email: string } & Partial<S>,
+      ],
     });
 
     return this.Subscribers.getSubscribers({
-      email: parameters.email
+      email: parameters.email,
     });
   }
 }

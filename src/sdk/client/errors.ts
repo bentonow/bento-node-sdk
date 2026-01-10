@@ -18,3 +18,10 @@ export class AuthorNotAuthorizedError extends Error {
     this.name = 'AuthorNotAuthorizedError';
   }
 }
+
+export class RequestTimeoutError extends Error {
+  constructor(message = 'Request timed out') {
+    super(message);
+    this.name = 'RequestTimeoutError';
+  }
+}

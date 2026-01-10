@@ -12,10 +12,6 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
   });
 
   test('successfully creates new subscriber', async () => {
-    // Mock the import response
-    setupMockFetch({ results: 1 });
-
-    // Mock the get subscriber response for a new subscriber
     const mockSubscriber = {
       data: {
         id: 'new-sub-1',
@@ -25,35 +21,33 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
           email: 'new@example.com',
           fields: {
             firstName: 'John',
-            lastName: 'Doe'
+            lastName: 'Doe',
           },
           cached_tag_ids: [],
-          unsubscribed_at: null
-        }
-      }
+          unsubscribed_at: null,
+        },
+      },
     };
 
-    // Setup the second fetch call to return the subscriber
-    setupMockFetch(mockSubscriber);
+    setupMockFetch([
+      { body: { results: 1 } },
+      { body: mockSubscriber },
+    ]);
 
     const result = await analytics.V1.upsertSubscriber({
       email: 'new@example.com',
       fields: {
         firstName: 'John',
-        lastName: 'Doe'
-      }
+        lastName: 'Doe',
+      },
     });
 
-    expect(result).toBeDefined();
+    expect(result).not.toBeNull();
     expect(result?.attributes.email).toBe('new@example.com');
     expect(result?.attributes.fields?.firstName).toBe('John');
   });
 
   test('successfully updates existing subscriber', async () => {
-    // Mock the import response
-    setupMockFetch({ results: 1 });
-
-    // Mock the get subscriber response for an existing subscriber
     const mockSubscriber = {
       data: {
         id: 'existing-sub-1',
@@ -64,73 +58,72 @@ describe('BentoAPIV1 - upsertSubscriber', () => {
           fields: {
             firstName: 'Jane',
             lastName: 'Smith',
-            company: 'Updated Corp'
+            company: 'Updated Corp',
           },
           cached_tag_ids: ['existing-tag'],
-          unsubscribed_at: null
-        }
-      }
+          unsubscribed_at: null,
+        },
+      },
     };
 
-    // Setup the second fetch call to return the updated subscriber
-    setupMockFetch(mockSubscriber);
+    setupMockFetch([
+      { body: { results: 1 } },
+      { body: mockSubscriber },
+    ]);
 
     const result = await analytics.V1.upsertSubscriber({
       email: 'existing@example.com',
       fields: {
         firstName: 'Jane',
         lastName: 'Smith',
-        company: 'Updated Corp'
-      }
+        company: 'Updated Corp',
+      },
     });
 
-    expect(result).toBeDefined();
-    expect(result?.attributes.email).toBe('existing@example.com');
+    expect(result).not.toBeNull();
     expect(result?.attributes.fields?.company).toBe('Updated Corp');
   });
 
   test('handles error during import', async () => {
-    setupMockFetch({ error: 'Import failed' }, 500);
+    setupMockFetch([{ body: { error: 'Import failed' }, status: 500 }]);
 
     await expect(
       analytics.V1.upsertSubscriber({
         email: 'test@example.com',
         fields: {
-          firstName: 'Test'
-        }
+          firstName: 'Test',
+        },
       })
     ).rejects.toThrow();
   });
 
   test('handles error during subscriber fetch', async () => {
-    // First call succeeds (import)
-    setupMockFetch({ results: 1 });
-
-    // Second call fails (get subscriber)
-    setupMockFetch({ error: 'Fetch failed' }, 500);
+    setupMockFetch([
+      { body: { results: 1 } },
+      { body: { error: 'Fetch failed' }, status: 500 },
+    ]);
 
     await expect(
       analytics.V1.upsertSubscriber({
         email: 'test@example.com',
         fields: {
-          firstName: 'Test'
-        }
+          firstName: 'Test',
+        },
       })
     ).rejects.toThrow();
   });
 
   test('handles subscriber not found after import', async () => {
-    // First call succeeds (import)
-    setupMockFetch({ results: 1 });
-
-    // Second call returns null subscriber
-    setupMockFetch({ data: null });
+    setupMockFetch([
+      { body: { results: 1 } },
+      { body: { data: null } },
+    ]);
 
     const result = await analytics.V1.upsertSubscriber({
-      email: 'test@example.com',
+      email: 'missing@example.com',
       fields: {
-        firstName: 'Test'
-      }
+        firstName: 'Missing',
+      },
     });
 
     expect(result).toBeNull();

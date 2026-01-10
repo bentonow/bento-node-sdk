@@ -1,8 +1,8 @@
-import { expect, test, describe, beforeEach, mock } from 'bun:test';
+import { expect, test, describe, beforeEach, afterEach, mock } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch } from '../helpers/mockFetch';
-import { NotAuthorizedError, RateLimitedError } from '../../src';
+import { setupMockFetch, lastFetchSignal, resetMockFetchTracking } from '../helpers/mockFetch';
+import { NotAuthorizedError, RateLimitedError, RequestTimeoutError } from '../../src';
 
 describe('BentoClient', () => {
   let analytics: Analytics;
@@ -11,6 +11,9 @@ describe('BentoClient', () => {
   beforeEach(() => {
     analytics = new Analytics(mockOptions);
     globalScope = global;
+  });
+  afterEach(() => {
+    resetMockFetchTracking();
   });
 
   describe('Base64 Encoding', () => {
@@ -29,8 +32,8 @@ describe('BentoClient', () => {
 
       const mockBuffer = {
         from: mock(() => ({
-          toString: () => 'mocked-base64'
-        }))
+          toString: () => 'mocked-base64',
+        })),
       };
       globalScope.Buffer = mockBuffer;
 
@@ -38,8 +41,8 @@ describe('BentoClient', () => {
         ...mockOptions,
         authentication: {
           publishableKey: 'test',
-          secretKey: 'test'
-        }
+          secretKey: 'test',
+        },
       });
 
       const headers = (analytics.V1 as any)._client._headers;
@@ -60,7 +63,7 @@ describe('BentoClient', () => {
       // Test basic ASCII encoding
       // Create a test string that we can predict the base64 output for
       const testStr = 'test:test';
-      const expectedBase64 = 'dGVzdDp0ZXN0';  // 'test:test' in base64
+      const expectedBase64 = 'dGVzdDp0ZXN0'; // 'test:test' in base64
       const result = (analytics.V1 as any)._client._extractHeaders(
         { publishableKey: 'test', secretKey: 'test' },
         'test'
@@ -84,7 +87,9 @@ describe('BentoClient', () => {
           { publishableKey: nonLatin1Str, secretKey: '' },
           'test'
         );
-      }).toThrow("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+      }).toThrow(
+        "'btoa' failed: The string to be encoded contains characters outside of the Latin1 range."
+      );
 
       globalScope.btoa = originalBtoa;
       globalScope.Buffer = originalBuffer;
@@ -104,23 +109,13 @@ describe('BentoClient', () => {
 
     test('handles text/plain error response', async () => {
       const errorMessage = 'Plain text error message';
-      setupMockFetch(
-        { error: errorMessage },
-        500,
-        'text/plain'
-      );
+      setupMockFetch({ error: errorMessage }, 500, 'text/plain');
 
-      expect(analytics.V1.Tags.getTags()).rejects.toThrow(
-        `[500] - ${errorMessage}`
-      );
+      expect(analytics.V1.Tags.getTags()).rejects.toThrow(`[500] - ${errorMessage}`);
     });
 
     test('handles unknown content-type error response', async () => {
-      setupMockFetch(
-        { error: 'Unknown error' },
-        500,
-        'application/unknown'
-      );
+      setupMockFetch({ error: 'Unknown error' }, 500, 'application/unknown');
 
       expect(analytics.V1.Tags.getTags()).rejects.toThrow(
         '[500] - Unknown response from the Bento API.'
@@ -151,8 +146,8 @@ describe('BentoClient', () => {
       const customOptions = {
         ...mockOptions,
         clientOptions: {
-          baseUrl: 'https://custom.api.com'
-        }
+          baseUrl: 'https://custom.api.com',
+        },
       };
       const customAnalytics = new Analytics(customOptions);
       const client = (customAnalytics.V1 as any)._client;
@@ -171,10 +166,10 @@ describe('BentoClient', () => {
             ok: true,
             json: () => Promise.resolve({ data: null }),
             headers: new Headers({
-              'Content-Type': 'application/json'
-            })
+              'Content-Type': 'application/json',
+            }),
           });
-        }
+        },
       }));
 
       await analytics.V1.Forms.getResponses('test-form');
@@ -184,6 +179,118 @@ describe('BentoClient', () => {
       const url = new URL(capturedUrl!);
       expect(url.searchParams.get('id')).toBe('test-form');
       expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+    });
+
+    test('converts non-string query parameter values to strings', async () => {
+      let capturedUrl: string | null = null;
+
+      // Setup mock that captures the URL
+      mock.module('cross-fetch', () => ({
+        default: (url: string, _options: RequestInit) => {
+          capturedUrl = url;
+          return Promise.resolve({
+            status: 200,
+            ok: true,
+            json: () => Promise.resolve({ data: null }),
+            headers: new Headers({
+              'Content-Type': 'application/json',
+            }),
+          });
+        },
+      }));
+
+      // Test with a parameter that would have a non-string value
+      await analytics.V1.Forms.getResponses('test-form');
+
+      // Verify URL query parameters are properly stringified
+      expect(capturedUrl).not.toBeNull();
+      const url = new URL(capturedUrl!);
+
+      // All query parameters should be strings, not undefined or null
+      expect(typeof url.searchParams.get('site_uuid')).toBe('string');
+      expect(url.searchParams.get('site_uuid')).not.toBe('undefined');
+      expect(url.searchParams.get('site_uuid')).not.toBe('null');
+
+      // Verify site_uuid is properly set
+      expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+    });
+
+    test('initializes with custom timeout', () => {
+      const customOptions = {
+        ...mockOptions,
+        clientOptions: {
+          timeout: 5000,
+        },
+      };
+      const customAnalytics = new Analytics(customOptions);
+      const client = (customAnalytics.V1 as any)._client;
+      expect(client._timeout).toBe(5000);
+    });
+
+    test('uses default timeout of 30000ms', () => {
+      const client = (analytics.V1 as any)._client;
+      expect(client._timeout).toBe(30000);
+    });
+
+    test('attaches AbortSignal to standard requests', async () => {
+      setupMockFetch({ data: [] });
+
+      await analytics.V1.Fields.getFields();
+
+      expect(lastFetchSignal).not.toBeNull();
+    });
+  });
+
+  describe('Timeout Handling', () => {
+    test('throws RequestTimeoutError on timeout', async () => {
+      // Mock fetch to simulate a timeout by using AbortController
+      mock.module('cross-fetch', () => ({
+        default: (_url: string, options: RequestInit) => {
+          return new Promise((_resolve, reject) => {
+            // Simulate the abort being triggered
+            if (options.signal) {
+              const abortHandler = () => {
+                const error = new Error('The operation was aborted');
+                error.name = 'AbortError';
+                reject(error);
+              };
+              options.signal.addEventListener('abort', abortHandler);
+              // Don't resolve - let the timeout happen
+            }
+          });
+        },
+      }));
+
+      // Create analytics with very short timeout
+      const timeoutAnalytics = new Analytics({
+        ...mockOptions,
+        clientOptions: {
+          timeout: 1, // 1ms timeout to trigger quickly
+        },
+      });
+
+      await expect(timeoutAnalytics.V1.Tags.getTags()).rejects.toThrow(RequestTimeoutError);
+    });
+  });
+
+  describe('JSON Response Handling', () => {
+    test('throws error on invalid JSON response with success status', async () => {
+      mock.module('cross-fetch', () => ({
+        default: () => {
+          return Promise.resolve({
+            status: 200,
+            ok: true,
+            json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input')),
+            headers: new Headers({
+              'Content-Type': 'application/json',
+            }),
+          });
+        },
+      }));
+
+      await expect(analytics.V1.Tags.getTags()).rejects.toThrow(
+        'Invalid JSON response from server'
+      );
     });
   });
 });

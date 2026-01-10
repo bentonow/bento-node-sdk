@@ -117,6 +117,10 @@ const bento = new Analytics({
     secretKey: 'bento-secret-key',
   },
   siteUuid: 'bento-site-uuid',
+  // Optional: Configure request timeout (default: 30000ms)
+  clientOptions: {
+    timeout: 30000,
+  },
 });
 
 bento.V1.track({
@@ -179,10 +183,11 @@ bento.V1.removeSubscriber({
 
 #### upsertSubscriber
 
-Updates existing subscriber or creates a new one if they don't exist:
+Creates or updates a subscriber. The SDK queues the import job and then attempts to fetch
+the subscriber record once the job has been accepted.
 
 ```javascript
-await analytics.V1.upsertSubscriber({
+const subscriber = await analytics.V1.upsertSubscriber({
   email: 'user@example.com',
   fields: {
     firstName: 'John',
@@ -193,6 +198,9 @@ await analytics.V1.upsertSubscriber({
   remove_tags: 'customer',
 });
 ```
+
+> **Note:** Imports are processed asynchronously by Bento and may take 1-5 minutes to
+> complete. If the subscriber is not yet available, the method will return `null`.
 
 #### updateFields
 
@@ -824,6 +832,32 @@ Note: The `S` and `E` generic types are used for TypeScript support. `S` represe
 - The SDK supports TypeScript with generics for custom fields and events.
 - Batch operations are available for importing subscribers and events efficiently.
 - The SDK doesn't currently support anonymous events (coming soon).
+- Requests have a default timeout of 30 seconds, configurable via `clientOptions.timeout`.
+
+## Error Handling
+
+The SDK exports several error types for specific error conditions:
+
+```javascript
+import {
+  NotAuthorizedError, // 401 - Invalid credentials
+  RateLimitedError, // 429 - Too many requests
+  AuthorNotAuthorizedError, // Author not permitted to send emails
+  RequestTimeoutError, // Request exceeded timeout
+} from '@bentonow/bento-node-sdk';
+
+try {
+  await bento.V1.Tags.getTags();
+} catch (error) {
+  if (error instanceof RequestTimeoutError) {
+    // Handle timeout - maybe retry
+  } else if (error instanceof RateLimitedError) {
+    // Handle rate limiting - back off and retry
+  } else if (error instanceof NotAuthorizedError) {
+    // Handle auth error - check credentials
+  }
+}
+```
 
 ## Contributing
 

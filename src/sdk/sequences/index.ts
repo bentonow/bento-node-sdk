@@ -10,12 +10,12 @@ export class BentoSequences {
   /**
    * Returns all of the sequences for the site, including their email templates.
    *
-   * @returns Promise\<Sequence[] | null\>
+   * @returns Promise\<Sequence[]\>
    */
-  public async getSequences(): Promise<Sequence[] | null> {
+  public async getSequences(): Promise<Sequence[]> {
     const result = await this._client.get<DataResponse<Sequence[]>>(this._url);
 
-    if (Object.keys(result).length === 0 || !result.data) return null;
-    return result.data;
+    if (!result || Object.keys(result).length === 0) return [];
+    return result.data ?? [];
   }
 }
