@@ -633,6 +633,20 @@ const sequences = await bento.V1.Sequences.getSequences();
 // ]
 ```
 
+#### createSequenceEmail
+
+Creates a new email template inside a sequence.
+
+```javascript
+const createdTemplate = await bento.V1.Sequences.createSequenceEmail('sequence_abc123', {
+  subject: 'Welcome to Bento',
+  html: '<p>Hello {{ visitor.first_name }}</p>',
+  delay_interval: 'days',
+  delay_interval_count: 7,
+  inbox_snippet: 'Welcome to the sequence',
+});
+```
+
 ### Workflows
 
 Retrieve workflows and their associated email templates.

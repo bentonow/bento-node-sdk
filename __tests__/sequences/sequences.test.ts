@@ -119,4 +119,95 @@ describe('BentoSequences', () => {
       await expect(analytics.V1.Sequences.getSequences()).rejects.toThrow();
     });
   });
+
+  describe('createSequenceEmail', () => {
+    test('successfully creates a sequence email template', async () => {
+      const mockTemplate = {
+        data: {
+          id: '123',
+          type: EntityType.EMAIL_TEMPLATES,
+          attributes: {
+            name: 'Welcome Sequence Email',
+            subject: 'Welcome aboard',
+            html: '<h1>Hello there</h1>',
+            created_at: '2024-01-01T00:00:00Z',
+            stats: null,
+          },
+        },
+      };
+
+      setupMockFetch(mockTemplate, 201);
+
+      const result = await analytics.V1.Sequences.createSequenceEmail('sequence_abc123', {
+        subject: 'Welcome aboard',
+        html: '<h1>Hello there</h1>',
+        delay_interval: 'days',
+        delay_interval_count: 7,
+      });
+
+      expect(result).not.toBeNull();
+      expect(result!.attributes.subject).toBe('Welcome aboard');
+      expect(result!.attributes.html).toBe('<h1>Hello there</h1>');
+    });
+
+    test('uses correct endpoint for POST request', async () => {
+      setupMockFetch({
+        data: {
+          id: '123',
+          type: EntityType.EMAIL_TEMPLATES,
+          attributes: {},
+        },
+      });
+
+      await analytics.V1.Sequences.createSequenceEmail('sequence_xyz789', {
+        subject: 'Test Subject',
+        html: '<p>Test</p>',
+      });
+
+      expect(lastFetchUrl).toContain('/fetch/sequences/sequence_xyz789/emails/templates');
+      expect(lastFetchMethod).toBe('POST');
+    });
+
+    test('returns null when response is empty object', async () => {
+      setupMockFetch({}, 201);
+
+      const result = await analytics.V1.Sequences.createSequenceEmail('sequence_empty', {
+        subject: 'Test Subject',
+        html: '<p>Test</p>',
+      });
+
+      expect(result).toBeNull();
+    });
+
+    test('returns null when response has no data', async () => {
+      setupMockFetch({ data: null }, 201);
+
+      const result = await analytics.V1.Sequences.createSequenceEmail('sequence_nodata', {
+        subject: 'Test Subject',
+        html: '<p>Test</p>',
+      });
+
+      expect(result).toBeNull();
+    });
+
+    test('handles validation errors', async () => {
+      setupMockFetch(
+        {
+          errors: {
+            delay_interval_count: ['must be a positive integer'],
+          },
+        },
+        422
+      );
+
+      await expect(
+        analytics.V1.Sequences.createSequenceEmail('sequence_bad_delay', {
+          subject: 'Test Subject',
+          html: '<p>Test</p>',
+          delay_interval: 'days',
+          delay_interval_count: 0,
+        })
+      ).rejects.toThrow();
+    });
+  });
 });
