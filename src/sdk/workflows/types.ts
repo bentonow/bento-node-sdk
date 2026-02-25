@@ -19,3 +19,7 @@ export type WorkflowAttributes = {
 };
 
 export type Workflow = BaseEntity<WorkflowAttributes>;
+
+export type GetWorkflowsParameters = {
+  page?: number;
+};

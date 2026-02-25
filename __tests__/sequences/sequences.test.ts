@@ -61,6 +61,17 @@ describe('BentoSequences', () => {
       expect(lastFetchMethod).toBe('GET');
     });
 
+    test('passes pagination parameters in query string', async () => {
+      setupMockFetch({ data: [] });
+
+      await analytics.V1.Sequences.getSequences({ page: 5 });
+
+      expect(lastFetchUrl).toContain('/fetch/sequences');
+      const url = new URL(lastFetchUrl!);
+      expect(url.searchParams.get('page')).toBe('5');
+      expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+    });
+
     test('returns empty array when response is empty object', async () => {
       setupMockFetch({});
 

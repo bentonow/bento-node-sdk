@@ -1,7 +1,7 @@
 import type { BentoClient } from '../client';
 import type { DataResponse } from '../client/types';
 import type { EmailTemplate } from '../email-templates/types';
-import type { CreateSequenceEmailParameters, Sequence } from './types';
+import type { CreateSequenceEmailParameters, GetSequencesParameters, Sequence } from './types';
 
 export class BentoSequences {
   private readonly _url = '/fetch/sequences';
@@ -11,10 +11,11 @@ export class BentoSequences {
   /**
    * Returns all of the sequences for the site, including their email templates.
    *
+   * @param parameters Optional pagination parameters (e.g., { page: 2 })
    * @returns Promise\<Sequence[]\>
    */
-  public async getSequences(): Promise<Sequence[]> {
-    const result = await this._client.get<DataResponse<Sequence[]>>(this._url);
+  public async getSequences(parameters: GetSequencesParameters = {}): Promise<Sequence[]> {
+    const result = await this._client.get<DataResponse<Sequence[]>>(this._url, parameters);
 
     if (!result || Object.keys(result).length === 0) return [];
     return result.data ?? [];
