@@ -1,7 +1,12 @@
 import { expect, test, describe, beforeEach, afterEach, mock } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch, lastFetchSignal, resetMockFetchTracking } from '../helpers/mockFetch';
+import {
+  setupMockFetch,
+  lastFetchSignal,
+  lastFetchUrl,
+  resetMockFetchTracking,
+} from '../helpers/mockFetch';
 import { NotAuthorizedError, RateLimitedError, RequestTimeoutError } from '../../src';
 
 describe('BentoClient', () => {
@@ -212,6 +217,17 @@ describe('BentoClient', () => {
       expect(url.searchParams.get('site_uuid')).not.toBe('null');
 
       // Verify site_uuid is properly set
+      expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+    });
+
+    test('omits undefined query parameters when forwarding SDK options', async () => {
+      setupMockFetch({ data: [] });
+
+      await analytics.V1.Sequences.getSequences({ page: undefined });
+
+      expect(lastFetchUrl).not.toBeNull();
+      const url = new URL(lastFetchUrl!);
+      expect(url.searchParams.has('page')).toBe(false);
       expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
     });
 

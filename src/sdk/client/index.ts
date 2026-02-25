@@ -255,6 +255,7 @@ export class BentoClient {
 
     const queryParameters = new URLSearchParams();
     for (const [key, value] of Object.entries(body)) {
+      if (value === undefined || value === null) continue;
       queryParameters.append(key, String(value));
     }
 
