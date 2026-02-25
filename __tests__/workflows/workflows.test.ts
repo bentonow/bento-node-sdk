@@ -61,6 +61,17 @@ describe('BentoWorkflows', () => {
       expect(lastFetchMethod).toBe('GET');
     });
 
+    test('passes pagination parameters in query string', async () => {
+      setupMockFetch({ data: [] });
+
+      await analytics.V1.Workflows.getWorkflows({ page: 3 });
+
+      expect(lastFetchUrl).toContain('/fetch/workflows');
+      const url = new URL(lastFetchUrl!);
+      expect(url.searchParams.get('page')).toBe('3');
+      expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+    });
+
     test('returns empty array when response is empty object', async () => {
       setupMockFetch({});
 

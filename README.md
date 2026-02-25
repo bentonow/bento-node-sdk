@@ -608,24 +608,33 @@ bento.V1.Tags.createTag({
 
 ### Sequences
 
-Retrieve sequences and their associated email templates.
+Sequences power drip campaigns, onboarding flows, and other time-based journeys by chaining multiple email templates with configurable delays. The SDK mirrors the public Sequences API for fetching sequences, creating new sequence emails, and updating template content. Refer to the [Sequences API docs](https://docs.bentonow.com/sequences_api#get-sequences) for full request/response details.
 
 #### getSequences
 
-Retrieves all sequences for the site, including their email templates.
+Calls `GET /v1/fetch/sequences` and returns every sequence plus the embedded email templates and stats. Pass `{ page }` to paginate through large installs—the SDK appends `site_uuid` automatically.
 
 ```javascript
-const sequences = await bento.V1.Sequences.getSequences();
-// Returns:
-// [
+import { Analytics } from '@bentonow/bento-node-sdk';
+
+const analytics = new Analytics({
+  authentication: {
+    publishableKey: process.env.BENTO_PUBLISHABLE_KEY,
+    secretKey: process.env.BENTO_SECRET_KEY,
+  },
+  siteUuid: process.env.BENTO_SITE_UUID,
+});
+
+const sequences = await analytics.V1.Sequences.getSequences({ page: 1 });
+// sequences => [
 //   {
-//     id: '123',
+//     id: 'seq-1',
 //     type: 'sequence',
 //     attributes: {
 //       name: 'Welcome Sequence',
 //       created_at: '2024-01-01T00:00:00Z',
 //       email_templates: [
-//         { id: 1, subject: 'Welcome!', stats: null },
+//         { id: 1, subject: 'Welcome!', stats: { opened: 100, clicked: 50 } },
 //         { id: 2, subject: 'Getting Started', stats: null }
 //       ]
 //     }
@@ -635,39 +644,61 @@ const sequences = await bento.V1.Sequences.getSequences();
 
 #### createSequenceEmail
 
-Creates a new email template inside a sequence.
+Wraps [`POST /v1/fetch/sequences/:id/emails/templates`](https://docs.bentonow.com/sequences_api#create-sequence-email) so you can add messages to a sequence via code. Pass the sequence prefix ID (e.g., `sequence_abc123`) plus the subject/HTML and any optional delay/snippet/editor fields.
 
 ```javascript
-const createdTemplate = await bento.V1.Sequences.createSequenceEmail('sequence_abc123', {
+const createdTemplate = await analytics.V1.Sequences.createSequenceEmail('sequence_abc123', {
   subject: 'Welcome to Bento',
   html: '<p>Hello {{ visitor.first_name }}</p>',
   delay_interval: 'days',
   delay_interval_count: 7,
   inbox_snippet: 'Welcome to the sequence',
+  editor_choice: 'plain',
+});
+```
+
+#### updateSequenceEmail
+
+Sequence emails reuse the Email Templates resource, so updates happen through `analytics.V1.EmailTemplates.updateEmailTemplate` (the same helper documented in the [Email Templates](#email-templates) section). Only `subject` and `html` are patchable today, matching [`PATCH /v1/fetch/emails/templates/:id`](https://docs.bentonow.com/sequences_api#update-sequence-email).
+
+```javascript
+await analytics.V1.EmailTemplates.updateEmailTemplate({
+  id: 12345,
+  subject: 'Updated subject',
+  html: '<h1>Updated HTML</h1>',
 });
 ```
 
 ### Workflows
 
-Retrieve workflows and their associated email templates.
+Workflows (a.k.a. Flows) are Bento’s automation engine for welcome journeys, abandoned-cart nudges, re-engagement loops, and other event-driven campaigns. The SDK surfaces the public Workflows API so you can inspect every flow (including the embedded email templates and their stats) straight from Node. See the [Workflows API reference](https://docs.bentonow.com/workflows_api#get-workflows) for the canonical response schema.
 
 #### getWorkflows
 
-Retrieves all workflows for the site, including their email templates.
+Calls `GET /v1/fetch/workflows` and returns an array of workflows. Pass an optional `page` parameter to paginate through large accounts—the SDK automatically injects your `site_uuid` so you only need to provide the page number.
 
 ```javascript
-const workflows = await bento.V1.Workflows.getWorkflows();
-// Returns:
-// [
+import { Analytics } from '@bentonow/bento-node-sdk';
+
+const analytics = new Analytics({
+  authentication: {
+    publishableKey: process.env.BENTO_PUBLISHABLE_KEY,
+    secretKey: process.env.BENTO_SECRET_KEY,
+  },
+  siteUuid: process.env.BENTO_SITE_UUID,
+});
+
+const workflows = await analytics.V1.Workflows.getWorkflows({ page: 2 });
+// workflows => [
 //   {
-//     id: '456',
+//     id: 'wf-1',
 //     type: 'workflow',
 //     attributes: {
-//       name: 'Onboarding Workflow',
+//       name: 'Abandoned Cart Recovery',
 //       created_at: '2024-01-01T00:00:00Z',
 //       email_templates: [
-//         { id: 3, subject: 'Step 1', stats: null },
-//         { id: 4, subject: 'Step 2', stats: null }
+//         { id: 3, subject: 'Reminder #1', stats: { opened: 42, clicked: 10 } },
+//         { id: 4, subject: 'Reminder #2', stats: null }
 //       ]
 //     }
 //   }
@@ -676,38 +707,63 @@ const workflows = await bento.V1.Workflows.getWorkflows();
 
 ### Email Templates
 
-Retrieve and update email templates used in sequences and workflows.
+Retrieve and update email templates used in sequences and workflows. Both helpers call the public Email Templates API (`GET /v1/fetch/emails/templates/:id` and `PATCH /v1/fetch/emails/templates/:id`), and the SDK automatically injects your `site_uuid` and authentication headers. See the [Email Templates API docs](https://docs.bentonow.com/email_templates_api#get-email-template) for the canonical contract.
 
 #### getEmailTemplate
 
-Retrieves a single email template by ID.
+Retrieves a single email template by ID and returns `null` when the Bento API responds with an empty payload. Use this to surface subject lines, HTML, and performance stats inside your own tooling.
 
 ```javascript
-const template = await bento.V1.EmailTemplates.getEmailTemplate({ id: 123 });
-// Returns:
-// {
-//   id: '123',
-//   type: 'email_template',
-//   attributes: {
-//     name: 'Welcome Email',
-//     subject: 'Welcome to our service!',
-//     html: '<p>Hello {{ name }}, welcome!</p>',
-//     created_at: '2024-01-01T00:00:00Z',
-//     stats: null
-//   }
-// }
+import { Analytics } from '@bentonow/bento-node-sdk';
+
+const analytics = new Analytics({
+  authentication: {
+    publishableKey: process.env.BENTO_PUBLISHABLE_KEY,
+    secretKey: process.env.BENTO_SECRET_KEY,
+  },
+  siteUuid: process.env.BENTO_SITE_UUID,
+});
+
+const template = await analytics.V1.EmailTemplates.getEmailTemplate({ id: 123 });
+if (!template) {
+  console.log('Template not found');
+} else {
+  console.log(template.attributes.subject, template.attributes.stats);
+}
 ```
 
 #### updateEmailTemplate
 
-Updates an email template's subject and/or HTML content.
+Updates an email template's subject and/or HTML content via [`PATCH /v1/fetch/emails/templates/:id`](https://docs.bentonow.com/email_templates_api#update-email-template). Only pass the fields you want to change; omitted fields stay untouched. The helper returns the updated template (`null` if Bento responds empty) and bubbles up standard SDK errors such as `NotAuthorizedError`, `RateLimitedError`, or `RequestTimeoutError`.
 
 ```javascript
-const updatedTemplate = await bento.V1.EmailTemplates.updateEmailTemplate({
-  id: 123,
-  subject: 'Updated Subject Line',
-  html: '<p>Updated HTML content with {{ name }}</p>',
+import { Analytics, NotAuthorizedError } from '@bentonow/bento-node-sdk';
+
+const analytics = new Analytics({
+  authentication: {
+    publishableKey: process.env.BENTO_PUBLISHABLE_KEY,
+    secretKey: process.env.BENTO_SECRET_KEY,
+  },
+  siteUuid: process.env.BENTO_SITE_UUID,
 });
+
+try {
+  const updatedTemplate = await analytics.V1.EmailTemplates.updateEmailTemplate({
+    id: 123,
+    subject: 'Updated Subject Line',
+    html: '<p>Updated HTML content with {{ name }}</p>',
+  });
+
+  if (updatedTemplate) {
+    console.log(updatedTemplate.attributes.subject);
+  }
+} catch (error) {
+  if (error instanceof NotAuthorizedError) {
+    console.error('Check your Bento credentials or site permissions.');
+  } else {
+    throw error;
+  }
+}
 ```
 
 For detailed information on each module, refer to the [SDK Documentation](https://docs.bentonow.com/subscribers).
