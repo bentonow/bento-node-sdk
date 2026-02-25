@@ -23,6 +23,10 @@ export type Sequence = BaseEntity<SequenceAttributes>;
 
 export type SequenceDelayInterval = 'minutes' | 'hours' | 'days' | 'months';
 
+export type GetSequencesParameters = {
+  page?: number;
+};
+
 export type CreateSequenceEmailParameters = {
   subject: string;
   html: string;
