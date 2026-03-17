@@ -23,6 +23,7 @@ describe('BentoWorkflows', () => {
             type: EntityType.WORKFLOWS,
             attributes: {
               name: 'Welcome Workflow',
+              status: 'live',
               created_at: '2024-01-01T00:00:00Z',
               email_templates: [
                 { id: 1, subject: 'Welcome!', stats: { opened: 150, clicked: 75 } },
@@ -35,6 +36,7 @@ describe('BentoWorkflows', () => {
             type: EntityType.WORKFLOWS,
             attributes: {
               name: 'Abandoned Cart Workflow',
+              status: 'draft',
               created_at: '2024-02-01T00:00:00Z',
               email_templates: [{ id: 3, subject: 'You left something behind', stats: null }],
             },
@@ -48,8 +50,10 @@ describe('BentoWorkflows', () => {
 
       expect(result).toHaveLength(2);
       expect(result[0].attributes.name).toBe('Welcome Workflow');
+      expect(result[0].attributes.status).toBe('live');
       expect(result[0].attributes.email_templates).toHaveLength(2);
       expect(result[1].attributes.name).toBe('Abandoned Cart Workflow');
+      expect(result[1].attributes.status).toBe('draft');
     });
 
     test('uses correct endpoint for GET request', async () => {
@@ -104,6 +108,7 @@ describe('BentoWorkflows', () => {
             type: EntityType.WORKFLOWS,
             attributes: {
               name: 'Empty Workflow',
+              status: 'live',
               created_at: '2024-01-01T00:00:00Z',
               email_templates: [],
             },
