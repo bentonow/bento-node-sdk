@@ -161,59 +161,67 @@ describe('BentoClient', () => {
 
     test('handles requests with query parameters', async () => {
       let capturedUrl: string | null = null;
+      const savedFetch = globalThis.fetch;
 
-      // Setup mock that captures the URL
-      globalThis.fetch = ((url: string | URL | Request) => {
-        capturedUrl = typeof url === 'string' ? url : url.toString();
-        return Promise.resolve({
-          status: 200,
-          ok: true,
-          json: () => Promise.resolve({ data: null }),
-          headers: new Headers({
-            'Content-Type': 'application/json',
-          }),
-        });
-      }) as typeof globalThis.fetch;
+      try {
+        globalThis.fetch = ((url: string | URL | Request) => {
+          capturedUrl = typeof url === 'string' ? url : url.toString();
+          return Promise.resolve({
+            status: 200,
+            ok: true,
+            json: () => Promise.resolve({ data: null }),
+            headers: new Headers({
+              'Content-Type': 'application/json',
+            }),
+          });
+        }) as typeof globalThis.fetch;
 
-      await analytics.V1.Forms.getResponses('test-form');
+        await analytics.V1.Forms.getResponses('test-form');
 
-      // Verify URL contains expected query parameters
-      expect(capturedUrl).not.toBeNull();
-      const url = new URL(capturedUrl!);
-      expect(url.searchParams.get('id')).toBe('test-form');
-      expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+        // Verify URL contains expected query parameters
+        expect(capturedUrl).not.toBeNull();
+        const url = new URL(capturedUrl!);
+        expect(url.searchParams.get('id')).toBe('test-form');
+        expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+      } finally {
+        globalThis.fetch = savedFetch;
+      }
     });
 
     test('converts non-string query parameter values to strings', async () => {
       let capturedUrl: string | null = null;
+      const savedFetch = globalThis.fetch;
 
-      // Setup mock that captures the URL
-      globalThis.fetch = ((url: string | URL | Request) => {
-        capturedUrl = typeof url === 'string' ? url : url.toString();
-        return Promise.resolve({
-          status: 200,
-          ok: true,
-          json: () => Promise.resolve({ data: null }),
-          headers: new Headers({
-            'Content-Type': 'application/json',
-          }),
-        });
-      }) as typeof globalThis.fetch;
+      try {
+        globalThis.fetch = ((url: string | URL | Request) => {
+          capturedUrl = typeof url === 'string' ? url : url.toString();
+          return Promise.resolve({
+            status: 200,
+            ok: true,
+            json: () => Promise.resolve({ data: null }),
+            headers: new Headers({
+              'Content-Type': 'application/json',
+            }),
+          });
+        }) as typeof globalThis.fetch;
 
-      // Test with a parameter that would have a non-string value
-      await analytics.V1.Forms.getResponses('test-form');
+        // Test with a parameter that would have a non-string value
+        await analytics.V1.Forms.getResponses('test-form');
 
-      // Verify URL query parameters are properly stringified
-      expect(capturedUrl).not.toBeNull();
-      const url = new URL(capturedUrl!);
+        // Verify URL query parameters are properly stringified
+        expect(capturedUrl).not.toBeNull();
+        const url = new URL(capturedUrl!);
 
-      // All query parameters should be strings, not undefined or null
-      expect(typeof url.searchParams.get('site_uuid')).toBe('string');
-      expect(url.searchParams.get('site_uuid')).not.toBe('undefined');
-      expect(url.searchParams.get('site_uuid')).not.toBe('null');
+        // All query parameters should be strings, not undefined or null
+        expect(typeof url.searchParams.get('site_uuid')).toBe('string');
+        expect(url.searchParams.get('site_uuid')).not.toBe('undefined');
+        expect(url.searchParams.get('site_uuid')).not.toBe('null');
 
-      // Verify site_uuid is properly set
-      expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+        // Verify site_uuid is properly set
+        expect(url.searchParams.get('site_uuid')).toBe(mockOptions.siteUuid);
+      } finally {
+        globalThis.fetch = savedFetch;
+      }
     });
 
     test('omits undefined query parameters when forwarding SDK options', async () => {
@@ -255,50 +263,62 @@ describe('BentoClient', () => {
 
   describe('Timeout Handling', () => {
     test('throws RequestTimeoutError on timeout', async () => {
-      // Mock fetch to simulate a timeout by using AbortController
-      globalThis.fetch = ((_url: string | URL | Request, options?: RequestInit) => {
-        return new Promise((_resolve, reject) => {
-          // Simulate the abort being triggered
-          if (options?.signal) {
-            const abortHandler = () => {
-              const error = new Error('The operation was aborted');
-              error.name = 'AbortError';
-              reject(error);
-            };
-            options.signal.addEventListener('abort', abortHandler);
-            // Don't resolve - let the timeout happen
-          }
+      const savedFetch = globalThis.fetch;
+
+      try {
+        // Mock fetch to simulate a timeout by using AbortController
+        globalThis.fetch = ((_url: string | URL | Request, options?: RequestInit) => {
+          return new Promise((_resolve, reject) => {
+            // Simulate the abort being triggered
+            if (options?.signal) {
+              const abortHandler = () => {
+                const error = new Error('The operation was aborted');
+                error.name = 'AbortError';
+                reject(error);
+              };
+              options.signal.addEventListener('abort', abortHandler);
+              // Don't resolve - let the timeout happen
+            }
+          });
+        }) as typeof globalThis.fetch;
+
+        // Create analytics with very short timeout
+        const timeoutAnalytics = new Analytics({
+          ...mockOptions,
+          clientOptions: {
+            timeout: 1, // 1ms timeout to trigger quickly
+          },
         });
-      }) as typeof globalThis.fetch;
 
-      // Create analytics with very short timeout
-      const timeoutAnalytics = new Analytics({
-        ...mockOptions,
-        clientOptions: {
-          timeout: 1, // 1ms timeout to trigger quickly
-        },
-      });
-
-      await expect(timeoutAnalytics.V1.Tags.getTags()).rejects.toThrow(RequestTimeoutError);
+        await expect(timeoutAnalytics.V1.Tags.getTags()).rejects.toThrow(RequestTimeoutError);
+      } finally {
+        globalThis.fetch = savedFetch;
+      }
     });
   });
 
   describe('JSON Response Handling', () => {
     test('throws error on invalid JSON response with success status', async () => {
-      globalThis.fetch = (() => {
-        return Promise.resolve({
-          status: 200,
-          ok: true,
-          json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input')),
-          headers: new Headers({
-            'Content-Type': 'application/json',
-          }),
-        });
-      }) as typeof globalThis.fetch;
+      const savedFetch = globalThis.fetch;
 
-      await expect(analytics.V1.Tags.getTags()).rejects.toThrow(
-        'Invalid JSON response from server'
-      );
+      try {
+        globalThis.fetch = (() => {
+          return Promise.resolve({
+            status: 200,
+            ok: true,
+            json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input')),
+            headers: new Headers({
+              'Content-Type': 'application/json',
+            }),
+          });
+        }) as typeof globalThis.fetch;
+
+        await expect(analytics.V1.Tags.getTags()).rejects.toThrow(
+          'Invalid JSON response from server'
+        );
+      } finally {
+        globalThis.fetch = savedFetch;
+      }
     });
   });
 });

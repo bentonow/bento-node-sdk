@@ -29,7 +29,7 @@ export let lastFetchUrl: string | null = null;
 export let lastFetchMethod: string | null = null;
 export let lastFetchSignal: AbortSignal | null = null;
 
-let originalFetch: typeof globalThis.fetch;
+let originalFetch: typeof globalThis.fetch | undefined;
 
 export const resetMockFetchTracking = (): void => {
   lastFetchUrl = null;
@@ -40,6 +40,7 @@ export const resetMockFetchTracking = (): void => {
 export const cleanupMockFetch = (): void => {
   if (originalFetch !== undefined) {
     globalThis.fetch = originalFetch;
+    originalFetch = undefined;
   }
   resetMockFetchTracking();
 };
@@ -58,15 +59,12 @@ export const setupMockFetch = (
   const singleEntry = normalizeEntry(response, status, contentType);
   const fallbackEntry = queue && queue.length > 0 ? queue[queue.length - 1] : singleEntry;
 
-  originalFetch = globalThis.fetch;
+  if (originalFetch === undefined) originalFetch = globalThis.fetch;
   globalThis.fetch = ((url: string | URL | Request, options?: RequestInit) => {
-    const urlStr = typeof url === 'string' ? url : url.toString();
-    const opts = options ?? {};
-
     // Capture URL, method, and AbortSignal for test verification
-    lastFetchUrl = urlStr;
-    lastFetchMethod = (opts as any).method || 'GET';
-    lastFetchSignal = (opts as any).signal ?? null;
+    lastFetchUrl = typeof url === 'string' ? url : url.toString();
+    lastFetchMethod = options?.method || 'GET';
+    lastFetchSignal = options?.signal ?? null;
 
     const entry = queue ? queue.shift() ?? fallbackEntry : singleEntry;
     const currentStatus = entry.status ?? status;
