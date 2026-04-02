@@ -1,4 +1,3 @@
-import fetch from 'cross-fetch';
 import type { AnalyticsOptions, AuthenticationOptions } from '../interfaces';
 import {
   NotAuthorizedError,

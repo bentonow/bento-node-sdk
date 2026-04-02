@@ -3,9 +3,9 @@ import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
 import {
   setupMockFetch,
+  cleanupMockFetch,
   lastFetchSignal,
   lastFetchUrl,
-  resetMockFetchTracking,
 } from '../helpers/mockFetch';
 import { NotAuthorizedError, RateLimitedError, RequestTimeoutError } from '../../src';
 
@@ -18,7 +18,7 @@ describe('BentoClient', () => {
     globalScope = global;
   });
   afterEach(() => {
-    resetMockFetchTracking();
+    cleanupMockFetch();
   });
 
   describe('Base64 Encoding', () => {
@@ -163,19 +163,17 @@ describe('BentoClient', () => {
       let capturedUrl: string | null = null;
 
       // Setup mock that captures the URL
-      mock.module('cross-fetch', () => ({
-        default: (url: string, _options: RequestInit) => {
-          capturedUrl = url;
-          return Promise.resolve({
-            status: 200,
-            ok: true,
-            json: () => Promise.resolve({ data: null }),
-            headers: new Headers({
-              'Content-Type': 'application/json',
-            }),
-          });
-        },
-      }));
+      globalThis.fetch = ((url: string | URL | Request) => {
+        capturedUrl = typeof url === 'string' ? url : url.toString();
+        return Promise.resolve({
+          status: 200,
+          ok: true,
+          json: () => Promise.resolve({ data: null }),
+          headers: new Headers({
+            'Content-Type': 'application/json',
+          }),
+        });
+      }) as typeof globalThis.fetch;
 
       await analytics.V1.Forms.getResponses('test-form');
 
@@ -190,19 +188,17 @@ describe('BentoClient', () => {
       let capturedUrl: string | null = null;
 
       // Setup mock that captures the URL
-      mock.module('cross-fetch', () => ({
-        default: (url: string, _options: RequestInit) => {
-          capturedUrl = url;
-          return Promise.resolve({
-            status: 200,
-            ok: true,
-            json: () => Promise.resolve({ data: null }),
-            headers: new Headers({
-              'Content-Type': 'application/json',
-            }),
-          });
-        },
-      }));
+      globalThis.fetch = ((url: string | URL | Request) => {
+        capturedUrl = typeof url === 'string' ? url : url.toString();
+        return Promise.resolve({
+          status: 200,
+          ok: true,
+          json: () => Promise.resolve({ data: null }),
+          headers: new Headers({
+            'Content-Type': 'application/json',
+          }),
+        });
+      }) as typeof globalThis.fetch;
 
       // Test with a parameter that would have a non-string value
       await analytics.V1.Forms.getResponses('test-form');
@@ -260,22 +256,20 @@ describe('BentoClient', () => {
   describe('Timeout Handling', () => {
     test('throws RequestTimeoutError on timeout', async () => {
       // Mock fetch to simulate a timeout by using AbortController
-      mock.module('cross-fetch', () => ({
-        default: (_url: string, options: RequestInit) => {
-          return new Promise((_resolve, reject) => {
-            // Simulate the abort being triggered
-            if (options.signal) {
-              const abortHandler = () => {
-                const error = new Error('The operation was aborted');
-                error.name = 'AbortError';
-                reject(error);
-              };
-              options.signal.addEventListener('abort', abortHandler);
-              // Don't resolve - let the timeout happen
-            }
-          });
-        },
-      }));
+      globalThis.fetch = ((_url: string | URL | Request, options?: RequestInit) => {
+        return new Promise((_resolve, reject) => {
+          // Simulate the abort being triggered
+          if (options?.signal) {
+            const abortHandler = () => {
+              const error = new Error('The operation was aborted');
+              error.name = 'AbortError';
+              reject(error);
+            };
+            options.signal.addEventListener('abort', abortHandler);
+            // Don't resolve - let the timeout happen
+          }
+        });
+      }) as typeof globalThis.fetch;
 
       // Create analytics with very short timeout
       const timeoutAnalytics = new Analytics({
@@ -291,18 +285,16 @@ describe('BentoClient', () => {
 
   describe('JSON Response Handling', () => {
     test('throws error on invalid JSON response with success status', async () => {
-      mock.module('cross-fetch', () => ({
-        default: () => {
-          return Promise.resolve({
-            status: 200,
-            ok: true,
-            json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input')),
-            headers: new Headers({
-              'Content-Type': 'application/json',
-            }),
-          });
-        },
-      }));
+      globalThis.fetch = (() => {
+        return Promise.resolve({
+          status: 200,
+          ok: true,
+          json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input')),
+          headers: new Headers({
+            'Content-Type': 'application/json',
+          }),
+        });
+      }) as typeof globalThis.fetch;
 
       await expect(analytics.V1.Tags.getTags()).rejects.toThrow(
         'Invalid JSON response from server'
