@@ -14,6 +14,7 @@ export type WorkflowEmailTemplate = {
  */
 export type WorkflowAttributes = {
   name: string;
+  status: 'live' | 'draft';
   created_at: string;
   email_templates: WorkflowEmailTemplate[];
 };
