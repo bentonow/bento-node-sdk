@@ -47,9 +47,7 @@
     "ts-jest": "^29.4.6",
     "typescript": "^5.7.3"
   },
-  "dependencies": {
-    "cross-fetch": "^4.1.0"
-  },
+  "dependencies": {},
   "size-limit": [
     {
       "path": "dist/index.js",

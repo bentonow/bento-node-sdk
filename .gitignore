@@ -6,3 +6,5 @@ scratchpad.js
 Bun.lockb
 .idea
 .env
+docs/
+scripts/
