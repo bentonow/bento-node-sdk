@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.6 - 2026-02-25
+## 1.0.5 - 2026-02-25
 
 ### Added
 - Documented the Email Templates GET and PATCH helpers in the README, including code samples, error-handling guidance, and references to the public Email Templates API.
