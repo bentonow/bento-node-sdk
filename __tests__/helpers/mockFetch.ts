@@ -1,5 +1,3 @@
-import { mock } from 'bun:test';
-
 type MockResponseEntry = {
   body: any;
   status?: number;
@@ -31,10 +29,20 @@ export let lastFetchUrl: string | null = null;
 export let lastFetchMethod: string | null = null;
 export let lastFetchSignal: AbortSignal | null = null;
 
+let originalFetch: typeof globalThis.fetch | undefined;
+
 export const resetMockFetchTracking = (): void => {
   lastFetchUrl = null;
   lastFetchMethod = null;
   lastFetchSignal = null;
+};
+
+export const cleanupMockFetch = (): void => {
+  if (originalFetch !== undefined) {
+    globalThis.fetch = originalFetch;
+    originalFetch = undefined;
+  }
+  resetMockFetchTracking();
 };
 
 export const setupMockFetch = (
@@ -51,41 +59,40 @@ export const setupMockFetch = (
   const singleEntry = normalizeEntry(response, status, contentType);
   const fallbackEntry = queue && queue.length > 0 ? queue[queue.length - 1] : singleEntry;
 
-  mock.module('cross-fetch', () => ({
-    default: (url: string, options: RequestInit = {}) => {
-      // Capture URL, method, and AbortSignal for test verification
-      lastFetchUrl = url;
-      lastFetchMethod = options.method || 'GET';
-      lastFetchSignal = options.signal ?? null;
+  if (originalFetch === undefined) originalFetch = globalThis.fetch;
+  globalThis.fetch = ((url: string | URL | Request, options?: RequestInit) => {
+    // Capture URL, method, and AbortSignal for test verification
+    lastFetchUrl = typeof url === 'string' ? url : url.toString();
+    lastFetchMethod = options?.method || 'GET';
+    lastFetchSignal = options?.signal ?? null;
 
-      const entry = queue ? queue.shift() ?? fallbackEntry : singleEntry;
-      const currentStatus = entry.status ?? status;
-      const currentContentType = entry.contentType ?? contentType;
-      const body = entry.body;
+    const entry = queue ? queue.shift() ?? fallbackEntry : singleEntry;
+    const currentStatus = entry.status ?? status;
+    const currentContentType = entry.contentType ?? contentType;
+    const body = entry.body;
 
-      return Promise.resolve({
-        status: currentStatus,
-        ok: currentStatus >= 200 && currentStatus < 300,
-        json: () => Promise.resolve(body),
-        text: () => {
-          if (currentContentType === 'text/plain') {
-            if (typeof body === 'string') {
-              return Promise.resolve(body);
-            }
-            if (body?.error) {
-              return Promise.resolve(body.error);
-            }
-            return Promise.resolve(String(body));
+    return Promise.resolve({
+      status: currentStatus,
+      ok: currentStatus >= 200 && currentStatus < 300,
+      json: () => Promise.resolve(body),
+      text: () => {
+        if (currentContentType === 'text/plain') {
+          if (typeof body === 'string') {
+            return Promise.resolve(body);
           }
+          if (body?.error) {
+            return Promise.resolve(body.error);
+          }
+          return Promise.resolve(String(body));
+        }
 
-          return Promise.resolve(JSON.stringify(body));
-        },
-        headers: new Headers({
-          'Content-Type': currentContentType,
-        }),
-      });
-    },
-  }));
+        return Promise.resolve(JSON.stringify(body));
+      },
+      headers: new Headers({
+        'Content-Type': currentContentType,
+      }),
+    });
+  }) as typeof globalThis.fetch;
 };
 
 /**

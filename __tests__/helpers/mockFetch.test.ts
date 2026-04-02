@@ -1,7 +1,11 @@
-import { expect, test, describe } from 'bun:test';
-import { getEndpointFromUrl, setupMockFetch } from './mockFetch';
+import { expect, test, describe, afterEach } from 'bun:test';
+import { getEndpointFromUrl, setupMockFetch, cleanupMockFetch } from './mockFetch';
 
 describe('mockFetch helpers', () => {
+  afterEach(() => {
+    cleanupMockFetch();
+  });
+
   describe('getEndpointFromUrl', () => {
     test('extracts endpoint from full URL', () => {
       const url = 'https://app.bentonow.com/api/v1/fetch/broadcasts';
@@ -42,24 +46,21 @@ describe('mockFetch helpers', () => {
   describe('setupMockFetch text handling', () => {
     test('returns raw string for text/plain body', async () => {
       setupMockFetch('plain text', 200, 'text/plain');
-      const fetchModule = await import('cross-fetch');
-      const response = await fetchModule.default('https://app.bentonow.com/api/v1/test');
+      const response = await fetch('https://app.bentonow.com/api/v1/test');
       const text = await response.text();
       expect(text).toBe('plain text');
     });
 
     test('returns error field when provided', async () => {
       setupMockFetch({ error: 'Server Error' }, 500, 'text/plain');
-      const fetchModule = await import('cross-fetch');
-      const response = await fetchModule.default('https://app.bentonow.com/api/v1/test');
+      const response = await fetch('https://app.bentonow.com/api/v1/test');
       const text = await response.text();
       expect(text).toBe('Server Error');
     });
 
     test('stringifies non-string text bodies without error', async () => {
       setupMockFetch({ value: 123 }, 200, 'text/plain');
-      const fetchModule = await import('cross-fetch');
-      const response = await fetchModule.default('https://app.bentonow.com/api/v1/test');
+      const response = await fetch('https://app.bentonow.com/api/v1/test');
       const text = await response.text();
       expect(text).toBe('[object Object]');
     });
@@ -69,12 +70,10 @@ describe('mockFetch helpers', () => {
         { body: { value: 'first' } },
         { body: { value: 'second' } },
       ]);
-      const fetchModule = await import('cross-fetch');
-      const fetchFn = fetchModule.default;
 
-      const first = await fetchFn('https://app.bentonow.com/api/v1/test');
-      const second = await fetchFn('https://app.bentonow.com/api/v1/test');
-      const third = await fetchFn('https://app.bentonow.com/api/v1/test');
+      const first = await fetch('https://app.bentonow.com/api/v1/test');
+      const second = await fetch('https://app.bentonow.com/api/v1/test');
+      const third = await fetch('https://app.bentonow.com/api/v1/test');
 
       expect(await first.json()).toEqual({ value: 'first' });
       expect(await second.json()).toEqual({ value: 'second' });
