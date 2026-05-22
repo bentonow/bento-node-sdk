@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.9 - 2026-05-22
+
+### Changed
+- Removed the unused Jest dev toolchain in favor of the existing Bun test runner, eliminating deprecated dev-only transitive packages.
+- Pinned development dependency versions and added Bun/npm install guardrails for exact installs with a 7-day release age gate.
+- Refreshed Bun and npm lockfiles for the production npm release.
+
+### Notes
+- No runtime SDK source, public exports, request behavior, or package runtime dependencies changed.
+
 ## 1.0.5 - 2026-02-25
 
 ### Added
