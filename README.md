@@ -70,7 +70,7 @@ bun install
 bun test
 
 # Run tests with coverage
-bun test:coverage
+bun run test:coverage
 
 # Build the package
 bun run build
@@ -82,20 +82,20 @@ bun run lint
 bun run format
 ```
 
-### Using npm
+### Using npm for dependency install
 
 ```bash
 # Install dependencies
 npm install
 
-# Run tests
-npm run test:npm
+# Tests and builds still run through Bun
+npm test
 
 # Run tests with coverage
-npm run test:coverage:npm
+npm run test:coverage
 
 # Build the package
-npm run build:npm
+npm run build
 
 # Lint code
 npm run lint
@@ -103,6 +103,12 @@ npm run lint
 # Format code
 npm run format
 ```
+
+### Dependency hygiene
+
+Development dependencies are pinned to exact versions. Bun installs also use a
+7-day minimum release age gate via `bunfig.toml`, and npm installs use the same
+policy via `.npmrc`.
 
 ### Integration
 
