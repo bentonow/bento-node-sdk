@@ -34,7 +34,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Lint
-        run: bun run lint --fix
+        run: bun run lint
 
       - name: Run tests
         run: bun test --coverage
@@ -45,19 +45,31 @@ jobs:
           echo "PREVIOUS_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       - name: Update package version
-        run: npm version $VERSION --no-git-tag-version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if [ "$CURRENT_VERSION" != "$VERSION" ]; then
+            npm version "$VERSION" --no-git-tag-version
+          fi
 
       - name: Update CHANGELOG version
-        run: sed -i "s/^## [0-9]\+\.[0-9]\+\.[0-9]\+/## $VERSION/" CHANGELOG.md
+        run: |
+          CURRENT_CHANGELOG_VERSION=$(awk '/^## / { print $2; exit }' CHANGELOG.md)
+          if [ "$CURRENT_CHANGELOG_VERSION" != "$VERSION" ]; then
+            sed -i "s/^## [0-9]\+\.[0-9]\+\.[0-9]\+/## $VERSION/" CHANGELOG.md
+          fi
 
       - name: Generate Release Notes
         id: release_notes
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const script = require('./.github/scripts/generate-release-notes.js')
-            const notes = await script({github, context})
-            core.setOutput('notes', notes)
+        run: |
+          {
+            echo "notes<<EOF"
+            awk -v version="$VERSION" '
+              $0 ~ "^## " version "([ -]|$)" { capture = 1; next }
+              capture && /^## / { exit }
+              capture { print }
+            ' CHANGELOG.md
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Build
         run: bun run build
@@ -66,8 +78,12 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add package.json CHANGELOG.md
-          git commit -m "chore: bump version to $VERSION [skip ci]"
+          git add package.json package-lock.json CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "No version files changed"
+          else
+            git commit -m "chore: bump version to $VERSION [skip ci]"
+          fi
           git tag v$VERSION
           git push && git push --tags
 

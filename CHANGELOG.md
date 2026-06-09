@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0 - 2026-06-10
+
+### Added
+- Added `getAdsStats` for ads attribution statistics, including optional filters for date range, channel, campaign, and ad identifiers.
+- Exported ads statistics request and response types for TypeScript consumers.
+
+### Changed
+- Removed the unused Jest dev toolchain in favor of Bun's native test runner.
+- Pinned development dependency versions and added Bun/npm install guardrails for exact installs with a 7-day release age gate.
+- Documented Node 18, Bun 1.3, and npm 11.10 requirements for contributor workflows and release-age policies.
+- Refreshed Bun and npm lockfiles for the production npm release.
+
 ## 1.0.9 - 2026-05-22
 
 ### Changed
