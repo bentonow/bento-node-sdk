@@ -41,7 +41,11 @@ Get started with our [ðŸ“š integration guides](https://docs.bentonow.com), or [ð
 
 ## Requirements
 
-The Bento Node.js SDK requires Node.js version 12 or later.
+The Bento Node.js SDK requires Node.js version 18 or later.
+
+Contributors also need Bun 1.3 or later for installs, tests, and builds. npm can
+be used for dependency installation, but the npm release-age gate requires npm
+11.10 or later.
 
 Bento Account for a valid **SITE_UUID**, **BENTO_PUBLISHABLE_KEY** & **BENTO_SECRET_KEY**.
 
@@ -84,6 +88,8 @@ bun run format
 
 ### Using npm for dependency install
 
+npm can install dependencies, but tests and builds still run through Bun.
+
 ```bash
 # Install dependencies
 npm install
@@ -107,8 +113,9 @@ npm run format
 ### Dependency hygiene
 
 Development dependencies are pinned to exact versions. Bun installs also use a
-7-day minimum release age gate via `bunfig.toml`, and npm installs use the same
-policy via `.npmrc`.
+7-day minimum release age gate via `bunfig.toml`. npm installs use the same
+policy via `.npmrc` when run with npm 11.10 or later; older npm versions ignore
+that setting.
 
 ### Integration
 

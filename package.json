@@ -5,6 +5,7 @@
   "author": "Backpack Internet",
   "license": "MIT",
   "type": "module",
+  "packageManager": "bun@1.3.0",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
