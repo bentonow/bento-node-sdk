@@ -10,3 +10,4 @@ export class Analytics<S = { [key: string]: unknown }, E extends string = ''> {
 }
 
 export * from './sdk/client/errors';
+export * from './sdk/stats/types';

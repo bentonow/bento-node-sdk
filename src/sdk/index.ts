@@ -6,6 +6,7 @@ export * from './experimental';
 export * from './fields';
 export * from './forms';
 export * from './sequences';
+export * from './stats';
 export * from './subscribers';
 export * from './tags';
 export * from './workflows';

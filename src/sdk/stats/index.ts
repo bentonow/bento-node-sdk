@@ -1,5 +1,5 @@
 import type { BentoClient } from '../client';
-import type { SiteStats, SegmentStats, ReportStats } from './types';
+import type { SiteStats, SegmentStats, ReportStats, AdsStats, AdsStatsParameters } from './types';
 
 export class BentoStats {
   private readonly _url = '/stats';
@@ -32,6 +32,22 @@ export class BentoStats {
    */
   public async getReportStats(reportId: string): Promise<ReportStats> {
     const result = await this._client.get<ReportStats>(`${this._url}/reports/${reportId}`);
+    return result;
+  }
+
+  /**
+   * Retrieves ads attribution statistics by UTM dimension or ad.
+   * @param parameters Optional filters for dimension, value, date range, and revenue mode.
+   * @returns Promise<AdsStats>
+   */
+  public async getAdsStats(parameters: AdsStatsParameters = {}): Promise<AdsStats> {
+    const result = await this._client.get<AdsStats>(`${this._url}/ads`, {
+      dimension: parameters.dimension,
+      value: parameters.value,
+      start_date: parameters.startDate,
+      end_date: parameters.endDate,
+      revenue_mode: parameters.revenueMode,
+    });
     return result;
   }
 }
