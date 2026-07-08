@@ -1,6 +1,11 @@
 import type { BentoClient } from '../client';
 import type { DataResponse } from '../client/types';
-import type { Broadcast, CreateBroadcastInput, EmailData } from './types';
+import type {
+  BatchBroadcastCreateResult,
+  Broadcast,
+  CreateBroadcastInput,
+  EmailData,
+} from './types';
 
 export class BentoBroadcasts {
   private readonly _fetchUrl = '/fetch/broadcasts';
@@ -33,12 +38,13 @@ export class BentoBroadcasts {
   /**
    * Creates new broadcast campaigns
    * @param broadcasts Array of broadcast data to create
-   * @returns Promise<Broadcast[]>
+   * @returns Promise<BatchBroadcastCreateResult>
    */
-  public async createBroadcast(broadcasts: CreateBroadcastInput[]): Promise<Broadcast[]> {
-    const result = await this._client.post<DataResponse<Broadcast[]>>(this._batchUrl, {
+  public async createBroadcast(
+    broadcasts: CreateBroadcastInput[]
+  ): Promise<BatchBroadcastCreateResult> {
+    return this._client.post<BatchBroadcastCreateResult>(this._batchUrl, {
       broadcasts,
     });
-    return result.data ?? [];
   }
 }

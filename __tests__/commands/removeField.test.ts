@@ -1,7 +1,6 @@
 import { expect, test, describe, beforeEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { mockSubscriberResponse } from '../helpers/mockResponses';
 import { setupMockFetch } from '../helpers/mockFetch';
 
 describe('BentoCommands - removeField', () => {
@@ -11,28 +10,15 @@ describe('BentoCommands - removeField', () => {
     analytics = new Analytics(mockOptions);
   });
 
-  test('successfully removes a field from a subscriber', async () => {
-    const email = 'test@example.com';
-    setupMockFetch(mockSubscriberResponse(email));
-
-    const result = await analytics.V1.Commands.removeField({
-      email,
-      fieldName: 'testField'
-    });
-
-    expect(result).toBeDefined();
-    expect(result?.attributes.email).toBe(email);
-  });
-
-  test('returns null when response is empty', async () => {
-    setupMockFetch({ data: null });
+  test('successfully queues a remove_field command', async () => {
+    setupMockFetch({ results: 1 });
 
     const result = await analytics.V1.Commands.removeField({
       email: 'test@example.com',
-      fieldName: 'testField'
+      fieldName: 'testField',
     });
 
-    expect(result).toBeNull();
+    expect(result).toBe(1);
   });
 
   test('handles server error gracefully', async () => {

@@ -28,6 +28,8 @@ const normalizeEntry = (
 export let lastFetchUrl: string | null = null;
 export let lastFetchMethod: string | null = null;
 export let lastFetchSignal: AbortSignal | null = null;
+export let lastFetchBody: BodyInit | null | undefined = null;
+export let lastFetchHeaders: HeadersInit | undefined = undefined;
 
 let originalFetch: typeof globalThis.fetch | undefined;
 
@@ -35,6 +37,8 @@ export const resetMockFetchTracking = (): void => {
   lastFetchUrl = null;
   lastFetchMethod = null;
   lastFetchSignal = null;
+  lastFetchBody = null;
+  lastFetchHeaders = undefined;
 };
 
 export const cleanupMockFetch = (): void => {
@@ -65,6 +69,8 @@ export const setupMockFetch = (
     lastFetchUrl = typeof url === 'string' ? url : url.toString();
     lastFetchMethod = options?.method || 'GET';
     lastFetchSignal = options?.signal ?? null;
+    lastFetchBody = options?.body;
+    lastFetchHeaders = options?.headers;
 
     const entry = queue ? queue.shift() ?? fallbackEntry : singleEntry;
     const currentStatus = entry.status ?? status;

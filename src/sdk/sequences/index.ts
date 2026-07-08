@@ -2,6 +2,7 @@ import type { BentoClient } from '../client';
 import type { DataResponse } from '../client/types';
 import type { EmailTemplate } from '../email-templates/types';
 import type { CreateSequenceEmailParameters, GetSequencesParameters, Sequence } from './types';
+import { toSequenceId } from './identity';
 
 export class BentoSequences {
   private readonly _url = '/fetch/sequences';
@@ -32,8 +33,9 @@ export class BentoSequences {
     sequenceId: string,
     parameters: CreateSequenceEmailParameters
   ): Promise<EmailTemplate | null> {
+    const id = toSequenceId(sequenceId);
     const result = await this._client.post<DataResponse<EmailTemplate>>(
-      `${this._url}/${sequenceId}/emails/templates`,
+      `${this._url}/${encodeURIComponent(id)}/emails/templates`,
       {
         email_template: parameters,
       }

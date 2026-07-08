@@ -118,6 +118,40 @@ export class BentoClient {
   }
 
   /**
+   * Wraps a DELETE request to the Bento API and automatically adds the required
+   * headers.
+   *
+   * @param endpoint string
+   * @param payload object
+   * @returns Promise\<T\>
+   * */
+  public async delete<T>(
+    endpoint: string,
+    payload: Record<string, unknown> = {},
+    requestOptions: RequestOptions = {}
+  ): Promise<T> {
+    const body = this._getBody(payload);
+    const url = `${this._baseUrl}${endpoint}`;
+
+    const timeoutMs =
+      requestOptions.timeout === undefined ? this._timeout : requestOptions.timeout;
+    const response = await this._fetchWithTimeout(
+      url,
+      {
+        method: 'DELETE',
+        headers: {
+          ...this._headers,
+          'Content-Type': 'application/json',
+        },
+        body,
+      },
+      timeoutMs
+    );
+
+    return this._handleResponse<T>(response);
+  }
+
+  /**
    * Wraps a PATCH request to the Bento API and automatically adds the required
    * headers.
    *

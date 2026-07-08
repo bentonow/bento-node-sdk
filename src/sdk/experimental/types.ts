@@ -62,23 +62,7 @@ export type BlacklistResult = {
 };
 
 export type ContentModerationResult = {
-  flagged: boolean;
-  categories: {
-    hate: boolean;
-    'hate/threatening': boolean;
-    'self-harm': boolean;
-    sexual: boolean;
-    'sexual/minors': boolean;
-    violence: boolean;
-    'violence/graphic': boolean;
-  };
-  category_scores: {
-    hate: number;
-    'hate/threatening': number;
-    'self-harm': number;
-    sexual: number;
-    'sexual/minors': number;
-    violence: number;
-    'violence/graphic': number;
-  };
+  valid: boolean;
+  reasons?: string[];
+  safe_original_content?: string;
 };

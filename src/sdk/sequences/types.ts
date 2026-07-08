@@ -14,6 +14,8 @@ export type SequenceEmailTemplate = {
  * Core Sequence Types
  */
 export type SequenceAttributes = {
+  id?: string;
+  prefix_id?: string;
   name: string;
   created_at: string;
   email_templates: SequenceEmailTemplate[];

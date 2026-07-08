@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch } from '../helpers/mockFetch';
+import { lastFetchUrl, setupMockFetch } from '../helpers/mockFetch';
 
 describe('BentoExperimental', () => {
   let analytics: Analytics;
@@ -116,6 +116,9 @@ describe('BentoExperimental', () => {
         domain: 'example.com',
       });
 
+      const url = new URL(lastFetchUrl || '');
+      expect(url.pathname).toBe('/api/v1/experimental/blacklist');
+      expect(url.searchParams.get('domain')).toBe('example.com');
       expect(result.query).toBe('example.com');
       expect(result.results['blacklist1.com']).toBe(false);
       expect(result.results['blacklist2.com']).toBe(true);
@@ -137,6 +140,10 @@ describe('BentoExperimental', () => {
         ipAddress: '192.168.1.1',
       });
 
+      const url = new URL(lastFetchUrl || '');
+      expect(url.pathname).toBe('/api/v1/experimental/blacklist');
+      expect(url.searchParams.get('ip')).toBe('192.168.1.1');
+      expect(url.searchParams.has('ipAddress')).toBe(false);
       expect(result.query).toBe('192.168.1.1');
       expect(Object.values(result.results)).not.toContain(true);
     });
@@ -171,25 +178,9 @@ describe('BentoExperimental', () => {
   describe('getContentModeration', () => {
     test('successfully moderates safe content', async () => {
       const mockResponse = {
-        flagged: false,
-        categories: {
-          hate: false,
-          'hate/threatening': false,
-          'self-harm': false,
-          sexual: false,
-          'sexual/minors': false,
-          violence: false,
-          'violence/graphic': false,
-        },
-        category_scores: {
-          hate: 0.01,
-          'hate/threatening': 0.01,
-          'self-harm': 0.01,
-          sexual: 0.01,
-          'sexual/minors': 0.01,
-          violence: 0.01,
-          'violence/graphic': 0.01,
-        },
+        valid: true,
+        reasons: [],
+        safe_original_content: 'Hello world, this is a test message.',
       };
 
       setupMockFetch(mockResponse);
@@ -198,32 +189,17 @@ describe('BentoExperimental', () => {
         'Hello world, this is a test message.'
       );
 
-      expect(result.flagged).toBe(false);
-      expect(result.categories.hate).toBe(false);
-      expect(result.category_scores.hate).toBeLessThan(0.1);
+      const url = new URL(lastFetchUrl || '');
+      expect(url.pathname).toBe('/api/v1/experimental/content_moderation');
+      expect(result.valid).toBe(true);
+      expect(result.reasons).toEqual([]);
     });
 
     test('successfully flags problematic content', async () => {
       const mockResponse = {
-        flagged: true,
-        categories: {
-          hate: true,
-          'hate/threatening': false,
-          'self-harm': false,
-          sexual: false,
-          'sexual/minors': false,
-          violence: false,
-          'violence/graphic': false,
-        },
-        category_scores: {
-          hate: 0.92,
-          'hate/threatening': 0.01,
-          'self-harm': 0.01,
-          sexual: 0.01,
-          'sexual/minors': 0.01,
-          violence: 0.01,
-          'violence/graphic': 0.01,
-        },
+        valid: false,
+        reasons: ['Link spam'],
+        safe_original_content: 'Test content with problematic material',
       };
 
       setupMockFetch(mockResponse);
@@ -232,9 +208,20 @@ describe('BentoExperimental', () => {
         'Test content with problematic material'
       );
 
-      expect(result.flagged).toBe(true);
-      expect(result.categories.hate).toBe(true);
-      expect(result.category_scores.hate).toBeGreaterThan(0.9);
+      expect(result.valid).toBe(false);
+      expect(result.reasons).toContain('Link spam');
+    });
+
+    test('handles blank content', async () => {
+      setupMockFetch({
+        valid: false,
+        reasons: ['Content is required'],
+      });
+
+      const result = await analytics.V1.Experimental.getContentModeration('');
+
+      expect(result.valid).toBe(false);
+      expect(result.reasons).toEqual(['Content is required']);
     });
 
     test('handles server error gracefully', async () => {
@@ -312,6 +299,9 @@ describe('BentoExperimental', () => {
         ip: '192.0.2.1',
       });
 
+      const url = new URL(lastFetchUrl || '');
+      expect(url.pathname).toBe('/api/v1/experimental/blacklist');
+      expect(url.searchParams.get('ip')).toBe('192.0.2.1');
       expect(result.query).toBe('example.com');
       expect(result.results['blacklist2.com']).toBe(true);
     });

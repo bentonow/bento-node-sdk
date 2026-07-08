@@ -657,10 +657,10 @@ const sequences = await analytics.V1.Sequences.getSequences({ page: 1 });
 
 #### createSequenceEmail
 
-Wraps [`POST /v1/fetch/sequences/:id/emails/templates`](https://docs.bentonow.com/sequences_api#create-sequence-email) so you can add messages to a sequence via code. Pass the sequence prefix ID (e.g., `sequence_abc123`) plus the subject/HTML and any optional delay/snippet/editor fields.
+Wraps [`POST /v1/fetch/sequences/:id/emails/templates`](https://docs.bentonow.com/sequences_api#create-sequence-email) so you can add messages to a sequence via code. Pass the sequence ID returned by `getSequences()` plus the subject/HTML and any optional delay/snippet/editor fields.
 
 ```javascript
-const createdTemplate = await analytics.V1.Sequences.createSequenceEmail('sequence_abc123', {
+const createdTemplate = await analytics.V1.Sequences.createSequenceEmail('123', {
   subject: 'Welcome to Bento',
   html: '<p>Hello {{ visitor.first_name }}</p>',
   delay_interval: 'days',

@@ -146,22 +146,15 @@ describe('BentoBroadcasts', () => {
   describe('createBroadcast', () => {
     test('successfully creates broadcast', async () => {
       const mockResponse = {
-        data: [
+        results: 1,
+        failed: 0,
+        failures: [],
+        broadcasts: [
           {
-            id: 'new-broadcast-1',
-            type: EntityType.EVENTS,
-            attributes: {
-              name: 'New Broadcast',
-              subject: 'New Subject',
-              content: '<p>Content</p>',
-              type: 'html',
-              from: {
-                name: 'Sender',
-                email: 'sender@example.com',
-              },
-              batch_size_per_hour: 100,
-              created_at: '2024-01-01T00:00:00Z',
-            },
+            id: 42,
+            template_id: 99,
+            name: 'New Broadcast',
+            dashboard_url: 'https://app.bentonow.com/account/emails/broadcasts/42/edit',
           },
         ],
       };
@@ -182,13 +175,15 @@ describe('BentoBroadcasts', () => {
         },
       ]);
 
-      expect(result).toHaveLength(1);
-      // @ts-ignore
-      expect(result[0].attributes.name).toBe('New Broadcast');
+      expect(result.results).toBe(1);
+      expect(result.failed).toBe(0);
+      expect(result.broadcasts).toHaveLength(1);
+      expect(result.broadcasts?.[0].name).toBe('New Broadcast');
+      expect(result.broadcasts?.[0].id).toBe(42);
     });
 
     test('uses correct /batch/broadcasts endpoint for POST', async () => {
-      setupMockFetch({ data: [] });
+      setupMockFetch({ results: 0, failed: 0, broadcasts: [], failures: [] });
 
       await analytics.V1.Broadcasts.createBroadcast([
         {
@@ -208,27 +203,23 @@ describe('BentoBroadcasts', () => {
       expect(lastFetchMethod).toBe('POST');
     });
 
-    test('handles broadcast with segments and tags', async () => {
+    test('returns partial success with failures', async () => {
       const mockResponse = {
-        data: [
+        results: 1,
+        failed: 1,
+        broadcasts: [
           {
-            id: 'broadcast-2',
-            type: EntityType.EVENTS,
-            attributes: {
-              name: 'Segmented Broadcast',
-              subject: 'For Segment',
-              content: 'Content',
-              type: 'plain',
-              from: {
-                name: 'Sender',
-                email: 'sender@example.com',
-              },
-              inclusive_tags: 'tag1,tag2',
-              exclusive_tags: 'tag3',
-              segment_id: 'segment-123',
-              batch_size_per_hour: 50,
-              created_at: '2024-01-01T00:00:00Z',
-            },
+            id: 42,
+            template_id: 99,
+            name: 'Created draft',
+            dashboard_url: 'https://app.bentonow.com/account/emails/broadcasts/42/edit',
+          },
+        ],
+        failures: [
+          {
+            index: 1,
+            name: 'Invalid draft',
+            error: 'batch_size_per_hour must be between 10 and 250000',
           },
         ],
       };
@@ -237,7 +228,7 @@ describe('BentoBroadcasts', () => {
 
       const result = await analytics.V1.Broadcasts.createBroadcast([
         {
-          name: 'Segmented Broadcast',
+          name: 'Created draft',
           subject: 'For Segment',
           content: 'Content',
           type: 'plain',
@@ -245,18 +236,25 @@ describe('BentoBroadcasts', () => {
             name: 'Sender',
             email: 'sender@example.com',
           },
-          inclusive_tags: 'tag1,tag2',
-          exclusive_tags: 'tag3',
-          segment_id: 'segment-123',
           batch_size_per_hour: 50,
+        },
+        {
+          name: 'Invalid draft',
+          subject: 'Bad',
+          content: 'Content',
+          type: 'plain',
+          from: {
+            name: 'Sender',
+            email: 'sender@example.com',
+          },
+          batch_size_per_hour: 1,
         },
       ]);
 
-      expect(result).toHaveLength(1);
-      // @ts-ignore
-      expect(result[0].attributes.segment_id).toBe('segment-123');
-      // @ts-ignore
-      expect(result[0].attributes.inclusive_tags).toBe('tag1,tag2');
+      expect(result.results).toBe(1);
+      expect(result.failed).toBe(1);
+      expect(result.broadcasts).toHaveLength(1);
+      expect(result.failures?.[0].error).toContain('batch_size_per_hour');
     });
   });
 });

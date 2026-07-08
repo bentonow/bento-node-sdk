@@ -90,10 +90,7 @@ export class BentoExperimental {
    * @returns Promise\<BlacklistResponse\>
    */
   public async checkBlacklist(parameters: BlacklistParameters): Promise<BlacklistResponse> {
-    const result = await this._client.get<BlacklistResponse>(
-      `${this._url}/blacklist.json`,
-      parameters
-    );
+    const result = await this._client.get<BlacklistResponse>(`${this._url}/blacklist`, parameters);
 
     return result;
   }
@@ -104,7 +101,10 @@ export class BentoExperimental {
    * @returns Promise<BlacklistResult>
    */
   public async getBlacklistStatus(input: BlacklistCheckInput): Promise<BlacklistResult> {
-    return this._client.get<BlacklistResult>(`${this._url}/blacklist`, input);
+    return this._client.get<BlacklistResult>(`${this._url}/blacklist`, {
+      domain: input.domain,
+      ip: input.ipAddress,
+    });
   }
 
   /**
@@ -113,8 +113,8 @@ export class BentoExperimental {
    * @returns Promise<ContentModerationResult>
    */
   public async getContentModeration(content: string): Promise<ContentModerationResult> {
-    return this._client.post<ContentModerationResult>(`${this._url}/moderation`, {
-      content
+    return this._client.post<ContentModerationResult>(`${this._url}/content_moderation`, {
+      content,
     });
   }
 

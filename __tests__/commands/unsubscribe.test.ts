@@ -1,7 +1,6 @@
 import { expect, test, describe, beforeEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { mockSubscriberResponse } from '../helpers/mockResponses';
 import { setupMockFetch } from '../helpers/mockFetch';
 
 describe('BentoCommands - unsubscribe', () => {
@@ -11,27 +10,12 @@ describe('BentoCommands - unsubscribe', () => {
     analytics = new Analytics(mockOptions);
   });
 
-  test('successfully unsubscribes a user', async () => {
-    const email = 'test@example.com';
-    const unsubscribedResponse = mockSubscriberResponse(email);
-    unsubscribedResponse.data.attributes.unsubscribed_at = new Date().toISOString();
-    setupMockFetch(unsubscribedResponse);
+  test('successfully queues an unsubscribe command', async () => {
+    setupMockFetch({ results: 1 });
 
-    const result = await analytics.V1.Commands.unsubscribe({ email });
+    const result = await analytics.V1.Commands.unsubscribe({ email: 'test@example.com' });
 
-    expect(result).toBeDefined();
-    expect(result?.attributes.email).toBe(email);
-    expect(result?.attributes.unsubscribed_at).not.toBeNull();
-  });
-
-  test('returns null when response is empty', async () => {
-    setupMockFetch({ data: null });
-
-    const result = await analytics.V1.Commands.unsubscribe({
-      email: 'test@example.com'
-    });
-
-    expect(result).toBeNull();
+    expect(result).toBe(1);
   });
 
   test('handles server error gracefully', async () => {
