@@ -108,89 +108,37 @@ describe('BentoAPIV1', () => {
   // Core functionality tests
   describe('core functionality', () => {
     test('successfully adds subscriber', async () => {
-      const mockResponse = {
-        data: {
-          id: 'sub-1',
-          type: EntityType.VISITORS,
-          attributes: {
-            uuid: 'uuid-123',
-            email: 'test@example.com',
-            fields: null,
-            cached_tag_ids: [],
-            unsubscribed_at: null,
-          },
-        },
-      };
-      setupMockFetch(mockResponse);
+      setupMockFetch({ results: 1 });
 
       const result = await api.Commands.subscribe({ email: 'test@example.com' });
-      expect(result?.attributes.email).toBe('test@example.com');
+      expect(result).toBe(1);
     });
 
     test('successfully removes subscriber', async () => {
-      const mockResponse = {
-        data: {
-          id: 'sub-1',
-          type: EntityType.VISITORS,
-          attributes: {
-            uuid: 'uuid-123',
-            email: 'test@example.com',
-            fields: null,
-            cached_tag_ids: [],
-            unsubscribed_at: new Date().toISOString(),
-          },
-        },
-      };
-      setupMockFetch(mockResponse);
+      setupMockFetch({ results: 1 });
 
       const result = await api.Commands.unsubscribe({ email: 'test@example.com' });
-      expect(result?.attributes.unsubscribed_at).not.toBeNull();
+      expect(result).toBe(1);
     });
 
     test('successfully tags subscriber', async () => {
-      const mockResponse = {
-        data: {
-          id: 'sub-1',
-          type: EntityType.VISITORS,
-          attributes: {
-            uuid: 'uuid-123',
-            email: 'test@example.com',
-            fields: null,
-            cached_tag_ids: ['tag-1'],
-            unsubscribed_at: null,
-          },
-        },
-      };
-      setupMockFetch(mockResponse);
+      setupMockFetch({ results: 1 });
 
       const result = await api.Commands.addTag({
         email: 'test@example.com',
         tagName: 'TestTag',
       });
-      expect(result?.attributes.cached_tag_ids).toContain('tag-1');
+      expect(result).toBe(1);
     });
 
     test('successfully removes tag from subscriber', async () => {
-      const mockResponse = {
-        data: {
-          id: 'sub-1',
-          type: EntityType.VISITORS,
-          attributes: {
-            uuid: 'uuid-123',
-            email: 'test@example.com',
-            fields: null,
-            cached_tag_ids: [],
-            unsubscribed_at: null,
-          },
-        },
-      };
-      setupMockFetch(mockResponse);
+      setupMockFetch({ results: 1 });
 
       const result = await api.Commands.removeTag({
         email: 'test@example.com',
         tagName: 'TestTag',
       });
-      expect(result?.attributes.cached_tag_ids).toHaveLength(0);
+      expect(result).toBe(1);
     });
   });
 

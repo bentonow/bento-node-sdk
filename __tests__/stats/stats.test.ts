@@ -13,21 +13,18 @@ describe('BentoStats', () => {
   describe('getSiteStats', () => {
     test('successfully retrieves site statistics', async () => {
       const mockStats = {
-        total_subscribers: 1000,
-        active_subscribers: 950,
-        unsubscribed_count: 50,
-        broadcast_count: 25,
-        average_open_rate: 45.5,
-        average_click_rate: 12.3
+        user_count: 10,
+        subscriber_count: 7,
+        unsubscriber_count: 3,
       };
 
       setupMockFetch(mockStats);
 
       const result = await analytics.V1.Stats.getSiteStats();
 
-      expect(result.total_subscribers).toBe(1000);
-      expect(result.active_subscribers).toBe(950);
-      expect(result.average_open_rate).toBe(45.5);
+      expect(result.user_count).toBe(10);
+      expect(result.subscriber_count).toBe(7);
+      expect(result.unsubscriber_count).toBe(3);
     });
 
     test('handles server error gracefully', async () => {
@@ -42,20 +39,18 @@ describe('BentoStats', () => {
   describe('getSegmentStats', () => {
     test('successfully retrieves segment statistics', async () => {
       const mockStats = {
-        segment_id: 'segment-123',
-        subscriber_count: 500,
-        growth_rate: 2.5,
-        engagement_rate: 35.8,
-        last_updated: '2024-01-01T00:00:00Z'
+        user_count: 12,
+        subscriber_count: 8,
+        unsubscriber_count: 4,
       };
 
       setupMockFetch(mockStats);
 
       const result = await analytics.V1.Stats.getSegmentStats('segment-123');
 
-      expect(result.segment_id).toBe('segment-123');
-      expect(result.subscriber_count).toBe(500);
-      expect(result.growth_rate).toBe(2.5);
+      expect(result.user_count).toBe(12);
+      expect(result.subscriber_count).toBe(8);
+      expect(result.unsubscriber_count).toBe(4);
     });
 
     test('handles non-existent segment', async () => {
@@ -70,24 +65,20 @@ describe('BentoStats', () => {
   describe('getReportStats', () => {
     test('successfully retrieves report statistics', async () => {
       const mockStats = {
-        report_id: 'report-123',
-        total_sent: 1000,
-        total_opens: 750,
-        unique_opens: 500,
-        total_clicks: 250,
-        unique_clicks: 200,
-        unsubscribes: 5,
-        spam_reports: 1,
-        created_at: '2024-01-01T00:00:00Z'
+        data: 42,
+        chart_style: 'counter',
+        report_type: 'Reporting::Reports::VisitorCountReport',
+        report_name: 'API Report',
       };
 
       setupMockFetch(mockStats);
 
       const result = await analytics.V1.Stats.getReportStats('report-123');
 
-      expect(result.report_id).toBe('report-123');
-      expect(result.total_sent).toBe(1000);
-      expect(result.unique_opens).toBe(500);
+      expect(result.data).toBe(42);
+      expect(result.chart_style).toBe('counter');
+      expect(result.report_type).toBe('Reporting::Reports::VisitorCountReport');
+      expect(result.report_name).toBe('API Report');
     });
 
     test('handles non-existent report', async () => {

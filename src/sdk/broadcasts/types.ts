@@ -24,6 +24,26 @@ export type Broadcast = BaseEntity<BroadcastAttributes>;
 
 export type CreateBroadcastInput = Omit<BroadcastAttributes, 'created_at'>;
 
+export type CreatedBroadcast = {
+  id: number;
+  template_id: number;
+  name: string;
+  dashboard_url: string;
+};
+
+export type BroadcastFailure = {
+  index: number;
+  name: string | null;
+  error: string;
+};
+
+export type BatchBroadcastCreateResult = {
+  results: number;
+  failed: number;
+  broadcasts?: CreatedBroadcast[];
+  failures?: BroadcastFailure[];
+};
+
 /**
  * Email data for transactional emails.
  * Note: This is the same structure as TransactionalEmail in batch/types.ts

@@ -1,3 +1,7 @@
+export type CommandResult = {
+  results: number;
+};
+
 /**
  * Command Method Parameter Types
  */

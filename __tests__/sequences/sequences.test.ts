@@ -1,7 +1,13 @@
 import { expect, test, describe, beforeEach, afterEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { setupMockFetch, lastFetchUrl, lastFetchMethod, resetMockFetchTracking } from '../helpers/mockFetch';
+import {
+  setupMockFetch,
+  lastFetchUrl,
+  lastFetchMethod,
+  lastFetchBody,
+  resetMockFetchTracking,
+} from '../helpers/mockFetch';
 import { EntityType } from '../../src/sdk/enums';
 
 describe('BentoSequences', () => {
@@ -149,7 +155,7 @@ describe('BentoSequences', () => {
 
       setupMockFetch(mockTemplate, 201);
 
-      const result = await analytics.V1.Sequences.createSequenceEmail('sequence_abc123', {
+      const result = await analytics.V1.Sequences.createSequenceEmail('123', {
         subject: 'Welcome aboard',
         html: '<h1>Hello there</h1>',
         delay_interval: 'days',
@@ -170,19 +176,83 @@ describe('BentoSequences', () => {
         },
       });
 
-      await analytics.V1.Sequences.createSequenceEmail('sequence_xyz789', {
+      await analytics.V1.Sequences.createSequenceEmail('789', {
         subject: 'Test Subject',
         html: '<p>Test</p>',
       });
 
-      expect(lastFetchUrl).toContain('/fetch/sequences/sequence_xyz789/emails/templates');
+      expect(lastFetchUrl).toContain('/fetch/sequences/789/emails/templates');
       expect(lastFetchMethod).toBe('POST');
+    });
+
+    test('wraps the payload and site_uuid in the POST body', async () => {
+      setupMockFetch({
+        data: {
+          id: '123',
+          type: EntityType.EMAIL_TEMPLATES,
+          attributes: {},
+        },
+      });
+
+      await analytics.V1.Sequences.createSequenceEmail('789', {
+        subject: 'Test Subject',
+        html: '<p>Test</p>',
+        delay_interval: 'days',
+        delay_interval_count: 7,
+        inbox_snippet: 'Start here',
+      });
+
+      expect(JSON.parse(String(lastFetchBody))).toEqual({
+        site_uuid: mockOptions.siteUuid,
+        email_template: {
+          subject: 'Test Subject',
+          html: '<p>Test</p>',
+          delay_interval: 'days',
+          delay_interval_count: 7,
+          inbox_snippet: 'Start here',
+        },
+      });
+    });
+
+    test('rejects blank IDs before sending a request', async () => {
+      setupMockFetch({
+        data: {
+          id: '123',
+          type: EntityType.EMAIL_TEMPLATES,
+          attributes: {},
+        },
+      });
+
+      await expect(
+        analytics.V1.Sequences.createSequenceEmail('   ', {
+          subject: 'Test Subject',
+          html: '<p>Test</p>',
+        })
+      ).rejects.toThrow('Sequence ID must be the non-empty id returned by list sequences');
+      expect(lastFetchUrl).toBeNull();
+    });
+
+    test('normalizes the sequence ID in the POST path', async () => {
+      setupMockFetch({
+        data: {
+          id: '123',
+          type: EntityType.EMAIL_TEMPLATES,
+          attributes: {},
+        },
+      });
+
+      await analytics.V1.Sequences.createSequenceEmail('  123  ', {
+        subject: 'Test Subject',
+        html: '<p>Test</p>',
+      });
+
+      expect(lastFetchUrl).toContain('/fetch/sequences/123/emails/templates');
     });
 
     test('returns null when response is empty object', async () => {
       setupMockFetch({}, 201);
 
-      const result = await analytics.V1.Sequences.createSequenceEmail('sequence_empty', {
+      const result = await analytics.V1.Sequences.createSequenceEmail('123', {
         subject: 'Test Subject',
         html: '<p>Test</p>',
       });
@@ -193,7 +263,7 @@ describe('BentoSequences', () => {
     test('returns null when response has no data', async () => {
       setupMockFetch({ data: null }, 201);
 
-      const result = await analytics.V1.Sequences.createSequenceEmail('sequence_nodata', {
+      const result = await analytics.V1.Sequences.createSequenceEmail('123', {
         subject: 'Test Subject',
         html: '<p>Test</p>',
       });
@@ -212,13 +282,24 @@ describe('BentoSequences', () => {
       );
 
       await expect(
-        analytics.V1.Sequences.createSequenceEmail('sequence_bad_delay', {
+        analytics.V1.Sequences.createSequenceEmail('123', {
           subject: 'Test Subject',
           html: '<p>Test</p>',
           delay_interval: 'days',
           delay_interval_count: 0,
         })
       ).rejects.toThrow();
+    });
+
+    test('surfaces not found errors for valid missing sequence IDs', async () => {
+      setupMockFetch({ error: 'Sequence not found' }, 404);
+
+      await expect(
+        analytics.V1.Sequences.createSequenceEmail('404', {
+          subject: 'Test Subject',
+          html: '<p>Test</p>',
+        })
+      ).rejects.toThrow('[404]');
     });
   });
 });

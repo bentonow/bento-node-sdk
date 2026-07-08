@@ -1,7 +1,6 @@
 import { expect, test, describe, beforeEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { mockSubscriberResponse } from '../helpers/mockResponses';
 import { setupMockFetch } from '../helpers/mockFetch';
 
 describe('BentoCommands - subscribe', () => {
@@ -11,25 +10,12 @@ describe('BentoCommands - subscribe', () => {
     analytics = new Analytics(mockOptions);
   });
 
-  test('successfully subscribes a user', async () => {
-    const email = 'test@example.com';
-    setupMockFetch(mockSubscriberResponse(email));
+  test('successfully queues a subscribe command', async () => {
+    setupMockFetch({ results: 1 });
 
-    const result = await analytics.V1.Commands.subscribe({ email });
+    const result = await analytics.V1.Commands.subscribe({ email: 'test@example.com' });
 
-    expect(result).toBeDefined();
-    expect(result?.attributes.email).toBe(email);
-    expect(result?.attributes.unsubscribed_at).toBeNull();
-  });
-
-  test('returns null when response is empty', async () => {
-    setupMockFetch({ data: null });
-
-    const result = await analytics.V1.Commands.subscribe({
-      email: 'test@example.com'
-    });
-
-    expect(result).toBeNull();
+    expect(result).toBe(1);
   });
 
   test('handles server error gracefully', async () => {

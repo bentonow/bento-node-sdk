@@ -21,7 +21,9 @@ export class BentoStats {
    * @returns Promise<SegmentStats>
    */
   public async getSegmentStats(segmentId: string): Promise<SegmentStats> {
-    const result = await this._client.get<SegmentStats>(`${this._url}/segments/${segmentId}`);
+    const result = await this._client.get<SegmentStats>(`${this._url}/segment`, {
+      segment_id: segmentId,
+    });
     return result;
   }
 
@@ -31,7 +33,9 @@ export class BentoStats {
    * @returns Promise<ReportStats>
    */
   public async getReportStats(reportId: string): Promise<ReportStats> {
-    const result = await this._client.get<ReportStats>(`${this._url}/reports/${reportId}`);
+    const result = await this._client.get<ReportStats>(`${this._url}/report`, {
+      report_id: reportId,
+    });
     return result;
   }
 

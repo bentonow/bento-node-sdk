@@ -1,7 +1,6 @@
 import { expect, test, describe, beforeEach } from 'bun:test';
 import { Analytics } from '../../src';
 import { mockOptions } from '../helpers/mockClient';
-import { mockSubscriberResponse } from '../helpers/mockResponses';
 import { setupMockFetch } from '../helpers/mockFetch';
 
 describe('BentoCommands - changeEmail', () => {
@@ -11,29 +10,15 @@ describe('BentoCommands - changeEmail', () => {
     analytics = new Analytics(mockOptions);
   });
 
-  test('successfully changes email address', async () => {
-    const oldEmail = 'old@example.com';
-    const newEmail = 'new@example.com';
-    setupMockFetch(mockSubscriberResponse(newEmail));
-
-    const result = await analytics.V1.Commands.changeEmail({
-      oldEmail,
-      newEmail
-    });
-
-    expect(result).toBeDefined();
-    expect(result?.attributes.email).toBe(newEmail);
-  });
-
-  test('returns null when response is empty', async () => {
-    setupMockFetch({ data: null });
+  test('successfully queues a change_email command', async () => {
+    setupMockFetch({ results: 1 });
 
     const result = await analytics.V1.Commands.changeEmail({
       oldEmail: 'old@example.com',
-      newEmail: 'new@example.com'
+      newEmail: 'new@example.com',
     });
 
-    expect(result).toBeNull();
+    expect(result).toBe(1);
   });
 
   test('handles server error gracefully', async () => {
