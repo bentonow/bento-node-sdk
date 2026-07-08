@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 - 2026-06-10
+## 2.0.0 - 2026-06-10
 
 ### Added
 - Added `getAdsStats` for ads attribution statistics, including optional filters for date range, channel, campaign, and ad identifiers.
@@ -12,7 +12,7 @@
 - Documented Node 18, Bun 1.3, and npm 11.10 requirements for contributor workflows and release-age policies.
 - Refreshed Bun and npm lockfiles for the production npm release.
 
-## 1.0.9 - 2026-05-22
+## 2.0.0 - 2026-05-22
 
 ### Changed
 - Removed the unused Jest dev toolchain in favor of the existing Bun test runner, eliminating deprecated dev-only transitive packages.
@@ -22,7 +22,7 @@
 ### Notes
 - No runtime SDK source, public exports, request behavior, or package runtime dependencies changed.
 
-## 1.0.5 - 2026-02-25
+## 2.0.0 - 2026-02-25
 
 ### Added
 - Documented the Email Templates GET and PATCH helpers in the README, including code samples, error-handling guidance, and references to the public Email Templates API.
